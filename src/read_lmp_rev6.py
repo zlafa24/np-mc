@@ -5,6 +5,7 @@ import string
 from math import *
 import random as rnd
 from subprocess import call
+import itertools as itt
 
 def readAtoms(filename):
 	input = open(filename,"r")
@@ -380,6 +381,22 @@ def getPotential(filename):
 	pefile = open(filename,"r")
 	lines=pefile.readlines()
 	return lines[len(lines)-1].split()[1]
+
+def getBondedAtoms(bonds,atomID):
+	bonded1 = bonds[(bonds[:,2]==atomID)][:,3] if bonds[(bonds[:,2]==atomID)].shape[0]>0 else []
+	bonded2 = bonds[(bonds[:,3]==atomID)][:,2] if bonds[(bonds[:,3]==atomID)].shape[0]>0 else []
+	return np.append(np.ravel(bonded1),np.ravel(bonded2))
+
+def getMoleculeAtoms(bonds,startID):
+	atomIDs = np.empty([1])
+	atomIDs[0] = startID
+	bondedAtoms = getBondedAtoms(bonds,startID)
+	actAtoms = [atom for atom in bondedAtoms if ((atom>0) and (not (atom in atomIDs)))]
+	while(len(actAtoms)>0):
+		atomIDs = np.append(atomIDs,actAtoms[0])
+		bondedAtoms = getBondedAtoms(bonds,actAtoms[0])
+		actAtoms = [atom for atom in bondedAtoms if ((atom>0) and (not (atom in atomIDs)))]
+	return atomIDs
 
 if __name__ == "__main__":
 	inputfile=sys.argv[1]

@@ -4,6 +4,7 @@ import numpy as np
 import random as rnd
 import itertools as itt
 
+'''
 def getBondedAtoms(bonds,atomID):
 	bonded1 = bonds[(bonds[:,2]==atomID)][:,3] if bonds[(bonds[:,2]==atomID)].shape[0]>0 else []
 	bonded2 = bonds[(bonds[:,3]==atomID)][:,2] if bonds[(bonds[:,3]==atomID)].shape[0]>0 else []
@@ -26,7 +27,7 @@ def getMoleculeAtoms(bonds,startID):
 	#bondedAtoms = [atom for atom in bondedAtoms if not (atom in atomIDs)]
 	#print actAtoms
 	
-	
+'''	
 
 ch3ID = 3
 sulfurID = 4
@@ -56,7 +57,7 @@ print "Sulfur atom id is: "+str(atomID)
 #sbonds = bonds[np.where((bonds[:,2]==atomID) | (bonds[:,3]==atomID))]
 
 #print getBondedAtoms(bonds,atomID)
-bondAtoms = getMoleculeAtoms(bonds,atomID)
+bondAtoms = rdlmp.getMoleculeAtoms(bonds,atomID)
 print bondAtoms
 for atom in bondAtoms:
 	print atoms[atoms[:,0]==atom][:,2]
@@ -66,8 +67,8 @@ meohs = np.empty([meohMols.shape[0],5])
 
 for idx,(ddtsulfur,meohsulfur) in enumerate(itt.izip_longest(ddtsulfurs,meohsulfurs)):
 	if(not (ddtsulfur==None)):
-		ddts[idx,:] = getMoleculeAtoms(bonds,ddtsulfur)
+		ddts[idx,:] = rdlmp.getMoleculeAtoms(bonds,ddtsulfur)
 	if(not (meohsulfur==None)):
-		meohs[idx,:] = getMoleculeAtoms(bonds,meohsulfur)
+		meohs[idx,:] = rdlmp.getMoleculeAtoms(bonds,meohsulfur)
 print ddts
 print meohs
