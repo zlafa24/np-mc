@@ -38,44 +38,70 @@ def initializeMols(atoms,bonds):
 			meohs[idx,:] = rdlmp.getMoleculeAtoms(bonds,meohsulfur)
 	return (ddts,meohs)
 
+def quat_mult(q1,q2):
+	w1,x1,y1,z1 = q1
+	w2,x2,y2,z2 = q2
+	w = w1*w2-x1*x2-y1*y2-z1*z2
+	x = w1*x2 + x1*w2 + y1*z2 - z1*y2
+	y = w1*y2 + y1*w2 + z1*x2 - x1*z2
+    	z = w1*z2 + z1*w2 + x1*y2 - y1*x2
+	return np.array([w,x,y,z])
+
+def rot_quat(vector,theta,rot_axis):
+	rot_axis = rot_axis/np.linalg.norm(rot_axis)
+	vector_mag = np.linalg.norm(vector)
+	quat = np.array([cos(theta/2),sin(theta/2)*rot_axis[0],sin(theta/2)*rot_axis[1],sin(theta/2)*rot_axis[2]])
+	quat_inverse = np.array([cos(theta/2),-sin(theta/2)*rot_axis[0],-sin(theta/2)*rot_axis[1],-sin(theta/2)*rot_axis[2]])
+	quat = quat/np.linalg.norm(quat)
+	quat_inverse = quat_inverse/(np.linalg.norm(quat_inverse)**2)
+	
+	vect_quat = np.array([0,vector[0],vector[1],vector[2]])/vector_mag
+	new_vector = quat_mult(quat_mult(quat,vect_quat),quat_inverse)
+	return new_vector[1:]*vector_mag
+
+def rotate_dihedral_quat(dih_atoms,angle,atoms2rotate):
+	rot_axis = dih_atoms[2,4:7]-dih_atoms[1,4:7]
+	rot_angle = angle-calc_dih_angle(dih_atoms)
+	for atom in atoms2rotate:
+		atom[4:7] = rot_quat((atom[4:7]-dih_atoms[2,4:7]),rot_angle,rot_axis)+dih_atoms[2,4:7]
+	return atoms2rotate
+
+
+
 def calc_dih_angle(dih_atoms):
 	b1 = dih_atoms[1,4:7]-dih_atoms[0,4:7]
 	b2 = dih_atoms[2,4:7]-dih_atoms[1,4:7]
 	b3 = dih_atoms[3,4:7]-dih_atoms[2,4:7]
-	b4 = np.cross(b1,b2)
-	b5 = np.cross(b2,b4)
-	#b2norm = b2/np.linalg.norm(b2)
-	#n1 = np.cross(b1,b2)/np.linalg.norm(np.cross(b1,b2))
-	#n2 = np.cross(b2,b3)/np.linalg.norm(np.cross(b2,b3))
-	#m1 = np.cross(n1,b2norm)
-	#angle = atan2(np.dot(m1,n2),np.dot(n1,n2))
-	#return angle if angle>0 else 2*pi+angle
-	angle =  atan2(np.dot(b3,b4),np.dot(b3,b5)*sqrt(np.dot(b2,b2)))
-	norm_angle = angle if angle>0 else 2*pi+angle
-	return norm_angle
+	#b4 = np.cross(b1,b2)
+	#b5 = np.cross(b2,b4)
+	b2norm = b2/np.linalg.norm(b2)
+	n1 = np.cross(b1,b2)/np.linalg.norm(np.cross(b1,b2))
+	n2 = np.cross(b2,b3)/np.linalg.norm(np.cross(b2,b3))
+	m1 = np.cross(n1,b2norm)
+	angle = atan2(np.dot(m1,n2),np.dot(n1,n2))
+	angle=((angle-pi)*(-1)+2*pi)%(2*pi)
+	return angle
+	#angle =  atan2(np.dot(b3,b4),np.dot(b3,b5)*sqrt(np.dot(b2,b2)))
+	#norm_angle = angle if angle>=0 else 2*pi+angle
+	#return norm_angle
 
 def rotate_dihedral(dih_atoms,angle,atoms2rotate):
 	b2 = dih_atoms[2,4:7]-dih_atoms[1,4:7]
 	b3 = dih_atoms[3,4:7]-dih_atoms[2,4:7]
-
 	rot_axis = b2/np.linalg.norm(b2)
 	init_vector = b3
-	
 	#n1 = np.cross((dih_atoms[1,4:7]-dih_atoms[0,4:7]),rot_axis)
 	#n2 = np.cross((dih_atoms[3,4:7]-dih_atoms[2,4:7]),rot_axis)
-
 	#init_angle = np.arccos(np.dot((n1/np.linalg.norm(n1)),(n2/np.linalg.norm(n2))))
 	init_angle = calc_dih_angle(dih_atoms)
-
-	rot_angle = -angle+init_angle
+	rot_angle = angle-init_angle
 	#print "Initial angle is "+str(init_angle)+" desired angle is "+str(angle)+" therefore rotating "+str(rot_angle)
 	skewmat = np.array([[0,-rot_axis[2],rot_axis[1]],[rot_axis[2],0,-rot_axis[0]],[-rot_axis[1],rot_axis[0],0]])
 	rot_matrix = np.identity(3)+sin(rot_angle)*skewmat+(2*sin(rot_angle/2)**2)*np.linalg.matrix_power(skewmat,2)
-	
 	#print "\nDihedral atoms looks like this "+str(dih_atoms[:,4:7])+"\n"
 	for atom in atoms2rotate:	
-		atom[4:7] = atom[4:7] - dih_atoms[1,4:7]
-		atom[4:7] = np.transpose(np.dot(rot_matrix,np.transpose(atom[4:7])))+dih_atoms[1,4:7]
+		atom[4:7] = atom[4:7] - dih_atoms[2,4:7]
+		atom[4:7] = np.transpose(np.dot(rot_matrix,np.transpose(atom[4:7])))+dih_atoms[2,4:7]
 	#print "\nNow dihedral atoms looks like this "+str(dih_atoms[:,4:7])+"\n"
 	return atoms2rotate
 
@@ -90,20 +116,26 @@ def update_coords(atoms,lmp):
 def delete_chain(mol,delindex,lmp,delete=True):
 	if(delete):	
 		atoms2del = mol[delindex:].astype(int)
+		lmp.command("group restOfchain id 1")
+                lmp.command("group restOfchain clear")
 		lmp.command("group restOfchain id "+(" ".join([str(atom) for atom in atoms2del])))
 		lmp.command("neigh_modify exclude group restOfchain all")
 		lmp.command("delete_bonds restOfchain multi any")
-		lmp.command("group restOfchain delete")
+		#lmp.command("group restOfchain delete")
 	else:
 		lmp.command("neigh_modify exclude none")
+		lmp.command("group beginOfchain id 1")	
+		lmp.command("group beginOfchain clear")
 		lmp.command("group beginOfchain id "+(" ".join([str(atom) for atom in mol[0:(delindex+1)].astype(int)])))
-		if(delindex<(mol.shape[0]-1)):	
+		if(delindex<(mol.shape[0]-1)):
+			lmp.command("group restOfchain id 1")
+			lmp.command("group restOfchain clear")
 			lmp.command("group restOfchain id "+(" ".join([str(atom) for atom in mol[(delindex+1):].astype(int)])))
 			lmp.command("neigh_modify exclude group restOfchain all")
 		lmp.command("delete_bonds beginOfchain multi undo")
-                lmp.command("group beginOfchain delete")
-		if(delindex<(mol.shape[0]-1)):
-			lmp.command("group restOfchain delete")
+                #lmp.command("group beginOfchain delete")
+		#if(delindex<(mol.shape[0]-1)):
+			#lmp.command("group restOfchain clear")
 
 def regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=False):
 	totalstart = time.time()
@@ -115,10 +147,11 @@ def regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=F
 	lmp.command("group all_else subtract all cbmc_mol")
 	for idx in xrange(startindex,len(mol)):
 		start = time.time()
-		delete_chain(mol,idx,lmp,delete=False)
-		lmp.command("neigh_modify exclude group all_else all_else")
-		lmp.command("run 1 post no")
+		#lmp.command("neigh_modify exclude group all_else all_else")
+		lmp.command("run 0 post no")
 		energy = lmp.extract_compute("pair_pe",0,0)
+		delete_chain(mol,idx,lmp,delete=False)
+		#lmp.command("neigh_modify exclude group all_else all_else")
 		if(idx>2):
 			probs = np.empty((numtrials))
 			positions = np.empty((numtrials,(mol.shape[0]-idx),3))
@@ -128,7 +161,7 @@ def regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=F
 			atoms2rotate = atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[idx:]]).flatten()]
 			print "Starting angle is "+str(calc_dih_angle(dih_atoms))+" and starting energy is "+str(energy)+"\n\n"
 			if(keep_original):
-				lmp.command("run 1 post no")
+				lmp.command("run 0 post no")
 				delta_pe = lmp.extract_compute("pair_pe",0,0)-energy
 				print "Angle is original, pe is "+str(lmp.extract_compute("pair_pe",0,0))+" delpe is "+str(delta_pe)+"\n"
 				probs[numtrials-1] = exp(-beta*delta_pe) if -beta*delta_pe<700 else float('inf')
@@ -138,21 +171,14 @@ def regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=F
 			for i in xrange(actual_trials):
 				chosen_index = np.searchsorted(dih_cdf[:,1],rnd.uniform(0,1))
 				angle = dih_cdf[chosen_index,0]
-				print "Chosen angle is "+str(angle)
-				positions[i,:,:] = rotate_dihedral(dih_atoms,angle,atoms2rotate)[:,4:7]
-				for count,position in enumerate(positions[i]):
-					atoms[np.where(atoms[:,0]==mol[idx+count])[0],4:7] = position
-				dih_atoms = atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[(idx-3):(idx+1)]]).flatten()]
+				positions[i,:,:] = rotate_dihedral_quat(dih_atoms,angle,atoms2rotate)[:,4:7]
+				atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[idx:]]).flatten()] = rotate_dihedral_quat(dih_atoms,angle,atoms2rotate)
+				#dih_atoms[3,4:7] = positions[i,0,:]
 				update_coords(atoms,lmp)
-				#print "Rotate atoms in cbmc are: "+str(atoms2rotate[:,4:7])
-				lmp.command("run 1 post no")
+				lmp.command("run 0 post no")
 				delta_pe = lmp.extract_compute("pair_pe",0,0)-energy
-				print "Angle is now "+str(calc_dih_angle(dih_atoms))+" pe is "+str(lmp.extract_compute("pair_pe",0,0))+" delpe is "+str(delta_pe)+"\n"
+				print "Energy is "+str(lmp.extract_compute("pair_pe",0,0))+" delPE is "+str(delta_pe)
 				probs[i] = exp(-beta*(delta_pe)) if -beta*(delta_pe)<700 else float('inf')
-				for count,position in enumerate(original_pos):
-					atoms[np.where(atoms[:,0]==mol[idx+count])[0],4:7] = position
-				dih_atoms = atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[(idx-3):(idx+1)]]).flatten()]
-				#print "Should be back to starting angle "+str(calc_dih_angle(dih_atoms))
 			finish = time.time()
 			#print "Evaluating trials takes "+str(finish-start)
 			print "Probabilities are "+str(probs)
@@ -162,7 +188,7 @@ def regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=F
 			else:
 				angle_cdf = np.cumsum(probs)/np.sum(probs)
 				chosen_pos = np.searchsorted(angle_cdf,rnd.uniform(0,1))
-				for count,position in enumerate(positions[chosen_pos][0]):
+				for count,position in enumerate(positions[chosen_pos]):
 					atoms[np.where(atoms[:,0]==mol[idx+count])[0],4:7] = position
 			update_coords(atoms,lmp)
 			#lmp.command("run 1 post no")
@@ -182,10 +208,6 @@ def cbmc(atoms,mol,beta,lmp,dih_cdf,startindex):
 	#startindex = rnd.choice(range(1,len(mol)))
 	atoms2del = mol[startindex:].astype(int)
 	#print "Atoms to delete are "+str(atoms2del)
-	#delete_chain(mol,startindex,lmp,delete=True)
-	#lmp.command("run 1 post no")
-	#initial_energy = lmp.extract_compute("thermo_pe",0,0)
-	#energy = initial_energy
 	(weight0,new_positions) = regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=True)
 	(weight1,new_positions) = regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials)
 	acceptance_prob = weight1/weight0 if weight0>0 else float('inf')
@@ -248,12 +270,14 @@ if __name__ == "__main__":
 	cbmcs_accepted=0
 	for i in xrange(tries):
 		#iter_start = time.time()
+		potentialfile.flush()
 		pe_old = pe
 		atoms_old = np.copy(atoms)
 		coord_old = coords
-		move = rnd.choice(['swap'])
+		move = rnd.choice(['swap','cbmc','rotate'])
 		if((i+1)%100==0):
-			acceptancefile.write(str(i)+'\t'+str(swaps)+'\t'+str(float(swaps_accepted)/float(swaps))+'\t'+str(rotates)+'\t'+str(float(rotates_accepted)/float(rotates))+'\t'+str(cbmcs)+'\t'+str(float(cbmcs_accepted)/float(cbmcs))+'\n')
+			acceptancefile.write(str(i)+'\t'+str(swaps)+'\t'+str(float(swaps_accepted)/float(swaps+0.01))+'\t'+str(rotates)+'\t'+str(float(rotates_accepted)/float(rotates+0.01))+'\t'+str(cbmcs)+'\t'+str(float(cbmcs_accepted)/float(cbmcs+0.01))+'\n')
+			acceptancefile.flush()
 			swaps=0
 			swaps_accepted=0
 			rotates=0
@@ -290,18 +314,17 @@ if __name__ == "__main__":
 				print "Move accepted"
 				pe = lmp.extract_compute("thermo_pe",0,0)
 				print "\nOn loop "+str(i)+"\n"
+				pe = lmp.extract_compute("thermo_pe",0,0)
+				potentialfile.write(str(i)+'\t'+str(pe)+'\n')
 				continue
 			else:
 				print "Move rejected"
 				pe = pe_old
 				atoms = atoms_old
 				print "\nOn loop "+str(i)+"\n"
+				pe = pe_old
+				potentialfile.write(str(i)+'\t'+str(pe)+'\n')
 				continue
-		#for idx in xrange(natoms):
-		#	coords[idx*3]=atoms[idx,4]
-		#	coords[idx*3+1]=atoms[idx,5]
-		#	coords[idx*3+2]=atoms[idx,6]
-		#lmp.scatter_atoms("x",1,3,coords)
 		update_coords(atoms,lmp)
 		lmp.command("run 1 pre no post no")
 		pe = lmp.extract_compute("thermo_pe",0,0)
@@ -319,8 +342,6 @@ if __name__ == "__main__":
 			atoms = atoms_old
 			pe = pe_old
 		potentialfile.write(str(i)+'\t'+str(pe)+'\n')
-		#raw_input("continue?")
-		#iter_end = time.time()
 		if(((i+1)%100)==0):
 			iter_end = time.time()
 			print "Total time is "+str(iter_end-loop_start)+" average iteration time is "+str((iter_end-loop_start)/(i+1.0))
