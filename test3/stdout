@@ -1,0 +1,3479 @@
+nohup: ignoring input
+reading file addmolecule_184_rand.lmp
+        4299 atoms
+
+reading file addmolecule_184_rand.lmp
+        1648 bonds
+
+reading file addmolecule_184_rand.lmp
+        1442 angles
+
+reading file addmolecule_184_rand.lmp
+        1236 dihedrals
+
+rotating
+Rotating -0.049839870271radians about theta or phi axis
+Time to update coords : 0.00595283508301
+On loop: 0
+New PE is: -4566.78529774 Old PE is: -4566.78705117Delta PE is 0.00175342546572
+Move accepted
+rotating
+Rotating 0.191174590378radians about theta or phi axis
+Time to update coords : 0.00459599494934
+On loop: 1
+New PE is: -4567.01092626 Old PE is: -4566.78529774Delta PE is -0.225628517734
+Move accepted
+swapping
+Starting energy is -17.170787088
+
+
+Angle is original, pe is -17.475775805 delpe is -0.304988716949
+
+Initialization time is 0.0973169803619
+Time to update coords : 0.00448894500732
+Energy is 0.0 delPE is 17.170787088 angle is 0.227
+Time to update coords : 0.00454306602478
+Energy is 0.0 delPE is 17.170787088 angle is 0.751
+Time to update coords : 0.00451397895813
+Energy is 0.0 delPE is 17.170787088 angle is 3.086
+Time to update coords : 0.00451016426086
+Energy is -18.4755829941 delPE is -1.30479590604 angle is 3.29
+Evaluating trials takes 0.0788729190826
+Probabilities are [  2.55499082e-13   2.55499082e-13   2.55499082e-13   9.05531439e+00
+   1.67367384e+00]
+Time to update coords : 0.00460600852966
+Starting energy is -18.3949253912
+
+
+Angle is original, pe is -18.6767339321 delpe is -0.281808540967
+
+Initialization time is 0.0987730026245
+Time to update coords : 0.00471091270447
+Energy is -18.762894153 delPE is -0.367968761856 angle is 3.795
+Time to update coords : 0.00454115867615
+Energy is -18.6944818542 delPE is -0.299556463079 angle is 3.07
+Time to update coords : 0.00443315505981
+Energy is -18.681945015 delPE is -0.287019623829 angle is 5.983
+Time to update coords : 0.00456595420837
+Energy is -18.7703837548 delPE is -0.375458363672 angle is 4.09
+Evaluating trials takes 0.0780990123749
+Probabilities are [ 1.86148166  1.65839108  1.62365128  1.885174    1.60942628]
+Time to update coords : 0.0045280456543
+Starting energy is -18.6767339321
+
+
+Angle is original, pe is -18.8684371186 delpe is -0.191703186486
+
+Initialization time is 0.096932888031
+Time to update coords : 0.00455498695374
+Energy is -19.2260831394 delPE is -0.54934920729 angle is 3.42
+Time to update coords : 0.0044481754303
+Energy is -19.2266668336 delPE is -0.54993290145 angle is 6.113
+Time to update coords : 0.00457882881165
+Energy is -18.8922384213 delPE is -0.215504489197 angle is 3.688
+Time to update coords : 0.00450801849365
+Energy is -18.9462624364 delPE is -0.269528504247 angle is 0.474
+Evaluating trials takes 0.0774319171906
+Probabilities are [ 2.5285904   2.53108396  1.43894904  1.57639564  1.38226131]
+Time to update coords : 0.00445485115051
+Starting energy is -18.8684371186
+
+
+Angle is original, pe is -19.0424134818 delpe is -0.173976363133
+
+Initialization time is 0.0980279445648
+Time to update coords : 0.00461506843567
+Energy is -19.0404726179 delPE is -0.172035499294 angle is 6.014
+Time to update coords : 0.00459909439087
+Energy is -19.0666538356 delPE is -0.198216716946 angle is 1.224
+Time to update coords : 0.00448298454285
+Energy is -19.1419323789 delPE is -0.273495260296 angle is 3.161
+Time to update coords : 0.00447702407837
+Energy is -19.0668544269 delPE is -0.198417308255 angle is 3.125
+Evaluating trials takes 0.0769910812378
+Probabilities are [ 1.33710767  1.39754888  1.58699056  1.39802236  1.34149717]
+Time to update coords : 0.00450491905212
+Starting energy is -19.0424134818
+
+
+Angle is original, pe is -19.1801233929 delpe is -0.137709911117
+
+Initialization time is 0.0968368053436
+Time to update coords : 0.00463700294495
+Energy is -19.185826182 delPE is -0.143412700247 angle is 5.806
+Time to update coords : 0.00459313392639
+Energy is -19.3683027242 delPE is -0.325889242416 angle is 2.892
+Time to update coords : 0.00448107719421
+Energy is -19.3725121574 delPE is -0.330098675664 angle is 1.264
+Time to update coords : 0.00448107719421
+Energy is -19.3823049272 delPE is -0.339891445449 angle is 5.313
+Evaluating trials takes 0.0765478610992
+Probabilities are [ 1.27401682  1.73379894  1.74616718  1.77528296  1.26180686]
+Time to update coords : 0.0044219493866
+Starting energy is -19.1801233929
+
+
+Angle is original, pe is -19.3106435572 delpe is -0.130520164325
+
+Initialization time is 0.0977649688721
+Time to update coords : 0.00458288192749
+Energy is -19.3362544468 delPE is -0.156131053977 angle is 5.379
+Time to update coords : 0.00444912910461
+Energy is -19.411112525 delPE is -0.230989132181 angle is 3.975
+Time to update coords : 0.00453400611877
+Energy is -19.3107579038 delPE is -0.130634510964 angle is 3.276
+Time to update coords : 0.00444483757019
+Energy is -19.4145237447 delPE is -0.234400351842 angle is 2.681
+Evaluating trials takes 0.0757689476013
+Probabilities are [ 1.30167473  1.47707126  1.2468206   1.4856043   1.24657987]
+Time to update coords : 0.00451493263245
+Starting energy is -19.3106435572
+
+
+Angle is original, pe is -19.434195577 delpe is -0.123552019762
+
+Initialization time is 0.0967469215393
+Time to update coords : 0.00453186035156
+Energy is -19.4438142917 delPE is -0.133170734501 angle is 0.608
+Time to update coords : 0.00448298454285
+Energy is -19.5170226212 delPE is -0.206379063968 angle is 3.916
+Time to update coords : 0.00467610359192
+Energy is -19.5602731248 delPE is -0.249629567559 angle is 5.216
+Time to update coords : 0.00443315505981
+Energy is -19.5605939997 delPE is -0.249950442545 angle is 0.115
+Evaluating trials takes 0.0754518508911
+Probabilities are [ 1.25217194  1.41694522  1.52430495  1.52513112  1.23199757]
+Time to update coords : 0.00452899932861
+Starting energy is -19.434195577
+
+
+Angle is original, pe is -19.5568431725 delpe is -0.122647595588
+
+Initialization time is 0.0974531173706
+Time to update coords : 0.00454592704773
+Energy is -19.6585502286 delPE is -0.224354651624 angle is 2.932
+Time to update coords : 0.00444197654724
+Energy is -19.5579311635 delPE is -0.123735586552 angle is 3.144
+Time to update coords : 0.00448107719421
+Energy is -19.6591881137 delPE is -0.22499253671 angle is 3.08
+Time to update coords : 0.00459098815918
+Energy is -19.657529794 delPE is -0.223334216995 angle is 0.199
+Evaluating trials takes 0.0748469829559
+Probabilities are [ 1.46061546  1.23237953  1.46218963  1.45810075  1.23011743]
+Time to update coords : 0.00450086593628
+Starting energy is -19.5568431725
+
+
+Angle is original, pe is -19.6795162931 delpe is -0.122673120521
+
+Initialization time is 0.0967028141022
+Time to update coords : 0.00447106361389
+Energy is -19.7831427092 delPE is -0.226299536624 angle is 3.371
+Time to update coords : 0.00476503372192
+Energy is -19.6797000209 delPE is -0.122856848375 angle is 2.997
+Time to update coords : 0.00473999977112
+Energy is -19.7836008024 delPE is -0.226757629887 angle is 3.329
+Time to update coords : 0.00459003448486
+Energy is -19.6802713989 delPE is -0.123428226317 angle is 3.041
+Evaluating trials takes 0.0288488864899
+Probabilities are [ 1.46542036  1.23055217  1.46655439  1.23174006  1.23017045]
+Time to update coords : 0.00450491905212
+Starting energy is -19.6795162931
+
+
+Angle is original, pe is -19.8288528734 delpe is -0.149336580291
+
+Initialization time is 0.0948338508606
+Time to update coords : 0.00454902648926
+Energy is -19.9515104386 delPE is -0.271994145563 angle is 3.06
+Time to update coords : 0.00458002090454
+Energy is -19.881219015 delPE is -0.201702721898 angle is 4.525
+Time to update coords : 0.0045108795166
+Energy is -19.8326667198 delPE is -0.153150426785 angle is 5.334
+Time to update coords : 0.00469899177551
+Energy is -19.9562858243 delPE is -0.276769531254 angle is 3.473
+Evaluating trials takes 0.0701901912689
+Probabilities are [ 1.58297284  1.40580005  1.29513953  1.59578952  1.28682527]
+Time to update coords : 0.00454783439636
+Total regrow time is 1.73693299294
+Starting energy is -18.2411910372
+
+
+Initialization time is 0.0941300392151
+Time to update coords : 0.00455689430237
+Energy is -18.3984299375 delPE is -0.157238900264 angle is 6.099
+Time to update coords : 0.00450015068054
+Energy is -18.6418025456 delPE is -0.400611508361 angle is 2.599
+Time to update coords : 0.00440502166748
+Energy is -18.4499088317 delPE is -0.208717794449 angle is 3.165
+Time to update coords : 0.00450205802917
+Energy is -18.591649369 delPE is -0.350458331779 angle is 5.587
+Time to update coords : 0.00455093383789
+Energy is -18.7451979381 delPE is -0.504006900888 angle is 5.608
+Evaluating trials takes 0.0864038467407
+Probabilities are [ 1.30411214  1.96697168  1.42255225  1.80724514  2.34220881]
+Time to update coords : 0.00450086593628
+Starting energy is -18.7451979381
+
+
+Initialization time is 0.0958161354065
+Time to update coords : 0.00467491149902
+Energy is -19.3901272011 delPE is -0.644929262956 angle is 5.588
+Time to update coords : 0.00456714630127
+Energy is -19.3820184819 delPE is -0.636820543802 angle is 5.84
+Time to update coords : 0.00461387634277
+Energy is 79.8392087701 delPE is 98.5844067082 angle is 2.993
+Time to update coords : 0.00473499298096
+Energy is 31.7341064036 delPE is 50.4793043417 angle is 6.137
+Time to update coords : 0.00441312789917
+Energy is 199.902906541 delPE is 218.648104479 angle is 1.37
+Evaluating trials takes 0.0863959789276
+Probabilities are [  2.97149102e+000   2.93108017e+000   5.02052019e-073   9.54520438e-038
+   4.45801498e-161]
+Time to update coords : 0.0044960975647
+Starting energy is -19.3820184819
+
+
+Initialization time is 0.0948929786682
+Time to update coords : 0.00467896461487
+Energy is -15.333188068 delPE is 4.0488304139 angle is 5.846
+Time to update coords : 0.0045280456543
+Energy is -18.9110314365 delPE is 0.470987045454 angle is 2.456
+Time to update coords : 0.00457715988159
+Energy is -19.0405213206 delPE is 0.3414971613 angle is 3.549
+Time to update coords : 0.00451493263245
+Energy is -19.9881741873 delPE is -0.606155705437 angle is 5.961
+Time to update coords : 0.00448894500732
+Energy is -19.2152477667 delPE is 0.166770715242 angle is 2.922
+Evaluating trials takes 0.0852100849152
+Probabilities are [  1.07322952e-03   4.51429874e-01   5.61765190e-01   2.78316465e+00
+   7.54561558e-01]
+Time to update coords : 0.00465893745422
+Starting energy is -19.9881741873
+
+
+Initialization time is 0.0949919223785
+Time to update coords : 0.00468301773071
+Energy is -19.8439796559 delPE is 0.144194531413 angle is 2.599
+Time to update coords : 0.0045919418335
+Energy is -19.6523007532 delPE is 0.335873434149 angle is 0.919
+Time to update coords : 0.00468492507935
+Energy is -20.4954017221 delPE is -0.507227534728 angle is 2.952
+Time to update coords : 0.0044960975647
+Energy is -19.7780558201 delPE is 0.21011836723 angle is 2.309
+Time to update coords : 0.00445294380188
+Energy is -19.6654561336 delPE is 0.3227180537 angle is 3.214
+Evaluating trials takes 0.0849599838257
+Probabilities are [ 0.78388339  0.56712543  2.35498172  0.70130128  0.57986505]
+Time to update coords : 0.00449681282043
+Starting energy is -20.4954017221
+
+
+Initialization time is 0.0947029590607
+Time to update coords : 0.00452208518982
+Energy is -20.9796346559 delPE is -0.484232933818 angle is 0.784
+Time to update coords : 0.00467705726624
+Energy is -20.8461163449 delPE is -0.350714622854 angle is 4.167
+Time to update coords : 0.00456404685974
+Energy is -20.7855662702 delPE is -0.290164548119 angle is 2.384
+Time to update coords : 0.00460910797119
+Energy is -20.8388573311 delPE is -0.343455609012 angle is 4.118
+Time to update coords : 0.00461006164551
+Energy is -21.0822221493 delPE is -0.586820427215 angle is 3.031
+Evaluating trials takes 0.0843229293823
+Probabilities are [ 2.26529046  1.80802747  1.63229694  1.78599998  2.69376005]
+Time to update coords : 0.00450611114502
+Starting energy is -20.8388573311
+
+
+Initialization time is 0.0947470664978
+Time to update coords : 0.00458407402039
+Energy is -21.1277707372 delPE is -0.288913406093 angle is 5.088
+Time to update coords : 0.00446081161499
+Energy is -20.5314775275 delPE is 0.307379803573 angle is 3.096
+Time to update coords : 0.00457406044006
+Energy is -19.807060357 delPE is 1.03179697413 angle is 0.642
+Time to update coords : 0.00451993942261
+Energy is -21.1181361091 delPE is -0.279278778064 angle is 4.851
+Time to update coords : 0.00470185279846
+Energy is -21.0491121973 delPE is -0.210254866185 angle is 0.293
+Evaluating trials takes 0.0836191177368
+Probabilities are [ 1.62885195  0.59508035  0.17510833  1.60256563  1.4262494 ]
+Time to update coords : 0.0044379234314
+Starting energy is -20.5332357004
+
+
+Initialization time is 0.0956280231476
+Time to update coords : 0.0045690536499
+Energy is 74.4500890162 delPE is 94.9833247166 angle is 3.087
+Time to update coords : 0.00449419021606
+Energy is -20.8427119468 delPE is -0.309476246409 angle is 3.817
+Time to update coords : 0.00461983680725
+Energy is -20.8749845667 delPE is -0.341748866273 angle is 0.529
+Time to update coords : 0.00456309318542
+Energy is 90.0284040824 delPE is 110.561639783 angle is 2.888
+Time to update coords : 0.00460600852966
+Energy is 223.545735085 delPE is 244.078970786 angle is 5.787
+Evaluating trials takes 0.0829980373383
+Probabilities are [  2.19628659e-070   1.68640494e+000   1.78085996e+000   8.25954459e-082
+   9.97246782e-180]
+Time to update coords : 0.00450301170349
+Starting energy is -20.8749845667
+
+
+Initialization time is 0.0946788787842
+Time to update coords : 0.00463795661926
+Energy is -20.9363434134 delPE is -0.0613588467134 angle is 2.768
+Time to update coords : 0.00459003448486
+Energy is -21.2282168573 delPE is -0.353232290624 angle is 3.311
+Time to update coords : 0.00447702407837
+Energy is -20.8071181979 delPE is 0.0678663687987 angle is 3.098
+Time to update coords : 0.00450706481934
+Energy is -20.9588811776 delPE is -0.0838966108932 angle is 6.13
+Time to update coords : 0.00453805923462
+Energy is -20.994843783 delPE is -0.119859216315 angle is 6.234
+Evaluating trials takes 0.0822579860687
+Probabilities are [ 1.10917223  1.81573061  0.89172011  1.15219929  1.22433889]
+Time to update coords : 0.00450491905212
+Starting energy is -20.9363434134
+
+
+Initialization time is 0.0953500270844
+Time to update coords : 0.00453400611877
+Energy is -21.0435551764 delPE is -0.107211762957 angle is 5.626
+Time to update coords : 0.00457096099854
+Energy is -21.1437535135 delPE is -0.207410100054 angle is 0.318
+Time to update coords : 0.00440883636475
+Energy is -21.1561235084 delPE is -0.219780095025 angle is 0.305
+Time to update coords : 0.00476479530334
+Energy is 2.47365270762 delPE is 23.409996121 angle is 4.634
+Time to update coords : 0.0046079158783
+Energy is 899.976210556 delPE is 920.91255397 angle is 5.642
+Evaluating trials takes 0.0817320346832
+Probabilities are [  1.19846769e+00   1.41941437e+00   1.44937588e+00   6.78758042e-18
+   0.00000000e+00]
+Time to update coords : 0.004634141922
+Starting energy is -21.1437535135
+
+
+Initialization time is 0.0925099849701
+Time to update coords : 0.00458192825317
+Energy is -21.4083220981 delPE is -0.264568584597 angle is 5.316
+Time to update coords : 0.00468492507935
+Energy is -21.5665505427 delPE is -0.422797029244 angle is 3.43
+Time to update coords : 0.00465321540833
+Energy is -21.4083730472 delPE is -0.264619533717 angle is 2.934
+Time to update coords : 0.0045211315155
+Energy is -21.6242326009 delPE is -0.480479087419 angle is 2.863
+Time to update coords : 0.00471711158752
+Energy is -21.4216340842 delPE is -0.277880570763 angle is 2.815
+Evaluating trials takes 0.0775349140167
+Probabilities are [ 1.56324752  2.04205951  1.56338203  2.2509763   1.59878629]
+Time to update coords : 0.00453901290894
+Total regrow time is 1.8351380825
+Weight1 is 51598663.0125 weight0 is 735816383.436
+Starting energy is -38.9376593715
+
+
+Angle is original, pe is -39.1902682896 delpe is -0.252608918139
+
+Initialization time is 0.0965280532837
+Time to update coords : 0.00463509559631
+Energy is -39.3060253612 delPE is -0.368365989702 angle is 0.603
+Time to update coords : 0.0047070980072
+Energy is -39.4201784763 delPE is -0.482519104882 angle is 0.45
+Time to update coords : 0.00450706481934
+Energy is -39.125112343 delPE is -0.187452971556 angle is 3.651
+Time to update coords : 0.00461792945862
+Energy is -39.1555788237 delPE is -0.217919452201 angle is 5.84
+Evaluating trials takes 0.0754148960114
+Probabilities are [ 1.86273073  2.25874403  1.37237613  1.44482911  1.53199321]
+Time to update coords : 0.00451803207397
+Starting energy is -39.1902682896
+
+
+Angle is original, pe is -39.1902682896 delpe is 0.0
+
+Initialization time is 0.0959150791168
+Time to update coords : 0.00461316108704
+Energy is -39.1902288135 delPE is 3.94761137983e-05 angle is 5.847
+Time to update coords : 0.00475883483887
+Energy is -39.1902546595 delPE is 1.36300539424e-05 angle is 0.246
+Time to update coords : 0.00461292266846
+Energy is -39.1902689952 delPE is -7.05636068687e-07 angle is 0.336
+Time to update coords : 0.0047550201416
+Energy is -39.1902563516 delPE is 1.19379999219e-05 angle is 0.195
+Evaluating trials takes 0.0286290645599
+Probabilities are [ 0.99993334  0.99997698  1.00000119  0.99997984  1.        ]
+Time to update coords : 0.00445103645325
+Total regrow time is 0.307089090347
+Starting energy is -38.9376593715
+
+
+Initialization time is 0.0943169593811
+Time to update coords : 0.0045280456543
+Energy is -39.1919276328 delPE is -0.254268261334 angle is 3.97
+Time to update coords : 0.00452399253845
+Energy is -39.2723097273 delPE is -0.334650355827 angle is 5.792
+Time to update coords : 0.00447607040405
+Energy is -39.2103680319 delPE is -0.272708660488 angle is 2.944
+Time to update coords : 0.00454998016357
+Energy is -39.3415915461 delPE is -0.403932174624 angle is 2.858
+Time to update coords : 0.00461220741272
+Energy is -39.2138832948 delPE is -0.276223923342 angle is 3.448
+Evaluating trials takes 0.0357060432434
+Probabilities are [ 1.53629197  1.75964033  1.58488396  1.97803239  1.59431992]
+Time to update coords : 0.00450301170349
+Starting energy is -39.3418249719
+
+
+Initialization time is 0.0935938358307
+Time to update coords : 0.00458693504333
+Energy is -39.3390013599 delPE is 0.00282361201609 angle is 1.023
+Time to update coords : 0.00460290908813
+Energy is -39.3424965034 delPE is -0.000671531512431 angle is 5.116
+Time to update coords : 0.00449895858765
+Energy is -39.3388626481 delPE is 0.00296232379146 angle is 2.848
+Time to update coords : 0.00486207008362
+Energy is -39.3388627016 delPE is 0.00296227029755 angle is 6.006
+Time to update coords : 0.00473690032959
+Energy is -39.3421443336 delPE is -0.000319361763076 angle is 3.07
+Evaluating trials takes 0.0356719493866
+Probabilities are [ 0.99524324  1.00113463  0.99501014  0.99501023  1.00053944]
+Time to update coords : 0.00458908081055
+Total regrow time is 0.270027160645
+Weight1 is 42.1554248514 weight0 is 42.3524457691
+Time to update coords : 0.0045530796051
+On loop: 2
+New PE is: -282.481519103 Old PE is: -4567.01092626Delta PE is 4284.52940716
+Move rejected
+
+
+CBMC Move
+
+
+Starting energy is -79.0684387148
+
+
+Angle is original, pe is -79.2802358545 delpe is -0.21179713976
+
+Initialization time is 0.0978307723999
+Time to update coords : 0.00460481643677
+Energy is -41.2413378207 delPE is 37.8271008941 angle is 3.963
+Time to update coords : 0.0045599937439
+Energy is -41.2335030196 delPE is 37.8349356951 angle is 5.731
+Time to update coords : 0.00471806526184
+Energy is -41.2310621194 delPE is 37.8373765954 angle is 5.793
+Time to update coords : 0.00461888313293
+Energy is -77.6571065557 delPE is 1.41133215904 angle is 3.181
+Evaluating trials takes 0.0779180526733
+Probabilities are [  1.81377597e-28   1.78993724e-28   1.78257458e-28   9.22498221e-02
+   1.42996872e+00]
+Time to update coords : 0.00475215911865
+Starting energy is -77.6539587525
+
+
+Angle is original, pe is -77.8146360939 delpe is -0.160677341393
+
+Initialization time is 0.10031914711
+Time to update coords : 0.00463104248047
+Energy is -78.0664519865 delPE is -0.412493233971 angle is 3.268
+Time to update coords : 0.00459909439087
+Energy is -77.9060537767 delPE is -0.252095024255 angle is 4.124
+Time to update coords : 0.00461912155151
+Energy is -78.0162991348 delPE is -0.362340382328 angle is 2.991
+Time to update coords : 0.00456500053406
+Energy is -77.8188648366 delPE is -0.164906084096 angle is 2.327
+Evaluating trials takes 0.0304698944092
+Probabilities are [ 2.00683588  1.53066434  1.84387321  1.32110657  1.31170629]
+Time to update coords : 0.00458002090454
+Starting energy is -77.8146360939
+
+
+Angle is original, pe is -77.9880063345 delpe is -0.173370240645
+
+Initialization time is 0.0998778343201
+Time to update coords : 0.00464010238647
+Energy is -78.0769337778 delPE is -0.262297683895 angle is 3.339
+Time to update coords : 0.00462508201599
+Energy is -78.0831187318 delPE is -0.268482637931 angle is 0.51
+Time to update coords : 0.00451803207397
+Energy is -78.0471367622 delPE is -0.232500668353 angle is 1.068
+Time to update coords : 0.00459480285645
+Energy is -78.0124582195 delPE is -0.197822125599 angle is 0.526
+Evaluating trials takes 0.0767478942871
+Probabilities are [ 1.55726431  1.57361402  1.48084625  1.39661797  1.3401248 ]
+Time to update coords : 0.00459694862366
+Starting energy is -77.9880063345
+
+
+Angle is original, pe is -78.128977285 delpe is -0.140970950463
+
+Initialization time is 0.0998170375824
+Time to update coords : 0.00463390350342
+Energy is -78.2317819568 delPE is -0.243775622268 angle is 1.432
+Time to update coords : 0.00461101531982
+Energy is -78.1462419551 delPE is -0.158235620563 angle is 5.368
+Time to update coords : 0.00449991226196
+Energy is -78.2954380052 delPE is -0.307431670663 angle is 3.505
+Time to update coords : 0.00454592704773
+Energy is -78.1723704841 delPE is -0.184364149604 angle is 3.126
+Evaluating trials takes 0.0761828422546
+Probabilities are [ 1.50931097  1.30630896  1.68059252  1.36523651  1.26877451]
+Time to update coords : 0.00458216667175
+Starting energy is -78.128977285
+
+
+Angle is original, pe is -78.2777268636 delpe is -0.148749578584
+
+Initialization time is 0.0997521877289
+Time to update coords : 0.00465893745422
+Energy is -78.3548162467 delPE is -0.225838961692 angle is 2.793
+Time to update coords : 0.00472092628479
+Energy is -78.3349035013 delPE is -0.205926216316 angle is 5.331
+Time to update coords : 0.00484299659729
+Energy is -78.3561122829 delPE is -0.227134997927 angle is 0.824
+Time to update coords : 0.0046660900116
+Energy is -78.304584671 delPE is -0.17560738597 angle is 2.691
+Evaluating trials takes 0.0762660503387
+Probabilities are [ 1.46428107  1.41586209  1.46748924  1.34519706  1.28555035]
+Time to update coords : 0.00460600852966
+Starting energy is -78.2777268636
+
+
+Angle is original, pe is -78.4320046385 delpe is -0.154277774924
+
+Initialization time is 0.0964570045471
+Time to update coords : 0.00458312034607
+Energy is -78.6291348208 delPE is -0.351407957257 angle is 2.628
+Time to update coords : 0.0046181678772
+Energy is -78.6259537313 delPE is -0.348226867701 angle is 0.944
+Time to update coords : 0.0046751499176
+Energy is -78.6232311847 delPE is -0.345504321119 angle is 5.072
+Time to update coords : 0.00475287437439
+Energy is -78.4654752817 delPE is -0.187748418128 angle is 3.007
+Evaluating trials takes 0.0709640979767
+Probabilities are [ 1.81014555  1.80044794  1.79218948  1.37306099  1.29760744]
+Time to update coords : 0.00463914871216
+Total regrow time is 1.03427481651
+Starting energy is -77.4421616127
+
+
+Initialization time is 0.0953011512756
+Time to update coords : 0.00459885597229
+Energy is -77.7868170288 delPE is -0.344655416087 angle is 3.52
+Time to update coords : 0.00455498695374
+Energy is -77.6536680201 delPE is -0.211506407345 angle is 2.986
+Time to update coords : 0.00453114509583
+Energy is -77.7200536494 delPE is -0.277892036676 angle is 1.54
+Time to update coords : 0.00462794303894
+Energy is -77.7435847014 delPE is -0.301423088695 angle is 0.289
+Time to update coords : 0.00460386276245
+Energy is -77.6996119229 delPE is -0.257450310197 angle is 5.809
+Evaluating trials takes 0.0855629444122
+Probabilities are [ 1.7896222   1.42926686  1.59881725  1.66362673  1.54456927]
+Time to update coords : 0.00449800491333
+Starting energy is -77.6536680201
+
+
+Initialization time is 0.0977928638458
+Time to update coords : 0.00469088554382
+Energy is -78.0424644698 delPE is -0.388796449703 angle is 3.618
+Time to update coords : 0.00457119941711
+Energy is -77.8141343395 delPE is -0.160466319397 angle is 2.723
+Time to update coords : 0.00455808639526
+Energy is -77.8440715617 delPE is -0.190403541664 angle is 0.676
+Time to update coords : 0.00459003448486
+Energy is -77.81518923 delPE is -0.161521209888 angle is 5.707
+Time to update coords : 0.00460505485535
+Energy is -78.0681210718 delPE is -0.414453051705 angle is 2.767
+Evaluating trials takes 0.0849189758301
+Probabilities are [ 1.9281164   1.31123896  1.37923106  1.31357681  2.01348842]
+Time to update coords : 0.00456404685974
+Starting energy is -78.0443145933
+
+
+Initialization time is 0.0977659225464
+Time to update coords : 0.0046751499176
+Energy is -78.4424085696 delPE is -0.398093976283 angle is 0.549
+Time to update coords : 0.00465798377991
+Energy is -78.4067377155 delPE is -0.362423122121 angle is 0.077
+Time to update coords : 0.00453591346741
+Energy is -66.6250648886 delPE is 11.4192497047 angle is 3.57
+Time to update coords : 0.0045371055603
+Energy is -78.4825755285 delPE is -0.438260935116 angle is 2.411
+Time to update coords : 0.00461101531982
+Energy is -77.8547307238 delPE is 0.189583869495 angle is 0.655
+Evaluating trials takes 0.084333896637
+Probabilities are [  1.95862735e+00   1.84413085e+00   4.22102515e-09   2.09608660e+00
+   7.26045936e-01]
+Time to update coords : 0.004714012146
+Starting energy is -78.4424085696
+
+
+Initialization time is 0.0977108478546
+Time to update coords : 0.0047881603241
+Energy is -79.144736774 delPE is -0.702328204394 angle is 0.124
+Time to update coords : 0.00459909439087
+Energy is -78.8158739949 delPE is -0.373465425325 angle is 3.071
+Time to update coords : 0.00457715988159
+Energy is -78.9340557402 delPE is -0.49164717056 angle is 4.555
+Time to update coords : 0.00453019142151
+Energy is -79.1442071938 delPE is -0.701798624217 angle is 3.194
+Time to update coords : 0.00468611717224
+Energy is -79.0807075351 delPE is -0.638298965482 angle is 2.601
+Evaluating trials takes 0.0838871002197
+Probabilities are [ 3.27392948  1.87884033  2.2938304   3.27100298  2.93840689]
+Time to update coords : 0.00459003448486
+Starting energy is -79.0807075351
+
+
+Initialization time is 0.0978779792786
+Time to update coords : 0.00466299057007
+Energy is -79.6098483687 delPE is -0.529140833556 angle is 5.37
+Time to update coords : 0.00464797019958
+Energy is -79.8696406429 delPE is -0.788933107777 angle is 3.378
+Time to update coords : 0.00482296943665
+Energy is -75.1747674179 delPE is 3.90594011722 angle is 5.077
+Time to update coords : 0.00459289550781
+Energy is -79.476318749 delPE is -0.395611213941 angle is 1.708
+Time to update coords : 0.00466895103455
+Energy is -79.6879137381 delPE is -0.607206202958 angle is 3.28
+Evaluating trials takes 0.0366771221161
+Probabilities are [  2.44375794e+00   3.78951049e+00   1.36610680e-03   1.95043293e+00
+   2.78810617e+00]
+Time to update coords : 0.0048291683197
+Starting energy is -79.4783655841
+
+
+Initialization time is 0.0943810939789
+Time to update coords : 0.00461411476135
+Energy is 7339.00135125 delPE is 7418.47971683 angle is 2.946
+Time to update coords : 0.00479102134705
+Energy is -80.0003188012 delPE is -0.521953217157 angle is 2.992
+Time to update coords : 0.00477600097656
+Energy is 6092.95106215 delPE is 6172.42942773 angle is 3.248
+Time to update coords : 0.00484800338745
+Energy is -80.2201363148 delPE is -0.741770730694 angle is 3.724
+Time to update coords : 0.00465703010559
+Energy is 10647.3229059 delPE is 10726.8012715 angle is 2.716
+Evaluating trials takes 0.0786199569702
+Probabilities are [ 0.          2.41427632  0.          3.49941499  0.        ]
+Time to update coords : 0.00456690788269
+Total regrow time is 1.06661391258
+Weight1 is 374383.621812 weight0 is 36012.2445301
+Move accepted
+
+On loop 3
+
+swapping
+Starting energy is -130.946488903
+
+
+Angle is original, pe is -131.243193472 delpe is -0.29670456902
+
+Initialization time is 0.0980579853058
+Time to update coords : 0.00452780723572
+Energy is -80.2201363148 delPE is 50.7263525882 angle is 0.524
+Time to update coords : 0.00469994544983
+Energy is -80.2201363148 delPE is 50.7263525882 angle is 3.901
+Time to update coords : 0.00475978851318
+Energy is -80.2201363148 delPE is 50.7263525882 angle is 4.126
+Time to update coords : 0.00467205047607
+Energy is -95.0390452154 delPE is 35.9074436876 angle is 0.517
+Evaluating trials takes 0.0801122188568
+Probabilities are [  6.28935986e-38   6.28935986e-38   6.28935986e-38   4.63885218e-27
+   1.65042369e+00]
+Time to update coords : 0.0046169757843
+Starting energy is -96.3201734717
+
+
+Angle is original, pe is -96.3852792637 delpe is -0.0651057919822
+
+Initialization time is 0.0994191169739
+Time to update coords : 0.00479006767273
+Energy is -96.8685296736 delPE is -0.548356201851 angle is 3.261
+Time to update coords : 0.00456094741821
+Energy is -97.0578416024 delPE is -0.737668130691 angle is 5.637
+Time to update coords : 0.00465488433838
+Energy is -96.8442627621 delPE is -0.524089290376 angle is 0.816
+Time to update coords : 0.00469207763672
+Energy is -96.9125906782 delPE is -0.592417206442 angle is 1.354
+Evaluating trials takes 0.0795669555664
+Probabilities are [ 2.5243539   3.47525524  2.42300057  2.71933956  1.11621255]
+Time to update coords : 0.00456881523132
+Starting energy is -96.3852792637
+
+
+Angle is original, pe is -97.2023336288 delpe is -0.817054365054
+
+Initialization time is 0.0990409851074
+Time to update coords : 0.00458097457886
+Energy is -97.2108743972 delPE is -0.825595133476 angle is 6.213
+Time to update coords : 0.00460314750671
+Energy is -97.2982613179 delPE is -0.912982054206 angle is 5.757
+Time to update coords : 0.00452303886414
+Energy is -97.1893544065 delPE is -0.804075142801 angle is 5.827
+Time to update coords : 0.0045530796051
+Energy is -96.4728911425 delPE is -0.0876118787814 angle is 2.669
+Evaluating trials takes 0.0788719654083
+Probabilities are [ 4.03153184  4.67258703  3.88765654  1.15945069  3.97380467]
+Time to update coords : 0.00455188751221
+Starting energy is -97.2023336288
+
+
+Angle is original, pe is -84.1647515563 delpe is 13.0375820724
+
+Initialization time is 0.0991160869598
+Time to update coords : 0.00464296340942
+Energy is -97.7314985871 delPE is -0.52916495836 angle is 3.643
+Time to update coords : 0.00459098815918
+Energy is -97.8163603973 delPE is -0.614026768554 angle is 5.478
+Time to update coords : 0.00457406044006
+Energy is -97.7305945683 delPE is -0.528260939477 angle is 0.741
+Time to update coords : 0.00460386276245
+Energy is -96.4867180059 delPE is 0.71561562288 angle is 3.348
+Evaluating trials takes 0.0783069133759
+Probabilities are [  2.44385750e+00   2.82040407e+00   2.44012961e+00   2.98666169e-01
+   2.74520565e-10]
+Time to update coords : 0.00470304489136
+Starting energy is -84.1647515563
+
+
+Angle is original, pe is -84.3728283963 delpe is -0.20807683998
+
+Initialization time is 0.0991759300232
+Time to update coords : 0.00447392463684
+Energy is -84.2237635891 delPE is -0.0590120327353 angle is 0.143
+Time to update coords : 0.00474786758423
+Energy is -61.8991610188 delPE is 22.2655905375 angle is 1.3
+Time to update coords : 0.0045280456543
+Energy is -72.2149599998 delPE is 11.9497915565 angle is 6.119
+Time to update coords : 0.00476098060608
+Energy is -29.9994810834 delPE is 54.1652704729 angle is 2.954
+Evaluating trials takes 0.0779099464417
+Probabilities are [  1.10478533e+00   4.68805191e-17   1.72318650e-09   1.89057151e-40
+   1.42101338e+00]
+Time to update coords : 0.00470399856567
+Starting energy is -84.3728283963
+
+
+Angle is original, pe is -10.5633021579 delpe is 73.8095262384
+
+Initialization time is 0.0990519523621
+Time to update coords : 0.00464296340942
+Energy is -84.9825903286 delPE is -0.609761932232 angle is 2.789
+Time to update coords : 0.00454187393188
+Energy is -43.0441509296 delPE is 41.3286774667 angle is 3.66
+Time to update coords : 0.00461912155151
+Energy is -84.9612770091 delPE is -0.588448612804 angle is 0.879
+Time to update coords : 0.00462913513184
+Energy is -84.9661336563 delPE is -0.593305259949 angle is 2.244
+Evaluating trials takes 0.0772838592529
+Probabilities are [  2.80016493e+00   4.90476325e-31   2.70117658e+00   2.72342058e+00
+   7.41318043e-55]
+Time to update coords : 0.00470304489136
+Starting energy is -10.5633021579
+
+
+Angle is original, pe is -8.07075512539 delpe is 2.49254703251
+
+Initialization time is 0.0991048812866
+Time to update coords : 0.00447297096252
+Energy is 16572.3702742 delPE is 16582.9335764 angle is 1.905
+Time to update coords : 0.00464200973511
+Energy is 1963.80609571 delPE is 1974.36939786 angle is 1.703
+Time to update coords : 0.00463891029358
+Energy is 33616.6744175 delPE is 33627.2377197 angle is 5.62
+Time to update coords : 0.00477814674377
+Energy is -9.70142067559 delPE is 0.861881482315 angle is 2.181
+Evaluating trials takes 0.0768940448761
+Probabilities are [ 0.          0.          0.          0.23330199  0.0148604 ]
+Time to update coords : 0.00458693504333
+Starting energy is -8.07075512539
+
+
+Angle is original, pe is 92.6408969112 delpe is 100.711652037
+
+Initialization time is 0.0989871025085
+Time to update coords : 0.00458312034607
+Energy is 30.8102112013 delPE is 38.8809663267 angle is 0.198
+Time to update coords : 0.0046010017395
+Energy is -8.80478225656 delPE is -0.734027131166 angle is 3.248
+Time to update coords : 0.00456690788269
+Energy is -8.73994828964 delPE is -0.669193164248 angle is 5.744
+Time to update coords : 0.00466513633728
+Energy is -8.78493241026 delPE is -0.714177284866 angle is 5.531
+Evaluating trials takes 0.0761020183563
+Probabilities are [  3.05989146e-29   3.45395355e+00   3.09577180e+00   3.34009738e+00
+   1.38255391e-74]
+Time to update coords : 0.00460720062256
+Starting energy is 92.6408969112
+
+
+Angle is original, pe is 97.1570959717 delpe is 4.5161990605
+
+Initialization time is 0.0986249446869
+Time to update coords : 0.00465703010559
+Energy is 165790.211622 delPE is 165697.570725 angle is 2.8
+Time to update coords : 0.0045850276947
+Energy is 46530.7382042 delPE is 46438.0973073 angle is 0.252
+Time to update coords : 0.00456595420837
+Energy is 4543.96542591 delPE is 4451.324529 angle is 0.314
+Time to update coords : 0.00463604927063
+Energy is 2013.21186238 delPE is 1920.57096547 angle is 3.994
+Evaluating trials takes 0.0758018493652
+Probabilities are [ 0.          0.          0.          0.          0.00048746]
+Time to update coords : 0.00456404685974
+Starting energy is 97.1570959717
+
+
+Angle is original, pe is 152.24105547 delpe is 55.0839594983
+
+Initialization time is 0.0960638523102
+Time to update coords : 0.00477600097656
+Energy is 96.1947142627 delPE is -0.962381708971 angle is 3.394
+Time to update coords : 0.00456809997559
+Energy is 96.2113881529 delPE is -0.945707818795 angle is 6.188
+Time to update coords : 0.00465083122253
+Energy is 96.8798516261 delPE is -0.277244345576 angle is 3.741
+Time to update coords : 0.0045919418335
+Energy is 235.561829067 delPE is 138.404733095 angle is 5.333
+Evaluating trials takes 0.0287449359894
+Probabilities are [  5.07908905e+000   4.93807438e+000   1.59706953e+000   3.14450576e-102
+   4.00728625e-041]
+Time to update coords : 0.00465607643127
+Total regrow time is 1.7691590786
+Starting energy is -95.6966925852
+
+
+Initialization time is 0.0951452255249
+Time to update coords : 0.00468707084656
+Energy is -96.4498104671 delPE is -0.753117881928 angle is 5.901
+Time to update coords : 0.0045747756958
+Energy is -96.4124165457 delPE is -0.715723960553 angle is 2.52
+Time to update coords : 0.00457692146301
+Energy is -96.6850025335 delPE is -0.988309948331 angle is 2.877
+Time to update coords : 0.00458288192749
+Energy is -96.6787784006 delPE is -0.982085815414 angle is 0.221
+Time to update coords : 0.00459408760071
+Energy is -96.0431100632 delPE is -0.346417478025 angle is 3.563
+Evaluating trials takes 0.0884919166565
+Probabilities are [ 3.56711536  3.34883246  5.30641151  5.25093096  1.79495518]
+Time to update coords : 0.00454497337341
+Starting energy is -96.6850025335
+
+
+Initialization time is 0.0971078872681
+Time to update coords : 0.0048680305481
+Energy is -92.7530419951 delPE is 3.93196053843 angle is 6.102
+Time to update coords : 0.00475907325745
+Energy is -96.8583822246 delPE is -0.173379691106 angle is 5.976
+Time to update coords : 0.00456023216248
+Energy is -93.5056263593 delPE is 3.17937617422 angle is 3.731
+Time to update coords : 0.00450992584229
+Energy is -95.6259432921 delPE is 1.05905924136 angle is 0.61
+Time to update coords : 0.00461411476135
+Energy is -37.2421536302 delPE is 59.4428489033 angle is 3.049
+Evaluating trials takes 0.0877678394318
+Probabilities are [  1.30738034e-03   1.34014619e+00   4.65937683e-03   1.67229686e-01
+   2.54773198e-44]
+Time to update coords : 0.00471115112305
+Starting energy is -96.8583822246
+
+
+Initialization time is 0.0970511436462
+Time to update coords : 0.00476908683777
+Energy is -19.6582126967 delPE is 77.2001695279 angle is 3.646
+Time to update coords : 0.00457382202148
+Energy is -83.9759697493 delPE is 12.8824124753 angle is 5.966
+Time to update coords : 0.0046718120575
+Energy is -97.8752006815 delPE is -1.01681845692 angle is 4.053
+Time to update coords : 0.00455904006958
+Energy is 561.736968275 delPE is 658.595350499 angle is 3.534
+Time to update coords : 0.00464200973511
+Energy is -97.8338837256 delPE is -0.975501500979 angle is 3.219
+Evaluating trials takes 0.0870780944824
+Probabilities are [  2.41765638e-57   3.56756791e-10   5.56811669e+00   0.00000000e+00
+   5.19287110e+00]
+Time to update coords : 0.00471615791321
+Starting energy is -97.8752006815
+
+
+Initialization time is 0.096969127655
+Time to update coords : 0.00476408004761
+Energy is -98.6239118597 delPE is -0.748711178216 angle is 5.165
+Time to update coords : 0.00467991828918
+Energy is -98.8368076034 delPE is -0.96160692186 angle is 0.853
+Time to update coords : 0.00469899177551
+Energy is -64.9319889228 delPE is 32.9432117588 angle is 3.051
+Time to update coords : 0.00468492507935
+Energy is -40.9023380078 delPE is 56.9728626737 angle is 5.454
+Time to update coords : 0.00466179847717
+Energy is -98.4479224478 delPE is -0.572721766311 angle is 2.862
+Evaluating trials takes 0.086699962616
+Probabilities are [  3.54066952e+00   5.07244817e+00   6.92311393e-25   1.65035619e-42
+   2.63038497e+00]
+Time to update coords : 0.00469088554382
+Starting energy is -98.6239118597
+
+
+Initialization time is 0.096971988678
+Time to update coords : 0.00457382202148
+Energy is -99.0334015004 delPE is -0.409489640656 angle is 3.366
+Time to update coords : 0.00460314750671
+Energy is -98.9810861053 delPE is -0.357174245519 angle is 0.594
+Time to update coords : 0.0045690536499
+Energy is -97.0144890998 delPE is 1.60942275996 angle is 4.393
+Time to update coords : 0.00463795661926
+Energy is -99.0024510305 delPE is -0.378539170738 angle is 2.129
+Time to update coords : 0.00461483001709
+Energy is -99.1546930238 delPE is -0.530781164097 angle is 2.224
+Evaluating trials takes 0.0389380455017
+Probabilities are [ 1.99668291  1.82785754  0.06602236  1.89500703  2.45053643]
+Time to update coords : 0.00449204444885
+Starting energy is -98.9861833988
+
+
+Initialization time is 0.0969519615173
+Time to update coords : 0.00467610359192
+Energy is -99.6538949798 delPE is -0.667711580969 angle is 5.658
+Time to update coords : 0.00469994544983
+Energy is -99.4952705441 delPE is -0.509087145269 angle is 1.51
+Time to update coords : 0.00454711914062
+Energy is -99.744636291 delPE is -0.758452892222 angle is 6.093
+Time to update coords : 0.00454187393188
+Energy is -78.4471003334 delPE is 20.5390830654 angle is 3.507
+Time to update coords : 0.00485682487488
+Energy is -99.2838360621 delPE is -0.297652663325 angle is 3.044
+Evaluating trials takes 0.0854461193085
+Probabilities are [  3.08803621e+00   2.36238856e+00   3.59939669e+00   8.65303157e-16
+   1.65306814e+00]
+Time to update coords : 0.00470685958862
+Starting energy is -99.4952705441
+
+
+Initialization time is 0.0975258350372
+Time to update coords : 0.00457811355591
+Energy is -99.4349633567 delPE is 0.0603071874048 angle is 5.324
+Time to update coords : 0.00457286834717
+Energy is -99.4979194306 delPE is -0.0026488865285 angle is 6.041
+Time to update coords : 0.00454902648926
+Energy is -100.15685066 delPE is -0.661580116294 angle is 3.623
+Time to update coords : 0.00476980209351
+Energy is -100.138219846 delPE is -0.64294930183 angle is 6.091
+Time to update coords : 0.00462293624878
+Energy is -99.4273698592 delPE is 0.0679006848814 angle is 2.813
+Evaluating trials takes 0.08455991745
+Probabilities are [ 0.90317575  1.00448308  3.05622784  2.96157251  0.89166844]
+Time to update coords : 0.00446796417236
+Starting energy is -100.138219846
+
+
+Initialization time is 0.0968410968781
+Time to update coords : 0.00462794303894
+Energy is -100.564568517 delPE is -0.426348670806 angle is 0.472
+Time to update coords : 0.00484108924866
+Energy is 1.20980047782 delPE is 101.348020324 angle is 2.492
+Time to update coords : 0.00462794303894
+Energy is -100.564800495 delPE is -0.426580649055 angle is 3.797
+Time to update coords : 0.00462079048157
+Energy is -100.565197352 delPE is -0.426977505698 angle is 6.143
+Time to update coords : 0.00451588630676
+Energy is 31.6453143923 delPE is 131.783534238 angle is 2.687
+Evaluating trials takes 0.0839130878448
+Probabilities are [  2.05434356e+00   4.72047878e-75   2.05514847e+00   2.05652620e+00
+   2.25615118e-97]
+Time to update coords : 0.00467801094055
+Starting energy is -100.564568517
+
+
+Initialization time is 0.096892118454
+Time to update coords : 0.00468015670776
+Energy is -101.154243897 delPE is -0.589675380385 angle is 3.771
+Time to update coords : 0.00456809997559
+Energy is -101.130875236 delPE is -0.566306718848 angle is 5.733
+Time to update coords : 0.00450491905212
+Energy is -101.145964204 delPE is -0.581395686887 angle is 0.405
+Time to update coords : 0.00462102890015
+Energy is -101.131508218 delPE is -0.566939701317 angle is 0.778
+Time to update coords : 0.00463914871216
+Energy is -100.875480047 delPE is -0.310911529953 angle is 2.732
+Evaluating trials takes 0.08305311203
+Probabilities are [ 2.70677811  2.60204429  2.66919648  2.60482708  1.69049724]
+Time to update coords : 0.00461411476135
+Starting energy is -101.145964204
+
+
+Initialization time is 0.0941867828369
+Time to update coords : 0.00470805168152
+Energy is -101.629484511 delPE is -0.483520307788 angle is 6.167
+Time to update coords : 0.00484395027161
+Energy is -101.786663528 delPE is -0.640699324421 angle is 5.303
+Time to update coords : 0.00466513633728
+Energy is -101.718813731 delPE is -0.572849527381 angle is 6.096
+Time to update coords : 0.00484013557434
+Energy is -101.743604919 delPE is -0.597640715209 angle is 0.502
+Time to update coords : 0.00494313240051
+Energy is 38.810880534 delPE is 139.956844738 angle is 2.734
+Evaluating trials takes 0.0792758464813
+Probabilities are [  2.26256609e+000   2.95034155e+000   2.63095252e+000   2.74343216e+000
+   2.28704076e-103]
+Time to update coords : 0.00466012954712
+Total regrow time is 1.82407689095
+Weight1 is 2197029585.4 weight0 is 828.394776498
+Starting energy is -152.542991489
+
+
+Angle is original, pe is -152.724453065 delpe is -0.181461575956
+
+Initialization time is 0.0976281166077
+Time to update coords : 0.00460004806519
+Energy is -153.106492799 delPE is -0.563501309426 angle is 2.963
+Time to update coords : 0.00448107719421
+Energy is -152.970923548 delPE is -0.427932058261 angle is 0.695
+Time to update coords : 0.00459504127502
+Energy is -153.074123958 delPE is -0.531132468429 angle is 4.876
+Time to update coords : 0.00449705123901
+Energy is -153.069511744 delPE is -0.526520254663 angle is 0.959
+Evaluating trials takes 0.076159954071
+Probabilities are [ 2.58974659  2.05984381  2.45199059  2.43296758  1.35856124]
+Time to update coords : 0.00456309318542
+Starting energy is -152.724453065
+
+
+Angle is original, pe is -152.724453065 delpe is 0.0
+
+Initialization time is 0.0968680381775
+Time to update coords : 0.00454902648926
+Energy is -152.725321756 delPE is -0.000868691275969 angle is 3.212
+Time to update coords : 0.00482487678528
+Energy is -152.723747686 delPE is 0.000705379042785 angle is 3.66
+Time to update coords : 0.00466108322144
+Energy is -152.726703356 delPE is -0.00225029040084 angle is 2.806
+Time to update coords : 0.00469899177551
+Energy is -152.723695718 delPE is 0.000757346981459 angle is 4.148
+Evaluating trials takes 0.0716450214386
+Probabilities are [ 1.001468    0.99880957  1.0038072   0.99872192  1.        ]
+Time to update coords : 0.00460195541382
+Total regrow time is 0.35306596756
+Starting energy is -152.542991489
+
+
+Initialization time is 0.09543800354
+Time to update coords : 0.00473093986511
+Energy is -152.715736134 delPE is -0.172744645216 angle is 6.051
+Time to update coords : 0.00459599494934
+Energy is -153.116428148 delPE is -0.573436658409 angle is 2.833
+Time to update coords : 0.00460600852966
+Energy is -152.716265659 delPE is -0.173274169593 angle is 3.516
+Time to update coords : 0.00470185279846
+Energy is -152.937651289 delPE is -0.394659800124 angle is 3.977
+Time to update coords : 0.00465202331543
+Energy is -153.089520915 delPE is -0.546529425625 angle is 4.816
+Evaluating trials takes 0.0837669372559
+Probabilities are [ 1.33870982  2.63356231  1.33990741  1.94730186  2.51657878]
+Time to update coords : 0.00455522537231
+Starting energy is -153.116428148
+
+
+Initialization time is 0.0950520038605
+Time to update coords : 0.0047459602356
+Energy is -153.1112835 delPE is 0.00514464745464 angle is 0.267
+Time to update coords : 0.00485801696777
+Energy is -153.093233306 delPE is 0.0231948415672 angle is 1.858
+Time to update coords : 0.00477004051208
+Energy is -153.092828458 delPE is 0.0235996895207 angle is 2.763
+Time to update coords : 0.0047619342804
+Energy is -153.093982 delPE is 0.0224461481271 angle is 0.285
+Time to update coords : 0.00469613075256
+Energy is -153.101332645 delPE is 0.0150955027629 angle is 0.395
+Evaluating trials takes 0.0366609096527
+Probabilities are [ 0.99135009  0.96158904  0.96093187  0.96280553  0.97483104]
+Time to update coords : 0.00468015670776
+Total regrow time is 0.321837902069
+Weight1 is 47.428629931 weight0 is 54.4961225645
+Time to update coords : 0.00467705726624
+On loop: 4
+New PE is: -396.778744199 Old PE is: 10402.8498054Delta PE is -10799.6285496
+Move accepted
+rotating
+Rotating -0.0276163018753radians about theta or phi axis
+Time to update coords : 0.00469708442688
+On loop: 5
+New PE is: -396.778744199 Old PE is: -396.778744199Delta PE is -5.68434188608e-14
+Move accepted
+rotating
+Rotating 0.0447121495798radians about theta or phi axis
+Time to update coords : 0.00478911399841
+On loop: 6
+New PE is: -396.778744199 Old PE is: -396.778744199Delta PE is 5.68434188608e-14
+Move accepted
+swapping
+Starting energy is -174.417897872
+
+
+Angle is original, pe is -174.705770217 delpe is -0.28787234483
+
+Initialization time is 0.0991370677948
+Time to update coords : 0.00458788871765
+Energy is -153.093982 delPE is 21.3239158726 angle is 2.218
+Time to update coords : 0.00448989868164
+Energy is -153.093982 delPE is 21.3239158726 angle is 5.183
+Time to update coords : 0.00450086593628
+Energy is -153.093982 delPE is 21.3239158726 angle is 4.254
+Time to update coords : 0.00456213951111
+Energy is -177.22940401 delPE is -2.81150613833 angle is 3.267
+Evaluating trials takes 0.0805220603943
+Probabilities are [  2.29928194e-16   2.29928194e-16   2.29928194e-16   1.15315000e+02
+   1.62599095e+00]
+Time to update coords : 0.00460600852966
+Starting energy is -176.914233185
+
+
+Angle is original, pe is -177.246686331 delpe is -0.332453146026
+
+Initialization time is 0.101022958755
+Time to update coords : 0.00460290908813
+Energy is -177.362829825 delPE is -0.448596639794 angle is 1.612
+Time to update coords : 0.00450897216797
+Energy is -177.521677523 delPE is -0.607444337843 angle is 3.176
+Time to update coords : 0.00438809394836
+Energy is -177.254338716 delPE is -0.340105530758 angle is 1.361
+Time to update coords : 0.00453805923462
+Energy is -177.609111244 delPE is -0.694878058135 angle is 4.438
+Evaluating trials takes 0.0792000293732
+Probabilities are [ 2.13299167  2.78922757  1.77592487  3.23299904  1.75312357]
+Time to update coords : 0.00449705123901
+Starting energy is -177.246686331
+
+
+Angle is original, pe is -177.480118839 delpe is -0.233432507919
+
+Initialization time is 0.0990169048309
+Time to update coords : 0.00454592704773
+Energy is -177.485048578 delPE is -0.238362246514 angle is 5.916
+Time to update coords : 0.00456595420837
+Energy is -177.479601333 delPE is -0.232915001526 angle is 0.07
+Time to update coords : 0.00468802452087
+Energy is -177.490292848 delPE is -0.243606517007 angle is 0.521
+Time to update coords : 0.00460314750671
+Energy is -177.737742195 delPE is -0.491055863273 angle is 3.567
+Evaluating trials takes 0.079085111618
+Probabilities are [ 1.49557673  1.48188271  1.50888003  2.29154112  1.48317828]
+Time to update coords : 0.00446486473083
+Starting energy is -177.480118839
+
+
+Angle is original, pe is -177.667285673 delpe is -0.187166833276
+
+Initialization time is 0.0989010334015
+Time to update coords : 0.00466799736023
+Energy is -177.836246173 delPE is -0.356127333371 angle is 3.141
+Time to update coords : 0.00460195541382
+Energy is -177.828690026 delPE is -0.348571186475 angle is 6.089
+Time to update coords : 0.00449800491333
+Energy is -177.787967551 delPE is -0.307848711382 angle is 5.222
+Time to update coords : 0.00450897216797
+Energy is -177.75066261 delPE is -0.270543770134 angle is 3.104
+Evaluating trials takes 0.0783731937408
+Probabilities are [ 1.82462897  1.80149509  1.68177648  1.57910059  1.37171317]
+Time to update coords : 0.00452494621277
+Starting energy is -177.667285673
+
+
+Angle is original, pe is -177.811308738 delpe is -0.144023064839
+
+Initialization time is 0.0990400314331
+Time to update coords : 0.00446391105652
+Energy is -177.811610474 delPE is -0.144324801723 angle is 0.042
+Time to update coords : 0.00453996658325
+Energy is -177.815449047 delPE is -0.148163374103 angle is 0.274
+Time to update coords : 0.00453996658325
+Energy is -177.828046894 delPE is -0.160761221038 angle is 5.437
+Time to update coords : 0.00463199615479
+Energy is -177.924797425 delPE is -0.25751175247 angle is 5.099
+Evaluating trials takes 0.0777699947357
+Probabilities are [ 1.2759806   1.28427841  1.3118921   1.54472954  1.27533062]
+Time to update coords : 0.00452899932861
+Starting energy is -177.811308738
+
+
+Angle is original, pe is -177.938161634 delpe is -0.12685289658
+
+Initialization time is 0.0990309715271
+Time to update coords : 0.00449299812317
+Energy is -178.057938669 delPE is -0.24662993135 angle is 3.218
+Time to update coords : 0.00455904006958
+Energy is -177.953283848 delPE is -0.141975110056 angle is 3.645
+Time to update coords : 0.00458407402039
+Energy is -178.070116353 delPE is -0.25880761506 angle is 2.972
+Time to update coords : 0.00452494621277
+Energy is -178.071427927 delPE is -0.260119189638 angle is 5.173
+Evaluating trials takes 0.0772740840912
+Probabilities are [ 1.51660333  1.27092777  1.54811352  1.55154608  1.23888396]
+Time to update coords : 0.00444293022156
+Starting energy is -177.938161634
+
+
+Angle is original, pe is -178.061864127 delpe is -0.123702493291
+
+Initialization time is 0.0987389087677
+Time to update coords : 0.00457096099854
+Energy is -178.062134638 delPE is -0.123973004105 angle is 6.167
+Time to update coords : 0.00451493263245
+Energy is -178.182331793 delPE is -0.244170159387 angle is 2.939
+Time to update coords : 0.00451993942261
+Energy is -178.18168976 delPE is -0.243528125582 angle is 5.934
+Time to update coords : 0.00461411476135
+Energy is -178.183292309 delPE is -0.24513067474 angle is 0.272
+Evaluating trials takes 0.0768780708313
+Probabilities are [ 1.23287371  1.51031687  1.50868031  1.51276856  1.23231066]
+Time to update coords : 0.0044949054718
+Starting energy is -178.061864127
+
+
+Angle is original, pe is -178.184511722 delpe is -0.12264759497
+
+Initialization time is 0.0987010002136
+Time to update coords : 0.00452589988708
+Energy is -178.288924195 delPE is -0.227060067982 angle is 3.433
+Time to update coords : 0.00447201728821
+Energy is -178.203413575 delPE is -0.141549447185 angle is 3.711
+Time to update coords : 0.00452303886414
+Energy is -178.22809541 delPE is -0.166231282283 angle is 4.132
+Time to update coords : 0.00453805923462
+Energy is -178.284137479 delPE is -0.222273351341 angle is 5.363
+Evaluating trials takes 0.0761070251465
+Probabilities are [ 1.46730357  1.27001456  1.32406626  1.45549099  1.23011743]
+Time to update coords : 0.00446605682373
+Starting energy is -178.184511722
+
+
+Angle is original, pe is -178.307184843 delpe is -0.122673121062
+
+Initialization time is 0.0986320972443
+Time to update coords : 0.00454711914062
+Energy is -178.358414089 delPE is -0.173902367064 angle is 4.856
+Time to update coords : 0.00467896461487
+Energy is -178.409433409 delPE is -0.22492168656 angle is 5.397
+Time to update coords : 0.00462698936462
+Energy is -178.354205934 delPE is -0.169694211976 angle is 3.676
+Time to update coords : 0.0046021938324
+Energy is -178.35053089 delPE is -0.166019167491 angle is 6.226
+Evaluating trials takes 0.0759630203247
+Probabilities are [ 1.34132955  1.46201471  1.33183168  1.32359208  1.23017045]
+Time to update coords : 0.00440192222595
+Starting energy is -178.307184843
+
+
+Angle is original, pe is -178.456521423 delpe is -0.149336579379
+
+Initialization time is 0.0964591503143
+Time to update coords : 0.00475597381592
+Energy is -178.457351333 delPE is -0.150166489927 angle is 0.164
+Time to update coords : 0.00475597381592
+Energy is -178.584392493 delPE is -0.277207649576 angle is 3.545
+Time to update coords : 0.00453209877014
+Energy is -178.579389562 delPE is -0.272204718389 angle is 5.829
+Time to update coords : 0.00462007522583
+Energy is -178.583046887 delPE is -0.275862043318 angle is 0.292
+Evaluating trials takes 0.0717720985413
+Probabilities are [ 1.28862993  1.59697057  1.58353582  1.59334595  1.28682527]
+Time to update coords : 0.00454807281494
+Total regrow time is 1.81349182129
+Starting energy is -176.632084732
+
+
+Initialization time is 0.0955181121826
+Time to update coords : 0.00469899177551
+Energy is -177.196233702 delPE is -0.564148969026 angle is 1.773
+Time to update coords : 0.00448894500732
+Energy is -177.15090687 delPE is -0.518822137534 angle is 1.524
+Time to update coords : 0.00452089309692
+Energy is -177.214920987 delPE is -0.582836254464 angle is 4.972
+Time to update coords : 0.00450205802917
+Energy is -177.129091665 delPE is -0.497006932566 angle is 5.561
+Time to update coords : 0.00455522537231
+Energy is -177.084821357 delPE is -0.452736624196 angle is 2.658
+Evaluating trials takes 0.088240146637
+Probabilities are [ 2.59258048  2.40154496  2.67569753  2.31468563  2.14795569]
+Time to update coords : 0.00451302528381
+Starting energy is -177.196233702
+
+
+Initialization time is 0.0973899364471
+Time to update coords : 0.00472593307495
+Energy is -177.993505864 delPE is -0.797272162309 angle is 5.679
+Time to update coords : 0.00453591346741
+Energy is -177.938952849 delPE is -0.742719147941 angle is 6.195
+Time to update coords : 0.00450587272644
+Energy is -177.817935179 delPE is -0.621701477352 angle is 1.149
+Time to update coords : 0.00460910797119
+Energy is -177.92966814 delPE is -0.733434438415 angle is 0.821
+Time to update coords : 0.00461316108704
+Energy is -177.994032299 delPE is -0.797798597705 angle is 4.739
+Evaluating trials takes 0.08860206604
+Probabilities are [ 3.8432511   3.50502397  2.85719424  3.45049837  3.84666915]
+Time to update coords : 0.0044310092926
+Starting energy is -177.938952849
+
+
+Initialization time is 0.0987849235535
+Time to update coords : 0.00465083122253
+Energy is -167.654130806 delPE is 10.2848220436 angle is 0.408
+Time to update coords : 0.00460004806519
+Energy is -178.665106035 delPE is -0.726153185721 angle is 3.728
+Time to update coords : 0.00461196899414
+Energy is -178.650339538 delPE is -0.71138668841 angle is 0.194
+Time to update coords : 0.00455403327942
+Energy is -178.700433407 delPE is -0.761480557196 angle is 5.811
+Time to update coords : 0.00473403930664
+Energy is -178.725002441 delPE is -0.786049591316 angle is 5.791
+Evaluating trials takes 0.0874099731445
+Probabilities are [  2.86667074e-08   3.40833241e+00   3.32439467e+00   3.61784640e+00
+   3.77110320e+00]
+Time to update coords : 0.00456619262695
+Starting energy is -178.702852034
+
+
+Initialization time is 0.0973989963531
+Time to update coords : 0.004558801651
+Energy is -179.669508762 delPE is -0.96665672763 angle is 0.354
+Time to update coords : 0.00456786155701
+Energy is -179.617342375 delPE is -0.914490340755 angle is 5.986
+Time to update coords : 0.00456690788269
+Energy is 695.821370125 delPE is 874.52422216 angle is 3.019
+Time to update coords : 0.0045120716095
+Energy is 537.708995059 delPE is 716.411847093 angle is 0.057
+Time to update coords : 0.00448107719421
+Energy is -177.195335713 delPE is 1.50751632172 angle is 4.368
+Evaluating trials takes 0.0863540172577
+Probabilities are [ 5.11588784  4.68450317  0.          0.          0.07841995]
+Time to update coords : 0.00451588630676
+Starting energy is -179.617342375
+
+
+Initialization time is 0.0971961021423
+Time to update coords : 0.00459694862366
+Energy is -180.211025045 delPE is -0.593682669895 angle is 0.906
+Time to update coords : 0.00444316864014
+Energy is -148.15431105 delPE is 31.4630313253 angle is 2.45
+Time to update coords : 0.00446796417236
+Energy is -180.17200907 delPE is -0.554666695001 angle is 3.212
+Time to update coords : 0.00448203086853
+Energy is -106.01529937 delPE is 73.6020430054 angle is 2.654
+Time to update coords : 0.00450301170349
+Energy is -102.20477465 delPE is 77.4125677249 angle is 6.215
+Evaluating trials takes 0.0857000350952
+Probabilities are [  2.72515682e+00   8.42999822e-24   2.55139789e+00   1.05236744e-54
+   1.68899062e-57]
+Time to update coords : 0.00453495979309
+Starting energy is -180.211025045
+
+
+Initialization time is 0.0970749855042
+Time to update coords : 0.00458908081055
+Energy is -180.201857444 delPE is 0.00916760092346 angle is 3.631
+Time to update coords : 0.00465703010559
+Energy is -180.790635283 delPE is -0.579610237438 angle is 2.661
+Time to update coords : 0.00453591346741
+Energy is -180.645329305 delPE is -0.434304260292 angle is 2.664
+Time to update coords : 0.00454306602478
+Energy is -180.626998981 delPE is -0.415973935401 angle is 4.892
+Time to update coords : 0.00452303886414
+Energy is -180.695760728 delPE is -0.484735683072 angle is 5.527
+Evaluating trials takes 0.0851619243622
+Probabilities are [ 0.98463829  2.66116094  2.08212836  2.01866621  2.26721444]
+Time to update coords : 0.00448203086853
+Starting energy is -180.201857444
+
+
+Initialization time is 0.0971801280975
+Time to update coords : 0.00464200973511
+Energy is 1296.95249343 delPE is 1477.15435088 angle is 3.321
+Time to update coords : 0.00453686714172
+Energy is -178.075519157 delPE is 2.12633828753 angle is 1.181
+Time to update coords : 0.00463390350342
+Energy is -180.594350882 delPE is -0.392493437469 angle is 1.228
+Time to update coords : 0.00445294380188
+Energy is -156.184750704 delPE is 24.0171067405 angle is 2.227
+Time to update coords : 0.00462293624878
+Energy is -180.24244772 delPE is -0.0405902762087 angle is 3.131
+Evaluating trials takes 0.0846121311188
+Probabilities are [  0.00000000e+00   2.75802727e-02   1.94019117e+00   2.43487001e-18
+   1.07094670e+00]
+Time to update coords : 0.00466203689575
+Starting energy is -180.594350882
+
+
+Initialization time is 0.0971350669861
+Time to update coords : 0.0046501159668
+Energy is -180.93898494 delPE is -0.344634058509 angle is 6.224
+Time to update coords : 0.00458192825317
+Energy is -180.962087926 delPE is -0.367737043945 angle is 0.184
+Time to update coords : 0.00461506843567
+Energy is -180.945208607 delPE is -0.35085772515 angle is 3.449
+Time to update coords : 0.00456404685974
+Energy is -180.88296195 delPE is -0.288611068144 angle is 1.109
+Time to update coords : 0.00460004806519
+Energy is -180.884790076 delPE is -0.290439193904 angle is 6.242
+Evaluating trials takes 0.0840489864349
+Probabilities are [ 1.78955766  1.86075342  1.80846443  1.62802056  1.63305415]
+Time to update coords : 0.00449800491333
+Starting energy is -180.945208607
+
+
+Initialization time is 0.097058057785
+Time to update coords : 0.00460600852966
+Energy is -181.156371731 delPE is -0.211163123796 angle is 5.705
+Time to update coords : 0.00453209877014
+Energy is -181.145915225 delPE is -0.200706618583 angle is 6.145
+Time to update coords : 0.00452995300293
+Energy is -180.430095555 delPE is 0.515113052037 angle is 5.508
+Time to update coords : 0.00443196296692
+Energy is 1436.18095834 delPE is 1617.12616695 angle is 3.923
+Time to update coords : 0.00448107719421
+Energy is 383.008388439 delPE is 563.953597046 angle is 6.083
+Evaluating trials takes 0.0830059051514
+Probabilities are [ 1.42843857  1.40343737  0.41901486  0.          0.        ]
+Time to update coords : 0.00453186035156
+Starting energy is -181.156371731
+
+
+Initialization time is 0.0945150852203
+Time to update coords : 0.00457787513733
+Energy is -181.445485356 delPE is -0.289113625506 angle is 5.061
+Time to update coords : 0.00457000732422
+Energy is -181.372238404 delPE is -0.215866673808 angle is 4.186
+Time to update coords : 0.00460195541382
+Energy is -181.439098147 delPE is -0.282726416113 angle is 2.946
+Time to update coords : 0.00464797019958
+Energy is -181.351281975 delPE is -0.194910244227 angle is 3.01
+Time to update coords : 0.00448799133301
+Energy is -181.351480123 delPE is -0.195108392013 angle is 0.062
+Evaluating trials takes 0.0786778926849
+Probabilities are [ 1.62940276  1.43982937  1.61192278  1.38976742  1.39023252]
+Time to update coords : 0.00446200370789
+Total regrow time is 1.87326192856
+Weight1 is 1006007082.77 weight0 is 10317133529.5
+Starting energy is -203.168209582
+
+
+Angle is original, pe is -203.921047055 delpe is -0.75283747318
+
+Initialization time is 0.0988631248474
+Time to update coords : 0.00452280044556
+Energy is -203.90176082 delPE is -0.733551238663 angle is 0.131
+Time to update coords : 0.00448298454285
+Energy is -203.764245101 delPE is -0.596035519332 angle is 0.148
+Time to update coords : 0.00454592704773
+Energy is -203.765866169 delPE is -0.597656587058 angle is 3.143
+Time to update coords : 0.00444197654724
+Energy is -203.922787435 delPE is -0.754577853538 angle is 2.898
+Evaluating trials takes 0.0290379524231
+Probabilities are [ 3.451179    2.73600582  2.7435057   3.57592054  3.56542668]
+Time to update coords : 0.00445008277893
+Starting energy is -203.921047055
+
+
+Angle is original, pe is -203.921047055 delpe is 0.0
+
+Initialization time is 0.0980548858643
+Time to update coords : 0.00461912155151
+Energy is -203.914180161 delPE is 0.0068668936506 angle is 3.698
+Time to update coords : 0.00455808639526
+Energy is -203.913845077 delPE is 0.00720197825061 angle is 3.141
+Time to update coords : 0.00456190109253
+Energy is -203.913097469 delPE is 0.00794958632119 angle is 2.008
+Time to update coords : 0.00451493263245
+Energy is -203.91343599 delPE is 0.00761106518843 angle is 0.479
+Evaluating trials takes 0.0716269016266
+Probabilities are [ 0.98847115  0.98791199  0.98666558  0.98722977  1.        ]
+Time to update coords : 0.00456809997559
+Total regrow time is 0.308212995529
+Starting energy is -203.168209582
+
+
+Initialization time is 0.0965139865875
+Time to update coords : 0.00457787513733
+Energy is -203.555672798 delPE is -0.387463216106 angle is 5.338
+Time to update coords : 0.00454592704773
+Energy is -203.895694257 delPE is -0.727484675348 angle is 3.243
+Time to update coords : 0.00446796417236
+Energy is -203.704046266 delPE is -0.535836684162 angle is 1.533
+Time to update coords : 0.00446796417236
+Energy is -201.51249518 delPE is 1.65571440158 angle is 3.305
+Time to update coords : 0.00460600852966
+Energy is -203.618884737 delPE is -0.45067515525 angle is 3.372
+Evaluating trials takes 0.0839838981628
+Probabilities are [ 1.92378038  3.41600442  2.4715463   0.06105791  2.14049141]
+Time to update coords : 0.00445008277893
+Starting energy is -203.704046266
+
+
+Initialization time is 0.095810174942
+Time to update coords : 0.0045919418335
+Energy is -203.704125884 delPE is -7.96177750431e-05 angle is 6.19
+Time to update coords : 0.00452494621277
+Energy is -203.701695979 delPE is 0.00235028685768 angle is 2.081
+Time to update coords : 0.00445699691772
+Energy is -203.701695979 delPE is 0.00235028685768 angle is 0.09
+Time to update coords : 0.00453495979309
+Energy is -203.703145465 delPE is 0.000900800550482 angle is 3.205
+Time to update coords : 0.00471520423889
+Energy is -203.701707579 delPE is 0.00233868733 angle is 2.247
+Evaluating trials takes 0.0787899494171
+Probabilities are [ 1.00013446  0.99603904  0.99603904  0.99848001  0.99605855]
+Time to update coords : 0.00461602210999
+Total regrow time is 0.365826845169
+Weight1 is 49.9317424022 weight0 is 79.5610626518
+Time to update coords : 0.00458002090454
+On loop: 7
+New PE is: -446.259425248 Old PE is: -396.778744199Delta PE is -49.4806810492
+Move accepted
+
+
+CBMC Move
+
+
+Starting energy is -229.052143574
+
+
+Angle is original, pe is -229.342013928 delpe is -0.289870353653
+
+Initialization time is 0.0996141433716
+Time to update coords : 0.00452995300293
+Energy is -229.441087086 delPE is -0.388943511863 angle is 3.288
+Time to update coords : 0.00470614433289
+Energy is -229.344228697 delPE is -0.292085123429 angle is 1.617
+Time to update coords : 0.00461602210999
+Energy is -229.418575334 delPE is -0.366431760409 angle is 3.248
+Time to update coords : 0.00461506843567
+Energy is -229.33846986 delPE is -0.286326285875 angle is 4.366
+Evaluating trials takes 0.0322089195251
+Probabilities are [ 1.92859529  1.63759939  1.85665651  1.62175141  1.63148623]
+Time to update coords : 0.00448608398438
+Starting energy is -229.342013928
+
+
+Angle is original, pe is -229.545339509 delpe is -0.203325581226
+
+Initialization time is 0.102377176285
+Time to update coords : 0.00452780723572
+Energy is -229.619202181 delPE is -0.277188253128 angle is 5.497
+Time to update coords : 0.0045919418335
+Energy is -229.781068464 delPE is -0.439054536316 angle is 3.19
+Time to update coords : 0.00454378128052
+Energy is -229.640534983 delPE is -0.298521055124 angle is 2.98
+Time to update coords : 0.00455594062805
+Energy is -230.060720159 delPE is -0.718706231586 angle is 4.85
+Evaluating trials takes 0.0791349411011
+Probabilities are [ 1.59691826  2.09889749  1.655494    3.36573982  1.40965786]
+Time to update coords : 0.00462985038757
+Starting energy is -229.545339509
+
+
+Angle is original, pe is -229.772810148 delpe is -0.227470638719
+
+Initialization time is 0.102314949036
+Time to update coords : 0.00478601455688
+Energy is -229.787106159 delPE is -0.24176665017 angle is 0.25
+Time to update coords : 0.00452995300293
+Energy is -229.82185331 delPE is -0.276513801228 angle is 3.102
+Time to update coords : 0.00461602210999
+Energy is -229.824729861 delPE is -0.279390352179 angle is 6.144
+Time to update coords : 0.00451612472534
+Energy is -229.756699126 delPE is -0.21135961704 angle is 1.888
+Evaluating trials takes 0.0788090229034
+Probabilities are [ 1.50419937  1.59510054  1.6028676   1.42891262  1.46832122]
+Time to update coords : 0.00449109077454
+Starting energy is -229.772810148
+
+
+Angle is original, pe is -229.946213865 delpe is -0.173403717586
+
+Initialization time is 0.102279901505
+Time to update coords : 0.00448608398438
+Energy is -230.056721351 delPE is -0.283911203796 angle is 1.84
+Time to update coords : 0.00458788871765
+Energy is -230.0282174 delPE is -0.255407252763 angle is 3.475
+Time to update coords : 0.00464391708374
+Energy is -229.971072233 delPE is -0.198262085493 angle is 0.497
+Time to update coords : 0.00464081764221
+Energy is -230.042273595 delPE is -0.269463447103 angle is 5.702
+Evaluating trials takes 0.0782408714294
+Probabilities are [ 1.61515098  1.53924966  1.39765596  1.57622247  1.34020056]
+Time to update coords : 0.00467300415039
+Starting energy is -229.946213865
+
+
+Angle is original, pe is -230.143618024 delpe is -0.19740415889
+
+Initialization time is 0.102230072021
+Time to update coords : 0.00457000732422
+Energy is -230.168915129 delPE is -0.222701263967 angle is 0.689
+Time to update coords : 0.00451803207397
+Energy is -230.193839931 delPE is -0.247626066213 angle is 1.055
+Time to update coords : 0.00465512275696
+Energy is -230.142938257 delPE is -0.196724391717 angle is 3.173
+Time to update coords : 0.00459885597229
+Energy is -230.177113683 delPE is -0.230899818039 angle is 5.688
+Evaluating trials takes 0.0777289867401
+Probabilities are [ 1.4565431   1.5191566   1.39403146  1.47684851  1.39563258]
+Time to update coords : 0.00458812713623
+Starting energy is -230.143618024
+
+
+Angle is original, pe is -230.300135825 delpe is -0.156517801273
+
+Initialization time is 0.102336168289
+Time to update coords : 0.00451683998108
+Energy is -230.337768824 delPE is -0.194150799765 angle is 5.554
+Time to update coords : 0.00465106964111
+Energy is -230.502790061 delPE is -0.359172037017 angle is 3.403
+Time to update coords : 0.00453400611877
+Energy is -230.343608576 delPE is -0.199990552147 angle is 4.891
+Time to update coords : 0.00461101531982
+Energy is -230.581870061 delPE is -0.438252037242 angle is 2.877
+Evaluating trials takes 0.0771789550781
+Probabilities are [ 1.38798627  1.83403438  1.40174138  2.09605511  1.30252511]
+Time to update coords : 0.0045268535614
+Starting energy is -230.300135825
+
+
+Angle is original, pe is -230.502077013 delpe is -0.20194118808
+
+Initialization time is 0.0985760688782
+Time to update coords : 0.00452208518982
+Energy is -230.54401572 delPE is -0.243879894819 angle is 1.06
+Time to update coords : 0.00459289550781
+Energy is -230.596792754 delPE is -0.296656928605 angle is 1.071
+Time to update coords : 0.00467610359192
+Energy is -230.495395526 delPE is -0.195259700338 angle is 3.722
+Time to update coords : 0.00470495223999
+Energy is -230.589348867 delPE is -0.28921304191 angle is 3.556
+Evaluating trials takes 0.0720920562744
+Probabilities are [ 1.50957676  1.65029092  1.39058778  1.62967633  1.40636626]
+Time to update coords : 0.00454998016357
+Total regrow time is 1.24170613289
+Starting energy is -229.052143574
+
+
+Initialization time is 0.0973129272461
+Time to update coords : 0.0047550201416
+Energy is -229.401759088 delPE is -0.349615514357 angle is 1.145
+Time to update coords : 0.00458002090454
+Energy is -229.401129285 delPE is -0.348985710956 angle is 3.111
+Time to update coords : 0.00482392311096
+Energy is -229.390145668 delPE is -0.338002094244 angle is 2.842
+Time to update coords : 0.00464701652527
+Energy is -229.404741986 delPE is -0.352598411751 angle is 0.55
+Time to update coords : 0.00473999977112
+Energy is -229.427396953 delPE is -0.375253378562 angle is 0.731
+Evaluating trials takes 0.0883750915527
+Probabilities are [ 1.80467485  1.80275656  1.76962801  1.81378809  1.88452157]
+Time to update coords : 0.0045759677887
+Starting energy is -229.390145668
+
+
+Initialization time is 0.100224018097
+Time to update coords : 0.00470495223999
+Energy is -229.872381676 delPE is -0.482236008216 angle is 1.749
+Time to update coords : 0.0046489238739
+Energy is -229.767198857 delPE is -0.377053188711 angle is 1.883
+Time to update coords : 0.00469779968262
+Energy is -229.637454426 delPE is -0.247308757627 angle is 2.295
+Time to update coords : 0.00469398498535
+Energy is -229.694074761 delPE is -0.303929092789 angle is 5.788
+Time to update coords : 0.00463104248047
+Energy is -229.617132315 delPE is -0.226986646589 angle is 1.065
+Evaluating trials takes 0.0398609638214
+Probabilities are [ 2.25766449  1.89025783  1.51834282  1.67068174  1.46712166]
+Time to update coords : 0.0045759677887
+Starting energy is -229.694074761
+
+
+Initialization time is 0.100198984146
+Time to update coords : 0.0047619342804
+Energy is -230.025893369 delPE is -0.331818608162 angle is 0.126
+Time to update coords : 0.00461292266846
+Energy is -230.063269633 delPE is -0.369194871713 angle is 0.245
+Time to update coords : 0.00466704368591
+Energy is -229.976454387 delPE is -0.282379625645 angle is 5.648
+Time to update coords : 0.00460505485535
+Energy is -230.100837725 delPE is -0.406762964354 angle is 0.891
+Time to update coords : 0.0046718120575
+Energy is -230.016590164 delPE is -0.322515403325 angle is 3.175
+Evaluating trials takes 0.0868148803711
+Probabilities are [ 1.75124608  1.86533981  1.6109791   1.98751047  1.72394913]
+Time to update coords : 0.00462794303894
+Starting energy is -230.016590164
+
+
+Initialization time is 0.100180149078
+Time to update coords : 0.00466299057007
+Energy is 108.174613231 delPE is 338.191203396 angle is 3.39
+Time to update coords : 0.00453591346741
+Energy is -230.252190267 delPE is -0.235600102452 angle is 2.472
+Time to update coords : 0.00471997261047
+Energy is 619.243516437 delPE is 849.260106601 angle is 2.782
+Time to update coords : 0.00461602210999
+Energy is -230.140284462 delPE is -0.123694298143 angle is 2.631
+Time to update coords : 0.00458908081055
+Energy is -230.275483305 delPE is -0.258893140782 angle is 1.778
+Evaluating trials takes 0.0860090255737
+Probabilities are [  9.53516142e-249   1.48861714e+000   0.00000000e+000   1.23229361e+000
+   1.54833712e+000]
+Time to update coords : 0.00458598136902
+Starting energy is -230.252190267
+
+
+Initialization time is 0.101062059402
+Time to update coords : 0.00468492507935
+Energy is -230.555594804 delPE is -0.303404536781 angle is 3.806
+Time to update coords : 0.00457000732422
+Energy is -230.470972219 delPE is -0.218781952537 angle is 5.383
+Time to update coords : 0.00464701652527
+Energy is -230.513197241 delPE is -0.26100697404 angle is 2.849
+Time to update coords : 0.00470495223999
+Energy is -230.520350003 delPE is -0.268159736281 angle is 6.143
+Time to update coords : 0.00468802452087
+Energy is -230.498904484 delPE is -0.24671421687 angle is 0.872
+Evaluating trials takes 0.0378649234772
+Probabilities are [ 1.66920252  1.44693499  1.55387384  1.5727562   1.5168192 ]
+Time to update coords : 0.00454592704773
+Starting energy is -230.513197241
+
+
+Initialization time is 0.0999400615692
+Time to update coords : 0.00461196899414
+Energy is -230.995504913 delPE is -0.482307672584 angle is 3.592
+Time to update coords : 0.00465798377991
+Energy is -230.680363557 delPE is -0.167166315738 angle is 2.596
+Time to update coords : 0.00459504127502
+Energy is -230.94446245 delPE is -0.431265209402 angle is 2.403
+Time to update coords : 0.0046010017395
+Energy is -230.947978759 delPE is -0.434781517854 angle is 0.029
+Time to update coords : 0.00469517707825
+Energy is -230.941319411 delPE is -0.428122169686 angle is 6.143
+Evaluating trials takes 0.0847990512848
+Probabilities are [ 2.25793772  1.32615854  2.07147043  2.08380707  2.0605052 ]
+Time to update coords : 0.00457787513733
+Starting energy is -230.941319411
+
+
+Initialization time is 0.0962629318237
+Time to update coords : 0.00480580329895
+Energy is -161.790270878 delPE is 69.1510485329 angle is 2.856
+Time to update coords : 0.00450420379639
+Energy is -229.06569263 delPE is 1.875626781 angle is 5.603
+Time to update coords : 0.00463485717773
+Energy is -231.475270896 delPE is -0.533951485495 angle is 3.377
+Time to update coords : 0.00459408760071
+Energy is -231.524412001 delPE is -0.583092589984 angle is 0.068
+Time to update coords : 0.00467586517334
+Energy is -230.787230135 delPE is 0.154089275716 angle is 5.92
+Evaluating trials takes 0.0794539451599
+Probabilities are [  1.93379975e-51   4.21176260e-02   2.46369076e+00   2.67685599e+00
+   7.70894443e-01]
+Time to update coords : 0.00470614433289
+Total regrow time is 1.23527193069
+Weight1 is 1380464.25846 weight0 is 2197949.04172
+Move rejected
+
+On loop 8
+
+
+
+CBMC Move
+
+
+Starting energy is -248.975449337
+
+
+Angle is original, pe is -248.975449337 delpe is 0.0
+
+Initialization time is 0.0959360599518
+Time to update coords : 0.00469207763672
+Energy is -247.842854516 delPE is 1.13259482046 angle is 6.244
+Time to update coords : 0.00459003448486
+Energy is -247.843793419 delPE is 1.13165591753 angle is 1.174
+Time to update coords : 0.0046329498291
+Energy is -247.84389473 delPE is 1.13155460704 angle is 2.106
+Time to update coords : 0.00454711914062
+Energy is -247.95311435 delPE is 1.02233498709 angle is 2.925
+Evaluating trials takes 0.0721929073334
+Probabilities are [ 0.14770129  0.14793565  0.14796096  0.17792869  1.        ]
+Time to update coords : 0.00456213951111
+Total regrow time is 0.173825979233
+Starting energy is -247.95311435
+
+
+Initialization time is 0.0935270786285
+Time to update coords : 0.00461387634277
+Energy is -247.95311435 delPE is 0.0 angle is 5.717
+Time to update coords : 0.00467705726624
+Energy is -247.953218329 delPE is -0.00010397928375 angle is 5.498
+Time to update coords : 0.0046238899231
+Energy is -247.954392929 delPE is -0.00127857905514 angle is 2.557
+Time to update coords : 0.00462293624878
+Energy is -247.956232967 delPE is -0.00311861763151 angle is 0.308
+Time to update coords : 0.00468707084656
+Energy is -247.953611391 delPE is -0.000497040877093 angle is 5.788
+Evaluating trials takes 0.0365540981293
+Probabilities are [ 1.          1.0001756   1.00216141  1.00528016  1.00083968]
+Time to update coords : 0.00458002090454
+Total regrow time is 0.135791063309
+Weight1 is 5.00845686174 weight0 is 1.62152659846
+Move accepted
+
+On loop 9
+
+rotating
+Rotating 0.14624457255radians about theta or phi axis
+Time to update coords : 0.00463604927063
+On loop: 10
+New PE is: -4816.73791801 Old PE is: -490.314889996Delta PE is -4326.42302801
+Move accepted
+rotating
+Rotating -0.196459971353radians about radial axis
+Time to update coords : 0.00442314147949
+On loop: 11
+New PE is: -4816.64404022 Old PE is: -4816.73791801Delta PE is 0.0938777874053
+Move accepted
+rotating
+Rotating 0.103658786743radians about radial axis
+Time to update coords : 0.00454306602478
+On loop: 12
+New PE is: -4816.79293822 Old PE is: -4816.64404022Delta PE is -0.148898004144
+Move accepted
+rotating
+Rotating -0.127280214754radians about theta or phi axis
+Time to update coords : 0.0044949054718
+On loop: 13
+New PE is: -4816.79507101 Old PE is: -4816.79293822Delta PE is -0.00213278798947
+Move accepted
+rotating
+Rotating -0.195011421184radians about radial axis
+Time to update coords : 0.00456118583679
+On loop: 14
+New PE is: -4816.82793189 Old PE is: -4816.79507101Delta PE is -0.0328608793834
+Move accepted
+swapping
+Starting energy is -266.687202
+
+
+Angle is original, pe is -266.978682444 delpe is -0.291480444255
+
+Initialization time is 0.100450992584
+Time to update coords : 0.0045120716095
+Energy is -248.128452309 delPE is 18.5587496911 angle is 2.377
+Time to update coords : 0.00451993942261
+Energy is -248.128452309 delPE is 18.5587496911 angle is 0.027
+Time to update coords : 0.00447201728821
+Energy is -248.128452309 delPE is 18.5587496911 angle is 5.479
+Time to update coords : 0.00464987754822
+Energy is -274.125415171 delPE is -7.4382131715 angle is 2.237
+Evaluating trials takes 0.0814599990845
+Probabilities are [  2.45184781e-14   2.45184781e-14   2.45184781e-14   2.85097196e+05
+   1.63592809e+00]
+Time to update coords : 0.0046911239624
+Starting energy is -270.329420032
+
+
+Angle is original, pe is -267.511354322 delpe is 2.8180657105
+
+Initialization time is 0.102682113647
+Time to update coords : 0.00461912155151
+Energy is -253.223046037 delPE is 17.1063739949 angle is 3.25
+Time to update coords : 0.0044949054718
+Energy is -268.878452283 delPE is 1.45096774906 angle is 5.853
+Time to update coords : 0.00470995903015
+Energy is 333.90339079 delPE is 604.232810822 angle is 2.614
+Time to update coords : 0.00465989112854
+Energy is 2691.88685422 delPE is 2962.21627425 angle is 5.906
+Evaluating trials takes 0.0809760093689
+Probabilities are [  2.84857881e-13   8.62775536e-02   0.00000000e+00   0.00000000e+00
+   8.57637130e-03]
+Time to update coords : 0.00445294380188
+Starting energy is -267.511354322
+
+
+Angle is original, pe is -229.141050655 delpe is 38.3703036667
+
+Initialization time is 0.101974010468
+Time to update coords : 0.00450396537781
+Energy is -234.609064436 delPE is 32.9022898852 angle is 2.272
+Time to update coords : 0.00458002090454
+Energy is -269.434939984 delPE is -1.9235856621 angle is 2.305
+Time to update coords : 0.00448799133301
+Energy is -268.216149539 delPE is -0.704795216998 angle is 4.938
+Time to update coords : 0.00454878807068
+Energy is -257.647892687 delPE is 9.86346163474 angle is 2.803
+Evaluating trials takes 0.0801119804382
+Probabilities are [  7.41843885e-25   2.57458905e+01   3.28759691e+00   5.83972810e-08
+   7.24791004e-29]
+Time to update coords : 0.00467896461487
+Starting energy is -229.141050655
+
+
+Angle is original, pe is -195.735642276 delpe is 33.405408379
+
+Initialization time is 0.101642847061
+Time to update coords : 0.00441598892212
+Energy is 41000.317281 delPE is 41229.4583316 angle is 3.461
+Time to update coords : 0.00464105606079
+Energy is -204.302877609 delPE is 24.8381730459 angle is 2.672
+Time to update coords : 0.00454092025757
+Energy is 687676.473201 delPE is 687905.614252 angle is 4.262
+Time to update coords : 0.00449204444885
+Energy is 27481.7161791 delPE is 27710.8572297 angle is 5.588
+Evaluating trials takes 0.0795679092407
+Probabilities are [  0.00000000e+00   6.08593081e-19   0.00000000e+00   0.00000000e+00
+   3.17203846e-25]
+Time to update coords : 0.0045850276947
+Starting energy is -195.735642276
+
+
+Angle is original, pe is -186.505756555 delpe is 9.22988572071
+
+Initialization time is 0.10126209259
+Time to update coords : 0.00450706481934
+Energy is -79.1345636556 delPE is 116.60107862 angle is 5.04
+Time to update coords : 0.00458407402039
+Energy is -52.7798019509 delPE is 142.955840325 angle is 6.183
+Time to update coords : 0.00451898574829
+Energy is -81.1698225073 delPE is 114.565819769 angle is 0.109
+Time to update coords : 0.0045759677887
+Energy is -110.38165976 delPE is 85.3539825155 angle is 0.137
+Evaluating trials takes 0.0791621208191
+Probabilities are [  3.07459584e-086   1.44506769e-105   9.55859759e-085   2.53279040e-063
+   1.70231842e-007]
+Time to update coords : 0.00458598136902
+Starting energy is -186.505756555
+
+
+Angle is original, pe is 325.374966033 delpe is 511.880722588
+
+Initialization time is 0.101276159286
+Time to update coords : 0.00456500053406
+Energy is -141.963882265 delPE is 44.54187429 angle is 5.673
+Time to update coords : 0.00469493865967
+Energy is -58.679181677 delPE is 127.826574878 angle is 1.567
+Time to update coords : 0.00456786155701
+Energy is -182.35960474 delPE is 4.14615181535 angle is 0.57
+Time to update coords : 0.00456285476685
+Energy is -180.942944123 delPE is 5.56281243202 angle is 2.67
+Evaluating trials takes 0.0788240432739
+Probabilities are [  2.15845350e-33   1.80011286e-94   9.10583157e-04   8.32486880e-05
+   0.00000000e+00]
+Time to update coords : 0.00462698936462
+Starting energy is 325.374966033
+
+
+Angle is original, pe is 325.353044762 delpe is -0.0219212708212
+
+Initialization time is 0.101227998734
+Time to update coords : 0.00458812713623
+Energy is 324068697.705 delPE is 324068372.33 angle is 3.248
+Time to update coords : 0.00462198257446
+Energy is 330.142170958 delPE is 4.76720492487 angle is 4.354
+Time to update coords : 0.00453805923462
+Energy is 359.730911524 delPE is 34.3559454905 angle is 4.079
+Time to update coords : 0.00448703765869
+Energy is 339.145748478 delPE is 13.7707824447 angle is 2.414
+Evaluating trials takes 0.078076839447
+Probabilities are [  0.00000000e+00   3.19047498e-04   6.37146261e-26   7.95911382e-11
+   1.03771117e+00]
+Time to update coords : 0.00458598136902
+Starting energy is 325.353044762
+
+
+Angle is original, pe is 324.522719745 delpe is -0.830325017581
+
+Initialization time is 0.101342916489
+Time to update coords : 0.00454211235046
+Energy is 324.454891606 delPE is -0.8981531565 angle is 6.191
+Time to update coords : 0.00449299812317
+Energy is 324.257380243 delPE is -1.09566451966 angle is 2.81
+Time to update coords : 0.00457310676575
+Energy is 324.196998017 delPE is -1.15604674522 angle is 0.506
+Time to update coords : 0.00441479682922
+Energy is 324.217606266 delPE is -1.1354384965 angle is 6.056
+Evaluating trials takes 0.0773410797119
+Probabilities are [ 4.55703401  6.36109658  7.04392543  6.80301133  4.06386122]
+Time to update coords : 0.00442790985107
+Starting energy is 324.522719745
+
+
+Angle is original, pe is 323.702149213 delpe is -0.820570531588
+
+Initialization time is 0.101398944855
+Time to update coords : 0.00457906723022
+Energy is 338.930681342 delPE is 14.4079615967 angle is 3.09
+Time to update coords : 0.00473284721375
+Energy is 323.519405912 delPE is -1.00331383297 angle is 3.718
+Time to update coords : 0.00451302528381
+Energy is 348.858936064 delPE is 24.3362163194 angle is 2.913
+Time to update coords : 0.00446796417236
+Energy is 344.901906398 delPE is 20.3791866529 angle is 0.352
+Evaluating trials takes 0.0771160125732
+Probabilities are [  2.71377616e-11   5.44257455e+00   1.42052564e-18   1.13352780e-15
+   3.99746971e+00]
+Time to update coords : 0.00463604927063
+Starting energy is 323.702149213
+
+
+Angle is original, pe is 323.58315312 delpe is -0.118996093699
+
+Initialization time is 0.0984301567078
+Time to update coords : 0.00453901290894
+Energy is 322.593412186 delPE is -1.10873702729 angle is 5.073
+Time to update coords : 0.00473117828369
+Energy is 322.993480822 delPE is -0.708668391365 angle is 3.259
+Time to update coords : 0.00467801094055
+Energy is 322.983373256 delPE is -0.718775957748 angle is 6.051
+Time to update coords : 0.0046648979187
+Energy is 322.943579562 delPE is -0.75856965085 angle is 5.995
+Evaluating trials takes 0.0726890563965
+Probabilities are [ 6.50307897  3.30916978  3.36613614  3.60010644  1.2225557 ]
+Time to update coords : 0.00447797775269
+Total regrow time is 1.84945106506
+Starting energy is -274.947530237
+
+
+Initialization time is 0.0973281860352
+Time to update coords : 0.00464987754822
+Energy is -276.167495575 delPE is -1.21996533855 angle is 5.635
+Time to update coords : 0.00457000732422
+Energy is -272.832635552 delPE is 2.11489468449 angle is 2.942
+Time to update coords : 0.00451397895813
+Energy is -272.834586797 delPE is 2.1129434395 angle is 0.011
+Time to update coords : 0.00460910797119
+Energy is -276.211176805 delPE is -1.2636465679 angle is 3.107
+Time to update coords : 0.00448298454285
+Energy is -203.952824932 delPE is 70.9947053051 angle is 1.477
+Evaluating trials takes 0.0896608829498
+Probabilities are [  7.84677123e+00   2.81184255e-02   2.82112280e-02   8.44745086e+00
+   8.59649392e-53]
+Time to update coords : 0.00450801849365
+Starting energy is -276.211176805
+
+
+Initialization time is 0.0997581481934
+Time to update coords : 0.00464487075806
+Energy is -277.80552755 delPE is -1.5943507453 angle is 0.273
+Time to update coords : 0.00447392463684
+Energy is -277.087885723 delPE is -0.87670891829 angle is 3.008
+Time to update coords : 0.00458216667175
+Energy is -274.871274139 delPE is 1.33990266539 angle is 3.726
+Time to update coords : 0.0046010017395
+Energy is -269.55863741 delPE is 6.65253939428 angle is 0.418
+Time to update coords : 0.00466394424438
+Energy is -272.401344475 delPE is 3.8098323295 angle is 3.376
+Evaluating trials takes 0.089115858078
+Probabilities are [  1.47657515e+01   4.39496702e+00   1.04075877e-01   1.32190382e-05
+   1.60682143e-03]
+Time to update coords : 0.0045530796051
+Starting energy is -277.80552755
+
+
+Initialization time is 0.0996530056
+Time to update coords : 0.00457096099854
+Energy is -275.553056317 delPE is 2.25247123248 angle is 3.064
+Time to update coords : 0.0046329498291
+Energy is -279.088067258 delPE is -1.28253970862 angle is 5.133
+Time to update coords : 0.00459885597229
+Energy is -179.247036984 delPE is 98.5584905662 angle is 3.118
+Time to update coords : 0.00452589988708
+Energy is -219.631766903 delPE is 58.1737606472 angle is 0.119
+Time to update coords : 0.00463795661926
+Energy is 54.5878138305 delPE is 332.39334138 angle is 5.68
+Evaluating trials takes 0.0887448787689
+Probabilities are [  2.22892739e-002   8.72130378e+000   5.24511417e-073   2.17205194e-043
+   1.70345212e-244]
+Time to update coords : 0.00450897216797
+Starting energy is -279.088067258
+
+
+Initialization time is 0.0997679233551
+Time to update coords : 0.00457882881165
+Energy is -200.661601601 delPE is 78.426465657 angle is 4.186
+Time to update coords : 0.00446510314941
+Energy is -210.443820437 delPE is 68.6442468215 angle is 2.764
+Time to update coords : 0.0045120716095
+Energy is -49.5481672454 delPE is 229.539900013 angle is 3.158
+Time to update coords : 0.00458717346191
+Energy is -125.43280359 delPE is 153.655263668 angle is 2.249
+Time to update coords : 0.00468993186951
+Energy is -24.6587649326 delPE is 254.429302326 angle is 3.395
+Evaluating trials takes 0.0878260135651
+Probabilities are [  3.04832133e-058   4.55078956e-051   4.58543662e-169   2.05687617e-113
+   2.55939601e-187]
+Time to update coords : 0.00441908836365
+Starting energy is -210.443820437
+
+
+Initialization time is 0.0997071266174
+Time to update coords : 0.00456809997559
+Energy is 1871.03525116 delPE is 2081.47907159 angle is 0.076
+Time to update coords : 0.00455594062805
+Energy is -196.518019362 delPE is 13.9258010755 angle is 2.821
+Time to update coords : 0.00461196899414
+Energy is -198.785293633 delPE is 11.6585268041 angle is 0.058
+Time to update coords : 0.00453901290894
+Energy is -205.7381282 delPE is 4.70569223654 angle is 1.301
+Time to update coords : 0.00469303131104
+Energy is 8982.35409623 delPE is 9192.79791667 angle is 3.527
+Evaluating trials takes 0.0873460769653
+Probabilities are [  0.00000000e+00   6.12601513e-11   2.81798262e-09   3.53970571e-04
+   0.00000000e+00]
+Time to update coords : 0.0045440196991
+Starting energy is -205.7381282
+
+
+Initialization time is 0.0992159843445
+Time to update coords : 0.0046010017395
+Energy is -83.9013498099 delPE is 121.836778391 angle is 2.259
+Time to update coords : 0.00454092025757
+Energy is -159.336411894 delPE is 46.4017163063 angle is 1.015
+Time to update coords : 0.00450396537781
+Energy is 158.127475043 delPE is 363.865603244 angle is 3.05
+Time to update coords : 0.00446009635925
+Energy is -96.879837881 delPE is 108.858290319 angle is 0.408
+Time to update coords : 0.00462603569031
+Energy is -189.915943701 delPE is 15.8221844994 angle is 3.111
+Evaluating trials takes 0.0865061283112
+Probabilities are [  4.44694122e-090   9.33647026e-035   1.41380000e-267   1.46604903e-080
+   2.49126292e-012]
+Time to update coords : 0.004469871521
+Starting energy is -189.915943701
+
+
+Initialization time is 0.0996389389038
+Time to update coords : 0.00456690788269
+Energy is -136.363980836 delPE is 53.5519628654 angle is 5.848
+Time to update coords : 0.00439190864563
+Energy is 8905.21904256 delPE is 9095.13498626 angle is 2.6
+Time to update coords : 0.00458812713623
+Energy is 3641.46221953 delPE is 3831.37816323 angle is 1.015
+Time to update coords : 0.00448894500732
+Energy is 237.491701016 delPE is 427.407644717 angle is 1.367
+Time to update coords : 0.00460696220398
+Energy is 188.73230521 delPE is 378.648248911 angle is 3.304
+Evaluating trials takes 0.0857758522034
+Probabilities are [  5.32570406e-040   0.00000000e+000   0.00000000e+000   3.55058589e-314
+   2.03787904e-278]
+Time to update coords : 0.00445604324341
+Starting energy is -136.363980836
+
+
+Initialization time is 0.0992658138275
+Time to update coords : 0.00459599494934
+Energy is -137.19589273 delPE is -0.831911894856 angle is 2.944
+Time to update coords : 0.00455713272095
+Energy is 155.541810879 delPE is 291.905791715 angle is 2.851
+Time to update coords : 0.00455904006958
+Energy is -137.568440992 delPE is -1.20446015636 angle is 3.85
+Time to update coords : 0.00449991226196
+Energy is 307736.968164 delPE is 307873.332145 angle is 3.218
+Time to update coords : 0.00452280044556
+Energy is -137.600414283 delPE is -1.23643344745 angle is 3.247
+Evaluating trials takes 0.0850298404694
+Probabilities are [  4.07476572e+000   8.39171123e-215   7.64398616e+000   0.00000000e+000
+   8.06804433e+000]
+Time to update coords : 0.00456213951111
+Starting energy is -137.600414283
+
+
+Initialization time is 0.0988609790802
+Time to update coords : 0.00458192825317
+Energy is 4080.06926676 delPE is 4217.66968104 angle is 3.151
+Time to update coords : 0.00446701049805
+Energy is -137.232394026 delPE is 0.368020257579 angle is 2.847
+Time to update coords : 0.00450420379639
+Energy is -136.079354301 delPE is 1.52105998234 angle is 1.552
+Time to update coords : 0.0046238899231
+Energy is -130.736615459 delPE is 6.86379882435 angle is 3.065
+Time to update coords : 0.00442409515381
+Energy is -138.189260105 delPE is -0.588845821482 angle is 2.781
+Evaluating trials takes 0.0842440128326
+Probabilities are [  0.00000000e+00   5.37159761e-01   7.66467939e-02   9.25268257e-06
+   2.70298900e+00]
+Time to update coords : 0.00470590591431
+Starting energy is -137.232394026
+
+
+Initialization time is 0.0960631370544
+Time to update coords : 0.00457286834717
+Energy is -138.182811695 delPE is -0.950417669805 angle is 0.11
+Time to update coords : 0.00457119941711
+Energy is 30.4600968211 delPE is 167.692490847 angle is 2.593
+Time to update coords : 0.00441598892212
+Energy is -138.324289136 delPE is -1.09189511039 angle is 4.49
+Time to update coords : 0.00453996658325
+Energy is -138.493389507 delPE is -1.26099548139 angle is 0.591
+Time to update coords : 0.00465297698975
+Energy is -138.450267432 delPE is -1.21787340662 angle is 0.123
+Evaluating trials takes 0.0795381069183
+Probabilities are [  4.97750506e+000   1.04392475e-123   6.32073528e+000   8.40971805e+000
+   7.81910099e+000]
+Time to update coords : 0.00449109077454
+Total regrow time is 1.90507292747
+Weight1 is 1.06348783495e-98 weight0 is 4.11094047998e-19
+Starting energy is -157.817412679
+
+
+Angle is original, pe is -146.6946643 delpe is 11.1227483789
+
+Initialization time is 0.100440979004
+Time to update coords : 0.00450611114502
+Energy is -158.651021779 delPE is -0.833609100106 angle is 0.956
+Time to update coords : 0.00457406044006
+Energy is -158.700017897 delPE is -0.882605218376 angle is 3.599
+Time to update coords : 0.00449013710022
+Energy is -158.574474194 delPE is -0.757061515631 angle is 4.08
+Time to update coords : 0.0045280456543
+Energy is -158.655055083 delPE is -0.83764240416 angle is 5.024
+Evaluating trials takes 0.0776569843292
+Probabilities are [  4.08646073e+00   4.43894551e+00   3.59094963e+00   4.11438806e+00
+   6.96408935e-09]
+Time to update coords : 0.00453805923462
+Starting energy is -146.6946643
+
+
+Angle is original, pe is -146.6946643 delpe is 0.0
+
+Initialization time is 0.099513053894
+Time to update coords : 0.0044641494751
+Energy is -146.693243882 delPE is 0.00142041817244 angle is 0.433
+Time to update coords : 0.00451302528381
+Energy is -146.693885008 delPE is 0.000779291966779 angle is 6.094
+Time to update coords : 0.00453305244446
+Energy is -146.692312402 delPE is 0.00235189743248 angle is 1.207
+Time to update coords : 0.00465893745422
+Energy is -146.69231507 delPE is 0.00234922967664 angle is 3.146
+Evaluating trials takes 0.072389125824
+Probabilities are [ 0.99760428  0.99868491  0.99603633  0.99604082  1.        ]
+Time to update coords : 0.00452089309692
+Total regrow time is 0.360625982285
+Starting energy is -157.817412679
+
+
+Initialization time is 0.0979650020599
+Time to update coords : 0.00455212593079
+Energy is -158.646073932 delPE is -0.828661253438 angle is 1.144
+Time to update coords : 0.00442600250244
+Energy is -158.603009764 delPE is -0.78559708523 angle is 2.847
+Time to update coords : 0.00451683998108
+Energy is -158.213697643 delPE is -0.396284964381 angle is 1.099
+Time to update coords : 0.0044801235199
+Energy is -158.547605429 delPE is -0.730192750699 angle is 3.135
+Time to update coords : 0.00443196296692
+Energy is -158.556668627 delPE is -0.739255947852 angle is 5.878
+Evaluating trials takes 0.0847527980804
+Probabilities are [ 4.05245972  3.7682227   1.95265327  3.43166161  3.48458587]
+Time to update coords : 0.00444912910461
+Starting energy is -158.603480134
+
+
+Initialization time is 0.0971457958221
+Time to update coords : 0.00460410118103
+Energy is -158.603516872 delPE is -3.67379251145e-05 angle is 5.82
+Time to update coords : 0.00452589988708
+Energy is -158.603417954 delPE is 6.21799442513e-05 angle is 5.987
+Time to update coords : 0.00450205802917
+Energy is -158.603295271 delPE is 0.000184862445423 angle is 5.75
+Time to update coords : 0.00457000732422
+Energy is -158.603351159 delPE is 0.000128975057692 angle is 2.489
+Time to update coords : 0.00460910797119
+Energy is -158.603291021 delPE is 0.000189112446606 angle is 2.522
+Evaluating trials takes 0.0797760486603
+Probabilities are [ 1.00006204  0.999895    0.99968788  0.99978223  0.99968071]
+Time to update coords : 0.00462102890015
+Total regrow time is 0.370365142822
+Weight1 is 83.4330263739 weight0 is 80.9648965976
+Time to update coords : 0.00450301170349
+On loop: 15
+New PE is: -399.712979333 Old PE is: -4816.82793189Delta PE is 4417.11495256
+Move rejected
+rotating
+Rotating 0.0781134596361radians about theta or phi axis
+Time to update coords : 0.00454902648926
+On loop: 16
+New PE is: -491.580525539 Old PE is: -4816.82793189Delta PE is 4325.24740635
+Move rejected
+
+
+CBMC Move
+
+
+Starting energy is -314.081658004
+
+
+Angle is original, pe is -314.251573434 delpe is -0.169915430297
+
+Initialization time is 0.100865840912
+Time to update coords : 0.00447201728821
+Energy is -314.315031877 delPE is -0.233373873288 angle is 0.115
+Time to update coords : 0.00450897216797
+Energy is -314.454794981 delPE is -0.373136976824 angle is 2.14
+Time to update coords : 0.00453901290894
+Energy is -314.324472522 delPE is -0.242814517411 angle is 3.739
+Time to update coords : 0.00460696220398
+Energy is -314.489688929 delPE is -0.408030924957 angle is 4.725
+Evaluating trials takes 0.0776329040527
+Probabilities are [ 1.48303143  1.87779854  1.50686338  1.99177059  1.33232929]
+Time to update coords : 0.00460600852966
+Starting energy is -314.31694471
+
+
+Angle is original, pe is -314.31694471 delpe is 0.0
+
+Initialization time is 0.0994329452515
+Time to update coords : 0.00466299057007
+Energy is -314.316964745 delPE is -2.00340239758e-05 angle is 0.026
+Time to update coords : 0.00461602210999
+Energy is -314.31674594 delPE is 0.000198770335714 angle is 1.098
+Time to update coords : 0.00464391708374
+Energy is -314.316788814 delPE is 0.000155896361719 angle is 2.599
+Time to update coords : 0.00456690788269
+Energy is -314.317604656 delPE is -0.00065994552341 angle is 0.655
+Evaluating trials takes 0.072741985321
+Probabilities are [ 1.00003383  0.9996644   0.99973678  1.00111504  1.        ]
+Time to update coords : 0.00446200370789
+Total regrow time is 0.361372947693
+Starting energy is -314.146833557
+
+
+Initialization time is 0.0982480049133
+Time to update coords : 0.00456309318542
+Energy is -314.539035674 delPE is -0.392202116219 angle is 2.932
+Time to update coords : 0.00454115867615
+Energy is -314.358227272 delPE is -0.211393714244 angle is 2.53
+Time to update coords : 0.00461387634277
+Energy is -314.511303614 delPE is -0.364470057026 angle is 3.549
+Time to update coords : 0.00447010993958
+Energy is -314.335298363 delPE is -0.188464805142 angle is 3.056
+Time to update coords : 0.00448513031006
+Energy is -314.501819121 delPE is -0.354985563627 angle is 3.139
+Evaluating trials takes 0.0849890708923
+Probabilities are [ 1.93923695  1.42899489  1.85051625  1.37472303  1.82111437]
+Time to update coords : 0.00453305244446
+Starting energy is -314.541681268
+
+
+Initialization time is 0.0971260070801
+Time to update coords : 0.00459003448486
+Energy is -314.536811054 delPE is 0.00487021362693 angle is 3.212
+Time to update coords : 0.00451397895813
+Energy is -314.540180451 delPE is 0.0015008174903 angle is 3.155
+Time to update coords : 0.00454616546631
+Energy is -314.53692653 delPE is 0.00475473815806 angle is 0.432
+Time to update coords : 0.00445508956909
+Energy is -314.539661291 delPE is 0.00201997733922 angle is 5.886
+Time to update coords : 0.0044469833374
+Energy is -314.536817907 delPE is 0.0048633605831 angle is 3.508
+Evaluating trials takes 0.0794720649719
+Probabilities are [ 0.99180961  0.99746884  0.99200303  0.99659476  0.99182109]
+Time to update coords : 0.00453591346741
+Total regrow time is 0.370552062988
+Weight1 is 41.8179430364 weight0 is 40.9634721479
+Move accepted
+
+On loop 17
+
+
+
+CBMC Move
+
+
+Starting energy is -331.039930962
+
+
+Angle is original, pe is -331.181070791 delpe is -0.14113982899
+
+Initialization time is 0.100436925888
+Time to update coords : 0.00449991226196
+Energy is -331.272282968 delPE is -0.232352005885 angle is 3.911
+Time to update coords : 0.00450897216797
+Energy is -331.261423603 delPE is -0.221492641183 angle is 4.622
+Time to update coords : 0.00466585159302
+Energy is -331.211251707 delPE is -0.171320744654 angle is 3.022
+Time to update coords : 0.00458717346191
+Energy is -331.264990787 delPE is -0.225059824657 angle is 3.294
+Evaluating trials takes 0.0781800746918
+Probabilities are [ 1.48047455  1.4535734   1.33549479  1.46235579  1.26913639]
+Time to update coords : 0.00439500808716
+Starting energy is -331.181070791
+
+
+Angle is original, pe is -331.307668865 delpe is -0.126598074109
+
+Initialization time is 0.103086948395
+Time to update coords : 0.00452899932861
+Energy is -331.316780643 delPE is -0.135709852353 angle is 5.617
+Time to update coords : 0.00464487075806
+Energy is -331.319636586 delPE is -0.138565794876 angle is 6.204
+Time to update coords : 0.00442504882812
+Energy is -331.309614111 delPE is -0.128543320515 angle is 0.343
+Time to update coords : 0.00441908836365
+Energy is -331.454453333 delPE is -0.273382541624 angle is 3.409
+Evaluating trials takes 0.0775439739227
+Probabilities are [ 1.2575524   1.26363186  1.24242546  1.58668851  1.23835097]
+Time to update coords : 0.00473999977112
+Starting energy is -331.307668865
+
+
+Angle is original, pe is -331.462962249 delpe is -0.155293384133
+
+Initialization time is 0.0995409488678
+Time to update coords : 0.00452208518982
+Energy is -331.474539162 delPE is -0.166870296496 angle is 0.751
+Time to update coords : 0.00460004806519
+Energy is -331.477933175 delPE is -0.170264309915 angle is 5.006
+Time to update coords : 0.0046808719635
+Energy is -331.548908586 delPE is -0.241239721344 angle is 2.312
+Time to update coords : 0.00460982322693
+Energy is -331.559066194 delPE is -0.251397329229 angle is 2.65
+Evaluating trials takes 0.0727820396423
+Probabilities are [ 1.3254958   1.33311445  1.50286152  1.52886202  1.29983476]
+Time to update coords : 0.00459384918213
+Total regrow time is 0.547446012497
+Starting energy is -331.039930962
+
+
+Initialization time is 0.097932100296
+Time to update coords : 0.00458788871765
+Energy is -331.265672624 delPE is -0.225741661587 angle is 2.808
+Time to update coords : 0.00457811355591
+Energy is -331.267150037 delPE is -0.227219074576 angle is 5.934
+Time to update coords : 0.00444293022156
+Energy is -331.207072195 delPE is -0.167141232899 angle is 2.904
+Time to update coords : 0.00446200370789
+Energy is -331.266154901 delPE is -0.226223939255 angle is 4.285
+Time to update coords : 0.00458908081055
+Energy is -331.229905495 delPE is -0.189974532927 angle is 4.583
+Evaluating trials takes 0.0855519771576
+Probabilities are [ 1.4640405   1.46769761  1.32610237  1.4652333   1.37823224]
+Time to update coords : 0.00446701049805
+Starting energy is -331.267160605
+
+
+Initialization time is 0.100303888321
+Time to update coords : 0.00468707084656
+Energy is -331.387919223 delPE is -0.120758617414 angle is 0.509
+Time to update coords : 0.0046591758728
+Energy is -69.9711871776 delPE is 261.295973428 angle is 3.356
+Time to update coords : 0.00450301170349
+Energy is -331.309277541 delPE is -0.0421169356824 angle is 3.105
+Time to update coords : 0.00452589988708
+Energy is -173.203248175 delPE is 158.063912431 angle is 3.26
+Time to update coords : 0.00447916984558
+Energy is 1184.41958071 delPE is 1515.68674131 angle is 5.907
+Evaluating trials takes 0.0851299762726
+Probabilities are [  1.22619981e+000   2.35666959e-192   1.07371117e+000   1.20231785e-116
+   0.00000000e+000]
+Time to update coords : 0.00440192222595
+Starting energy is -331.309277541
+
+
+Initialization time is 0.0971238613129
+Time to update coords : 0.00457715988159
+Energy is -331.615072819 delPE is -0.305795278195 angle is 2.471
+Time to update coords : 0.00470900535583
+Energy is -331.607418664 delPE is -0.29814112301 angle is 0.154
+Time to update coords : 0.00449180603027
+Energy is -331.719338466 delPE is -0.410060925177 angle is 3.355
+Time to update coords : 0.00460195541382
+Energy is -331.747610172 delPE is -0.438332630519 angle is 5.919
+Time to update coords : 0.00456500053406
+Energy is -331.721979494 delPE is -0.412701953233 angle is 0.342
+Evaluating trials takes 0.0366380214691
+Probabilities are [ 1.67595494  1.65443222  1.99861004  2.09634039  2.00754333]
+Time to update coords : 0.00458097457886
+Total regrow time is 0.518313169479
+Weight1 is 154.061316683 weight0 is 322.438043173
+Move rejected
+
+On loop 18
+
+swapping
+Starting energy is -366.822261745
+
+
+Angle is original, pe is -367.152774765 delpe is -0.330513019947
+
+Initialization time is 0.101281881332
+Time to update coords : 0.00447797775269
+Energy is -331.37728265 delPE is 35.4449790953 angle is 2.508
+Time to update coords : 0.0045108795166
+Energy is -331.37728265 delPE is 35.4449790953 angle is 1.079
+Time to update coords : 0.00453305244446
+Energy is -331.37728265 delPE is 35.4449790953 angle is 0.057
+Time to update coords : 0.00444889068604
+Energy is -365.003110746 delPE is 1.81915099922 angle is 3.508
+Evaluating trials takes 0.0819160938263
+Probabilities are [  1.01290821e-26   1.01290821e-26   1.01290821e-26   4.63320759e-02
+   1.74738938e+00]
+Time to update coords : 0.00460386276245
+Starting energy is -365.004111458
+
+
+Angle is original, pe is -365.489039687 delpe is -0.484928228581
+
+Initialization time is 0.102522134781
+Time to update coords : 0.00460505485535
+Energy is -366.091891215 delPE is -1.0877797571 angle is 3.208
+Time to update coords : 0.00457096099854
+Energy is -365.506796511 delPE is -0.502685052961 angle is 0.727
+Time to update coords : 0.00451016426086
+Energy is -365.708631674 delPE is -0.704520216337 angle is 3.256
+Time to update coords : 0.00472211837769
+Energy is -365.836829863 delPE is -0.832718404726 angle is 4.04
+Evaluating trials takes 0.0811259746552
+Probabilities are [ 6.27696213  2.33698649  3.28607056  4.08031899  2.26795173]
+Time to update coords : 0.00447797775269
+Starting energy is -365.489039687
+
+
+Angle is original, pe is -365.908428698 delpe is -0.419389011135
+
+Initialization time is 0.101666927338
+Time to update coords : 0.004478931427
+Energy is -366.140441144 delPE is -0.651401457548 angle is 4.559
+Time to update coords : 0.0045919418335
+Energy is -366.146135525 delPE is -0.657095838092 angle is 6.21
+Time to update coords : 0.00458002090454
+Energy is -366.143927589 delPE is -0.65488790262 angle is 5.91
+Time to update coords : 0.00451397895813
+Energy is -366.132109634 delPE is -0.643069947156 angle is 0.552
+Evaluating trials takes 0.0804300308228
+Probabilities are [ 3.0041455   3.03317225  3.02188429  2.96217593  2.03034127]
+Time to update coords : 0.00455498695374
+Starting energy is -365.908428698
+
+
+Angle is original, pe is -366.181906259 delpe is -0.273477561013
+
+Initialization time is 0.101493835449
+Time to update coords : 0.00460195541382
+Energy is -366.303600118 delPE is -0.395171420046 angle is 5.341
+Time to update coords : 0.00471687316895
+Energy is -366.583901221 delPE is -0.675472522783 angle is 3.423
+Time to update coords : 0.00449109077454
+Energy is -366.422968203 delPE is -0.514539505387 angle is 5.339
+Time to update coords : 0.00467395782471
+Energy is -366.459392872 delPE is -0.550964174194 angle is 3.366
+Evaluating trials takes 0.0802009105682
+Probabilities are [ 1.94898496  3.12877302  2.38423989  2.53549559  1.58694313]
+Time to update coords : 0.0045690536499
+Starting energy is -366.181906259
+
+
+Angle is original, pe is -366.433730391 delpe is -0.251824132343
+
+Initialization time is 0.101326942444
+Time to update coords : 0.00447487831116
+Energy is -366.437012733 delPE is -0.255106473883 angle is 0.06
+Time to update coords : 0.00450706481934
+Energy is -366.462165656 delPE is -0.280259396727 angle is 0.417
+Time to update coords : 0.00453305244446
+Energy is -366.503537571 delPE is -0.321631311897 angle is 0.902
+Time to update coords : 0.00443887710571
+Energy is -366.548678352 delPE is -0.366772092652 angle is 3.036
+Evaluating trials takes 0.0790848731995
+Probabilities are [ 1.53846805  1.60522156  1.72137732  1.85772385  1.5299643 ]
+Time to update coords : 0.00449800491333
+Starting energy is -366.433730391
+
+
+Angle is original, pe is -366.616327852 delpe is -0.182597460551
+
+Initialization time is 0.101316928864
+Time to update coords : 0.00453996658325
+Energy is -366.83524635 delPE is -0.401515959101 angle is 2.552
+Time to update coords : 0.0045120716095
+Energy is -366.741568252 delPE is -0.307837860363 angle is 5.492
+Time to update coords : 0.00468182563782
+Energy is -366.676668159 delPE is -0.242937767848 angle is 3.736
+Time to update coords : 0.00448298454285
+Energy is -366.727280626 delPE is -0.293550234578 angle is 6.009
+Evaluating trials takes 0.0788547992706
+Probabilities are [ 1.96997815  1.68174566  1.50717704  1.64165594  1.36116963]
+Time to update coords : 0.00450992584229
+Starting energy is -366.616327852
+
+
+Angle is original, pe is -366.795908547 delpe is -0.179580694756
+
+Initialization time is 0.101238012314
+Time to update coords : 0.00455093383789
+Energy is -366.860462167 delPE is -0.244134315681 angle is 1.255
+Time to update coords : 0.00487208366394
+Energy is -366.858590315 delPE is -0.242262463446 angle is 6.24
+Time to update coords : 0.0044219493866
+Energy is -366.899172615 delPE is -0.282844762984 angle is 1.64
+Time to update coords : 0.00456380844116
+Energy is -366.899561414 delPE is -0.283233561982 angle is 0.298
+Evaluating trials takes 0.0785670280457
+Probabilities are [ 1.51022545  1.5054593   1.61224495  1.61330381  1.35425308]
+Time to update coords : 0.00452709197998
+Starting energy is -366.795908547
+
+
+Angle is original, pe is -366.943775824 delpe is -0.147867277781
+
+Initialization time is 0.101084947586
+Time to update coords : 0.00453186035156
+Energy is -367.059039231 delPE is -0.263130684197 angle is 2.144
+Time to update coords : 0.00469398498535
+Energy is -366.997001513 delPE is -0.201092966561 angle is 5.574
+Time to update coords : 0.00472187995911
+Energy is -367.033655152 delPE is -0.237746605196 angle is 3.689
+Time to update coords : 0.00457191467285
+Energy is -367.057970351 delPE is -0.262061804016 angle is 6.118
+Evaluating trials takes 0.07821393013
+Probabilities are [ 1.55945638  1.40435329  1.49402273  1.55664414  1.28363643]
+Time to update coords : 0.00445508956909
+Starting energy is -366.943775824
+
+
+Angle is original, pe is -367.093920602 delpe is -0.150144777743
+
+Initialization time is 0.101092815399
+Time to update coords : 0.00449705123901
+Energy is -367.10034461 delPE is -0.156568785641 angle is 0.243
+Time to update coords : 0.00476908683777
+Energy is -367.188320075 delPE is -0.244544251194 angle is 3.44
+Time to update coords : 0.00450897216797
+Energy is -367.100331086 delPE is -0.156555261892 angle is 2.842
+Time to update coords : 0.00457787513733
+Energy is -367.093108286 delPE is -0.149332461499 angle is 5.995
+Evaluating trials takes 0.029993057251
+Probabilities are [ 1.30263725  1.51127125  1.3026075   1.28681632  1.28858269]
+Time to update coords : 0.00453281402588
+Starting energy is -367.093920602
+
+
+Angle is original, pe is -367.254811955 delpe is -0.160891353012
+
+Initialization time is 0.0987720489502
+Time to update coords : 0.00462198257446
+Energy is -367.370047407 delPE is -0.276126804734 angle is 2.044
+Time to update coords : 0.00452899932861
+Energy is -367.343183432 delPE is -0.249262830072 angle is 2.999
+Time to update coords : 0.00472402572632
+Energy is -367.39844178 delPE is -0.304521177751 angle is 3.587
+Time to update coords : 0.00477480888367
+Energy is -367.295642907 delPE is -0.20172230539 angle is 3.118
+Evaluating trials takes 0.0732259750366
+Probabilities are [ 1.59405848  1.52336125  1.67235297  1.40584654  1.31218042]
+Time to update coords : 0.00450491905212
+Total regrow time is 1.80549383163
+Starting energy is -364.387496741
+
+
+Initialization time is 0.0973768234253
+Time to update coords : 0.00466990470886
+Energy is -364.986902085 delPE is -0.599405343873 angle is 3.249
+Time to update coords : 0.00451278686523
+Energy is -365.00348427 delPE is -0.615987529458 angle is 3.053
+Time to update coords : 0.00459003448486
+Energy is -365.015363979 delPE is -0.627867238463 angle is 6.02
+Time to update coords : 0.00456309318542
+Energy is -365.040446252 delPE is -0.652949510891 angle is 3.825
+Time to update coords : 0.00468587875366
+Energy is -365.005323954 delPE is -0.617827213468 angle is 2.898
+Evaluating trials takes 0.0902380943298
+Probabilities are [ 2.75161938  2.82975805  2.88709833  3.012009    2.83856263]
+Time to update coords : 0.00447487831116
+Starting energy is -364.987362667
+
+
+Initialization time is 0.0995399951935
+Time to update coords : 0.00455403327942
+Energy is -364.025438192 delPE is 0.961924474504 angle is 1.028
+Time to update coords : 0.00468921661377
+Energy is -310.727105952 delPE is 54.2602567152 angle is 0.732
+Time to update coords : 0.0044801235199
+Energy is -362.117387067 delPE is 2.86997559987 angle is 5.737
+Time to update coords : 0.00459790229797
+Energy is -270.022389608 delPE is 94.9649730586 angle is 3.073
+Time to update coords : 0.00461006164551
+Energy is 353.484423564 delPE is 718.471786231 angle is 5.962
+Evaluating trials takes 0.0895578861237
+Probabilities are [  1.97037776e-01   1.61039591e-40   7.85659210e-03   2.26541432e-70
+   0.00000000e+00]
+Time to update coords : 0.00446796417236
+Starting energy is -364.025438192
+
+
+Initialization time is 0.0993180274963
+Time to update coords : 0.00462102890015
+Energy is -364.827356421 delPE is -0.801918228242 angle is 0.587
+Time to update coords : 0.00452709197998
+Energy is -364.736045581 delPE is -0.710607388625 angle is 0.321
+Time to update coords : 0.0044538974762
+Energy is -362.955977502 delPE is 1.06946068989 angle is 2.843
+Time to update coords : 0.00457406044006
+Energy is -364.641125234 delPE is -0.615687041899 angle is 4.877
+Time to update coords : 0.0044629573822
+Energy is -364.971525946 delPE is -0.946087753843 angle is 4.096
+Evaluating trials takes 0.0409979820251
+Probabilities are [ 3.87352234  3.32002275  0.16431803  2.82832254  4.94124357]
+Time to update coords : 0.00448298454285
+Starting energy is -364.736045581
+
+
+Initialization time is 0.0993161201477
+Time to update coords : 0.00460290908813
+Energy is -364.911651581 delPE is -0.17560599989 angle is 3.763
+Time to update coords : 0.00458693504333
+Energy is -365.675624621 delPE is -0.939579039936 angle is 5.39
+Time to update coords : 0.00441789627075
+Energy is -365.525908704 delPE is -0.789863123201 angle is 0.189
+Time to update coords : 0.00461506843567
+Energy is -365.826981962 delPE is -1.09093638055 angle is 5.73
+Time to update coords : 0.00450897216797
+Energy is -365.812708091 delPE is -1.07666250995 angle is 5.746
+Evaluating trials takes 0.0881149768829
+Probabilities are [ 1.34519391  4.88723182  3.7954665   6.31051051  6.16022262]
+Time to update coords : 0.00444412231445
+Starting energy is -365.675624621
+
+
+Initialization time is 0.0992789268494
+Time to update coords : 0.00479102134705
+Energy is 6075.28982072 delPE is 6440.96544534 angle is 3.532
+Time to update coords : 0.0045018196106
+Energy is -316.700231289 delPE is 48.9753933321 angle is 0.899
+Time to update coords : 0.00446701049805
+Energy is -195.604417474 delPE is 170.071207147 angle is 6.074
+Time to update coords : 0.00453305244446
+Energy is -277.602356796 delPE is 88.0732678251 angle is 4.339
+Time to update coords : 0.00456619262695
+Energy is -352.942015481 delPE is 12.7336091396 angle is 5.957
+Evaluating trials takes 0.0876429080963
+Probabilities are [  0.00000000e+000   1.20980291e-036   1.88009697e-125   2.56652687e-065
+   4.58670451e-010]
+Time to update coords : 0.00450682640076
+Starting energy is -352.942015481
+
+
+Initialization time is 0.0993490219116
+Time to update coords : 0.00470399856567
+Energy is -183.410887155 delPE is 169.531128327 angle is 3.548
+Time to update coords : 0.00447702407837
+Energy is -339.68785859 delPE is 13.2541568914 angle is 5.583
+Time to update coords : 0.00458693504333
+Energy is -343.779064527 delPE is 9.16295095387 angle is 2.935
+Time to update coords : 0.00444388389587
+Energy is -323.455264451 delPE is 29.4867510306 angle is 5.713
+Time to update coords : 0.00455594062805
+Energy is 183.580751628 delPE is 536.522767109 angle is 5.528
+Evaluating trials takes 0.0870821475983
+Probabilities are [  4.68015323e-125   1.90434013e-010   1.90602689e-007   2.37235829e-022
+   0.00000000e+000]
+Time to update coords : 0.00444793701172
+Starting energy is -343.779064527
+
+
+Initialization time is 0.0999808311462
+Time to update coords : 0.00457406044006
+Energy is -329.3031725 delPE is 14.4758920276 angle is 1.312
+Time to update coords : 0.00454688072205
+Energy is -333.654488749 delPE is 10.1245757781 angle is 6.1
+Time to update coords : 0.00460195541382
+Energy is 10163.5281615 delPE is 10507.3072261 angle is 3.403
+Time to update coords : 0.0044858455658
+Energy is -322.57397449 delPE is 21.2050900371 angle is 2.417
+Time to update coords : 0.00457096099854
+Energy is -323.29356502 delPE is 20.4854995078 angle is 1.79
+Evaluating trials takes 0.0863430500031
+Probabilities are [  2.41966701e-11   3.75749382e-08   0.00000000e+00   2.81019217e-16
+   9.47251021e-16]
+Time to update coords : 0.00449919700623
+Starting energy is -333.654488749
+
+
+Initialization time is 0.0999209880829
+Time to update coords : 0.00463700294495
+Energy is -237.123163208 delPE is 96.5313255408 angle is 1.289
+Time to update coords : 0.00451302528381
+Energy is 640.819934096 delPE is 974.474422845 angle is 3.137
+Time to update coords : 0.00471091270447
+Energy is 58.4911660175 delPE is 392.145654767 angle is 2.82
+Time to update coords : 0.00456285476685
+Energy is 2279.18727673 delPE is 2612.84176548 angle is 2.569
+Time to update coords : 0.00444507598877
+Energy is 424.468824271 delPE is 758.123313021 angle is 3.273
+Evaluating trials takes 0.0859680175781
+Probabilities are [  1.60851564e-071   0.00000000e+000   2.57353708e-288   0.00000000e+000
+   0.00000000e+000]
+Time to update coords : 0.00449395179749
+Starting energy is -237.123163208
+
+
+Initialization time is 0.0998752117157
+Time to update coords : 0.00459480285645
+Energy is 47033.0215913 delPE is 47270.1447545 angle is 5.768
+Time to update coords : 0.00459814071655
+Energy is 8716.06776493 delPE is 8953.19092814 angle is 6.129
+Time to update coords : 0.00485420227051
+Energy is 7480.76501335 delPE is 7717.88817655 angle is 6.269
+Time to update coords : 0.00458598136902
+Energy is -234.103031148 delPE is 3.02013206033 angle is 5.002
+Time to update coords : 0.0046181678772
+Energy is 233510.230597 delPE is 233747.35376 angle is 3.794
+Evaluating trials takes 0.0857801437378
+Probabilities are [ 0.          0.          0.          0.00609696  0.        ]
+Time to update coords : 0.00449204444885
+Starting energy is -234.103031148
+
+
+Initialization time is 0.0974309444427
+Time to update coords : 0.0046820640564
+Energy is -98.8839713593 delPE is 135.219059789 angle is 0.565
+Time to update coords : 0.00484395027161
+Energy is -222.502604972 delPE is 11.6004261756 angle is 3.891
+Time to update coords : 0.00467991828918
+Energy is -189.939928211 delPE is 44.163102937 angle is 3.624
+Time to update coords : 0.00472593307495
+Energy is 578.188236983 delPE is 812.291268131 angle is 1.147
+Time to update coords : 0.00458312034607
+Energy is -134.133481618 delPE is 99.9695495303 angle is 3.121
+Evaluating trials takes 0.0374948978424
+Probabilities are [  6.82091617e-100   3.10847806e-009   4.09188858e-033   0.00000000e+000
+   4.84084121e-074]
+Time to update coords : 0.00447201728821
+Total regrow time is 1.82234120369
+Weight1 is 1.00159707105e-102 weight0 is 999520760.672
+Starting energy is -251.451504333
+
+
+Angle is original, pe is 90.0590516741 delpe is 341.510556008
+
+Initialization time is 0.101556062698
+Time to update coords : 0.00446891784668
+Energy is -233.800900327 delPE is 17.6506040064 angle is 1.132
+Time to update coords : 0.00449585914612
+Energy is -236.776467164 delPE is 14.6750371692 angle is 3.994
+Time to update coords : 0.00437092781067
+Energy is -252.397268748 delPE is -0.94576441414 angle is 3.456
+Time to update coords : 0.00459599494934
+Energy is -192.339046718 delPE is 59.1124576155 angle is 3.136
+Evaluating trials takes 0.0783321857452
+Probabilities are [  1.13632887e-013   1.72865256e-011   4.93854634e+000   4.45096475e-044
+   3.50752512e-251]
+Time to update coords : 0.00441598892212
+Starting energy is 90.0590516741
+
+
+Angle is original, pe is 90.0590516741 delpe is 0.0
+
+Initialization time is 0.100854158401
+Time to update coords : 0.00450897216797
+Energy is 90.0704683311 delPE is 0.011416656983 angle is 4.538
+Time to update coords : 0.00452899932861
+Energy is 90.0418662279 delPE is -0.0171854461995 angle is 2.015
+Time to update coords : 0.00473213195801
+Energy is 90.0248472017 delPE is -0.0342044724156 angle is 0.395
+Time to update coords : 0.00459003448486
+Energy is 90.0704683311 delPE is 0.011416656983 angle is 2.996
+Evaluating trials takes 0.0734090805054
+Probabilities are [ 0.98090584  1.0294455   1.05946027  0.98090584  1.        ]
+Time to update coords : 0.0044629573822
+Total regrow time is 0.364609003067
+Starting energy is -251.451504333
+
+
+Initialization time is 0.099091053009
+Time to update coords : 0.00455498695374
+Energy is -252.26140009 delPE is -0.809895756367 angle is 3.578
+Time to update coords : 0.00451493263245
+Energy is -246.471896379 delPE is 4.97960795442 angle is 4.093
+Time to update coords : 0.0044858455658
+Energy is -217.69773922 delPE is 33.753765113 angle is 5.813
+Time to update coords : 0.00467014312744
+Energy is -252.298657957 delPE is -0.847153623362 angle is 2.941
+Time to update coords : 0.00451612472534
+Energy is -252.243879919 delPE is -0.792375585506 angle is 5.84
+Evaluating trials takes 0.0860857963562
+Probabilities are [  3.92605679e+00   2.22886857e-04   1.76141883e-25   4.18100351e+00
+   3.81160368e+00]
+Time to update coords : 0.00453996658325
+Starting energy is -252.298657957
+
+
+Initialization time is 0.0982780456543
+Time to update coords : 0.0046558380127
+Energy is -252.367323438 delPE is -0.0686654808014 angle is 5.718
+Time to update coords : 0.0045919418335
+Energy is -252.309635821 delPE is -0.0109778644258 angle is 5.663
+Time to update coords : 0.00473308563232
+Energy is -252.268169041 delPE is 0.0304889159224 angle is 5.64
+Time to update coords : 0.00475406646729
+Energy is -252.269615307 delPE is 0.029042649605 angle is 2.792
+Time to update coords : 0.00476694107056
+Energy is -252.270302948 delPE is 0.0283550083662 angle is 5.822
+Evaluating trials takes 0.0376510620117
+Probabilities are [ 1.12294241  1.01871073  0.94981761  0.95214014  0.95324639]
+Time to update coords : 0.00444006919861
+Total regrow time is 0.331715106964
+Weight1 is 59.5569767536 weight0 is 24.943202162
+Time to update coords : 0.00443601608276
+On loop: 19
+New PE is: -493.13350001 Old PE is: -555.549913911Delta PE is 62.4164139011
+Move rejected
+swapping
+Starting energy is -271.744693124
+
+
+Angle is original, pe is -272.079515352 delpe is -0.334822228672
+
+Initialization time is 0.102325201035
+Time to update coords : 0.00459623336792
+Energy is -332.554745843 delPE is -60.8100527187 angle is 6.276
+Time to update coords : 0.00454688072205
+Energy is -332.554745843 delPE is -60.8100527187 angle is 5.469
+Time to update coords : 0.00455689430237
+Energy is -332.554745843 delPE is -60.8100527187 angle is 3.14
+Time to update coords : 0.00465083122253
+Energy is -420.39399982 delPE is -148.649306697 angle is 3.068
+Evaluating trials takes 0.0828049182892
+Probabilities are [  3.94928194e+044   3.94928194e+044   3.94928194e+044   1.03646019e+109
+   1.76015111e+000]
+Time to update coords : 0.00457787513733
+Starting energy is -420.387215202
+
+
+Angle is original, pe is -420.588941149 delpe is -0.201725947925
+
+Initialization time is 0.105787992477
+Time to update coords : 0.00480794906616
+Energy is -421.543242475 delPE is -1.15602727297 angle is 4.461
+Time to update coords : 0.0045120716095
+Energy is -419.135586636 delPE is 1.25162856566 angle is 4.91
+Time to update coords : 0.00457406044006
+Energy is -420.878718755 delPE is -0.491503552963 angle is 3.602
+Time to update coords : 0.00458788871765
+Energy is -419.017918303 delPE is 1.36929689848 angle is 2.657
+Evaluating trials takes 0.0824439525604
+Probabilities are [ 7.04369382  0.12080586  2.29327417  0.099036    1.40585519]
+Time to update coords : 0.0045862197876
+Starting energy is -420.588941149
+
+
+Angle is original, pe is -421.633078618 delpe is -1.04413746811
+
+Initialization time is 0.104964971542
+Time to update coords : 0.00467300415039
+Energy is -418.328537706 delPE is 2.26040344373 angle is 1.627
+Time to update coords : 0.00449109077454
+Energy is 384.938708987 delPE is 805.527650137 angle is 2.151
+Time to update coords : 0.00466203689575
+Energy is -416.573576758 delPE is 4.01536439189 angle is 1.706
+Time to update coords : 0.00466299057007
+Energy is -415.743288046 delPE is 4.84565310392 angle is 2.545
+Evaluating trials takes 0.0819318294525
+Probabilities are [  2.19927046e-02   0.00000000e+00   1.13562703e-03   2.79462461e-04
+   5.83100460e+00]
+Time to update coords : 0.00465798377991
+Starting energy is -421.633078618
+
+
+Angle is original, pe is -421.702014522 delpe is -0.0689359044773
+
+Initialization time is 0.105724096298
+Time to update coords : 0.00460910797119
+Energy is -422.348993023 delPE is -0.71591440529 angle is 6.161
+Time to update coords : 0.00450897216797
+Energy is -423.167651062 delPE is -1.53457244485 angle is 5.685
+Time to update coords : 0.00463199615479
+Energy is -416.807383673 delPE is 4.82569494421 angle is 3.379
+Time to update coords : 0.00475788116455
+Energy is -420.349760226 delPE is 1.28331839168 angle is 0.146
+Evaluating trials takes 0.0814661979675
+Probabilities are [  3.34990960e+00   1.33479846e+01   2.89041550e-04   1.14511082e-01
+   1.12345533e+00]
+Time to update coords : 0.00470399856567
+Starting energy is -421.702014522
+
+
+Angle is original, pe is -298.225811511 delpe is 123.476203011
+
+Initialization time is 0.104923963547
+Time to update coords : 0.00470900535583
+Energy is 75.2506738913 delPE is 496.952688413 angle is 5.909
+Time to update coords : 0.00457310676575
+Energy is -30.5319686098 delPE is 391.170045912 angle is 5.564
+Time to update coords : 0.00448513031006
+Energy is -179.192418389 delPE is 242.509596133 angle is 6.161
+Time to update coords : 0.0047070980072
+Energy is -423.266448083 delPE is -1.56443356141 angle is 2.441
+Evaluating trials takes 0.0809609889984
+Probabilities are [  0.00000000e+000   1.33664692e-287   1.41169663e-178   1.40383177e+001
+   2.79093564e-091]
+Time to update coords : 0.0045690536499
+Starting energy is -298.225811511
+
+
+Angle is original, pe is -246.482074065 delpe is 51.7437374463
+
+Initialization time is 0.10496878624
+Time to update coords : 0.00469017028809
+Energy is -284.751861601 delPE is 13.4739499107 angle is 4.294
+Time to update coords : 0.0046751499176
+Energy is -282.808049396 delPE is 15.4177621156 angle is 6.201
+Time to update coords : 0.00459218025208
+Energy is -286.417277095 delPE is 11.8085344163 angle is 1.398
+Time to update coords : 0.00475597381592
+Energy is -286.615104583 delPE is 11.6107069281 angle is 5.067
+Evaluating trials takes 0.0806729793549
+Probabilities are [  1.31387488e-10   4.93187964e-12   2.18739196e-09   3.05497858e-09
+   1.12845107e-38]
+Time to update coords : 0.00471997261047
+Starting energy is -246.482074065
+
+
+Angle is original, pe is 13978.7667245 delpe is 14225.2487986
+
+Initialization time is 0.104829072952
+Time to update coords : 0.00456690788269
+Energy is -247.715391045 delPE is -1.23331697955 angle is 3.061
+Time to update coords : 0.00457310676575
+Energy is 12847.9046882 delPE is 13094.3867623 angle is 3.247
+Time to update coords : 0.00462603569031
+Energy is 18764.0679209 delPE is 19010.5499949 angle is 6.034
+Time to update coords : 0.00461792945862
+Energy is -247.276190058 delPE is -0.794115993338 angle is 2.926
+Evaluating trials takes 0.0798199176788
+Probabilities are [ 8.02569662  0.          0.          3.82282227  0.        ]
+Time to update coords : 0.0046010017395
+Starting energy is 13978.7667245
+
+
+Angle is original, pe is 14196.5229109 delpe is 217.756186392
+
+Initialization time is 0.10476899147
+Time to update coords : 0.00457787513733
+Energy is 14135.9330921 delPE is 157.166367533 angle is 5.696
+Time to update coords : 0.00448298454285
+Energy is 16041.5693029 delPE is 2062.80257836 angle is 5.123
+Time to update coords : 0.00454211235046
+Energy is 32223.8458978 delPE is 18245.0791733 angle is 3.068
+Time to update coords : 0.00457310676575
+Energy is 15006.9631201 delPE is 1028.19639557 angle is 5.601
+Evaluating trials takes 0.0791480541229
+Probabilities are [  5.47337852e-116   0.00000000e+000   0.00000000e+000   0.00000000e+000
+   2.01025502e-160]
+Time to update coords : 0.00454807281494
+Starting energy is 14196.5229109
+
+
+Angle is original, pe is 16075.6560328 delpe is 1879.13312191
+
+Initialization time is 0.104781150818
+Time to update coords : 0.00465393066406
+Energy is 14195.185339 delPE is -1.33757189184 angle is 2.836
+Time to update coords : 0.00453901290894
+Energy is 14195.346844 delPE is -1.17606695099 angle is 5.836
+Time to update coords : 0.00459694862366
+Energy is 14277.5422896 delPE is 81.0193786819 angle is 2.71
+Time to update coords : 0.00450205802917
+Energy is 14201.315961 delPE is 4.79305009591 angle is 2.84
+Evaluating trials takes 0.0787169933319
+Probabilities are [  9.57063145e+00   7.28613226e+00   3.82371461e-60   3.05422596e-04
+   0.00000000e+00]
+Time to update coords : 0.00466680526733
+Starting energy is 16075.6560328
+
+
+Angle is original, pe is 16088.2514275 delpe is 12.5953946707
+
+Initialization time is 0.100949048996
+Time to update coords : 0.00457000732422
+Energy is 703539.471015 delPE is 687463.814982 angle is 3.055
+Time to update coords : 0.00478100776672
+Energy is 399450667.263 delPE is 399434591.607 angle is 0.848
+Time to update coords : 0.00464081764221
+Energy is 16210.2894697 delPE is 134.633436867 angle is 1.706
+Time to update coords : 0.00479102134705
+Energy is 16106.4491827 delPE is 30.7931498446 angle is 0.37
+Evaluating trials takes 0.0301411151886
+Probabilities are [  0.00000000e+00   0.00000000e+00   1.83367937e-99   2.61277021e-23
+   5.79246842e-10]
+Time to update coords : 0.00463604927063
+Total regrow time is 1.85502409935
+Starting energy is -419.128165956
+
+
+Initialization time is 0.0994970798492
+Time to update coords : 0.00473690032959
+Energy is -419.970835704 delPE is -0.842669748606 angle is 1.146
+Time to update coords : 0.00456500053406
+Energy is -411.388139562 delPE is 7.74002639381 angle is 3.088
+Time to update coords : 0.00451707839966
+Energy is -409.205374383 delPE is 9.92279157274 angle is 6.161
+Time to update coords : 0.00455713272095
+Energy is -419.817397468 delPE is -0.689231512334 angle is 4.069
+Time to update coords : 0.00462007522583
+Energy is -420.458194521 delPE is -1.33002856525 angle is 4.191
+Evaluating trials takes 0.0914568901062
+Probabilities are [  4.14946566e+00   2.10700250e-06   5.28301187e-08   3.20231865e+00
+   9.44949309e+00]
+Time to update coords : 0.00467300415039
+Starting energy is -419.970835704
+
+
+Initialization time is 0.102643013
+Time to update coords : 0.0047459602356
+Energy is -420.424586526 delPE is -0.453750822335 angle is 2.869
+Time to update coords : 0.00466299057007
+Energy is -421.059524202 delPE is -1.08868849743 angle is 5.691
+Time to update coords : 0.0045280456543
+Energy is -420.51388519 delPE is -0.543049485473 angle is 0.547
+Time to update coords : 0.0046010017395
+Energy is -417.025519325 delPE is 2.94531637952 angle is 3.548
+Time to update coords : 0.00449991226196
+Energy is -421.233399688 delPE is -1.26256398371 angle is 0.865
+Evaluating trials takes 0.0907950401306
+Probabilities are [  2.15163750e+00   6.28660184e+00   2.50183366e+00   6.91801069e-03
+   8.43202207e+00]
+Time to update coords : 0.00466084480286
+Starting energy is -421.060825258
+
+
+Initialization time is 0.102545976639
+Time to update coords : 0.00456094741821
+Energy is -421.666362561 delPE is -0.605537303333 angle is 5.533
+Time to update coords : 0.00460410118103
+Energy is -418.958118799 delPE is 2.10270645876 angle is 5.758
+Time to update coords : 0.00464701652527
+Energy is -422.359203485 delPE is -1.29837822742 angle is 2.808
+Time to update coords : 0.00458598136902
+Energy is -191.20884468 delPE is 229.851980578 angle is 1.548
+Time to update coords : 0.00456881523132
+Energy is -313.958776832 delPE is 107.102048426 angle is 6.105
+Evaluating trials takes 0.090126991272
+Probabilities are [  2.78025979e+000   2.87031478e-002   8.95770949e+000   2.70712861e-169
+   2.84531809e-079]
+Time to update coords : 0.00456500053406
+Starting energy is -422.359203485
+
+
+Initialization time is 0.10258603096
+Time to update coords : 0.00467205047607
+Energy is -415.968966086 delPE is 6.39023739961 angle is 3.38
+Time to update coords : 0.00450587272644
+Energy is -423.336604456 delPE is -0.977400970031 angle is 5.466
+Time to update coords : 0.0045759677887
+Energy is -384.230398893 delPE is 38.1288045925 angle is 2.696
+Time to update coords : 0.00454902648926
+Energy is -411.72935358 delPE is 10.629849905 angle is 4.912
+Time to update coords : 0.00463891029358
+Energy is -418.924612657 delPE is 3.43459082803 angle is 5.585
+Evaluating trials takes 0.0894548892975
+Probabilities are [  2.05856863e-05   5.20955424e+00   1.08973767e-28   1.60082299e-08
+   3.02802891e-03]
+Time to update coords : 0.00469303131104
+Starting energy is -423.336604456
+
+
+Initialization time is 0.10543012619
+Time to update coords : 0.00461316108704
+Energy is -424.046973464 delPE is -0.710369008018 angle is 0.248
+Time to update coords : 0.00459599494934
+Energy is -424.311024276 delPE is -0.974419820131 angle is 1.12
+Time to update coords : 0.0045759677887
+Energy is -411.970576906 delPE is 11.3660275499 angle is 0.824
+Time to update coords : 0.00469613075256
+Energy is -420.12926116 delPE is 3.20734329532 angle is 3.835
+Time to update coords : 0.00453495979309
+Energy is -422.845612215 delPE is 0.490992240167 angle is 0.309
+Evaluating trials takes 0.0402660369873
+Probabilities are [  3.31868657e+00   5.18339453e+00   4.61795493e-09   4.44444436e-03
+   4.36434430e-01]
+Time to update coords : 0.00467109680176
+Starting energy is -424.046973464
+
+
+Initialization time is 0.102422952652
+Time to update coords : 0.00463318824768
+Energy is -424.895759064 delPE is -0.848785600819 angle is 3.314
+Time to update coords : 0.00458312034607
+Energy is -76.9167615781 delPE is 347.130211885 angle is 5.069
+Time to update coords : 0.00459885597229
+Energy is -78.005221335 delPE is 346.041752129 angle is 5.548
+Time to update coords : 0.00470614433289
+Energy is -425.403433798 delPE is -1.35646033489 angle is 3.601
+Time to update coords : 0.00467991828918
+Energy is -263.979869622 delPE is 160.067103841 angle is 3.603
+Evaluating trials takes 0.088497877121
+Probabilities are [  4.19254162e+000   2.65271551e-255   1.66701259e-254   9.88081772e+000
+   4.08254126e-118]
+Time to update coords : 0.00462102890015
+Starting energy is -424.895759064
+
+
+Initialization time is 0.102452993393
+Time to update coords : 0.00462698936462
+Energy is -405.444459749 delPE is 19.4512993149 angle is 4.349
+Time to update coords : 0.00450897216797
+Energy is -347.216069428 delPE is 77.6796896365 angle is 3.208
+Time to update coords : 0.00480008125305
+Energy is -355.553965849 delPE is 69.3417932157 angle is 0.039
+Time to update coords : 0.0046751499176
+Energy is -421.14983891 delPE is 3.74592015387 angle is 3.318
+Time to update coords : 0.00465798377991
+Energy is -374.055981603 delPE is 50.8397774614 angle is 3.062
+Evaluating trials takes 0.0879011154175
+Probabilities are [  5.43151178e-15   1.07578861e-57   1.40127795e-51   1.78994279e-03
+   5.19306286e-38]
+Time to update coords : 0.00462818145752
+Starting energy is -421.14983891
+
+
+Initialization time is 0.102324962616
+Time to update coords : 0.00460910797119
+Energy is -360.348918152 delPE is 60.8009207587 angle is 2.089
+Time to update coords : 0.00464105606079
+Energy is -412.278464205 delPE is 8.87137470555 angle is 3.362
+Time to update coords : 0.00475811958313
+Energy is -422.095382519 delPE is -0.94554360843 angle is 4.703
+Time to update coords : 0.00449013710022
+Energy is -421.678530944 delPE is -0.528692033155 angle is 6.157
+Time to update coords : 0.00462198257446
+Energy is -418.798339206 delPE is 2.35149970496 angle is 5.939
+Evaluating trials takes 0.0871410369873
+Probabilities are [  2.57145545e-45   3.11862742e-07   4.93670527e+00   2.44190660e+00
+   1.88569306e-02]
+Time to update coords : 0.0046010017395
+Starting energy is -421.680513538
+
+
+Initialization time is 0.102293014526
+Time to update coords : 0.00467801094055
+Energy is -313.038325566 delPE is 108.642187971 angle is 3.672
+Time to update coords : 0.00457310676575
+Energy is 2100.3850129 delPE is 2522.06552643 angle is 5.531
+Time to update coords : 0.00454902648926
+Energy is -422.523891574 delPE is -0.843378036456 angle is 1.898
+Time to update coords : 0.00471091270447
+Energy is -415.645180707 delPE is 6.03533283044 angle is 5.72
+Time to update coords : 0.00459408760071
+Energy is -422.597110184 delPE is -0.916596646496 angle is 2.661
+Evaluating trials takes 0.0378620624542
+Probabilities are [  2.11170069e-80   0.00000000e+00   4.15443162e+00   3.74837620e-05
+   4.70119480e+00]
+Time to update coords : 0.00460815429688
+Starting energy is -422.523891574
+
+
+Initialization time is 0.0984859466553
+Time to update coords : 0.00463700294495
+Energy is -423.915808015 delPE is -1.39191644082 angle is 5.817
+Time to update coords : 0.00455904006958
+Energy is -388.551530376 delPE is 33.9723611977 angle is 2.986
+Time to update coords : 0.00448393821716
+Energy is -422.919481535 delPE is -0.395589960426 angle is 1.013
+Time to update coords : 0.00481820106506
+Energy is -423.161524923 delPE is -0.637633349166 angle is 2.995
+Time to update coords : 0.00460410118103
+Energy is -418.680874919 delPE is 3.84301665517 angle is 2.829
+Evaluating trials takes 0.0809650421143
+Probabilities are [  1.04904828e+01   1.21772698e-25   1.95036293e+00   2.93510599e+00
+   1.51925646e-03]
+Time to update coords : 0.00462412834167
+Total regrow time is 1.85836005211
+Weight1 is 4531998.24977 weight0 is 5.70477037274e-18
+Starting energy is -443.691051563
+
+
+Angle is original, pe is -444.163781282 delpe is -0.472729719223
+
+Initialization time is 0.101917982101
+Time to update coords : 0.00453591346741
+Energy is -443.925585999 delPE is -0.23453443637 angle is 2.48
+Time to update coords : 0.00462007522583
+Energy is -443.907819747 delPE is -0.216768184443 angle is 0.452
+Time to update coords : 0.00457191467285
+Energy is -443.994832521 delPE is -0.30378095852 angle is 5.101
+Time to update coords : 0.00478291511536
+Energy is -443.955238147 delPE is -0.264186583969 angle is 0.355
+Evaluating trials takes 0.0791258811951
+Probabilities are [ 1.48594072  1.44202295  1.67026388  1.56223945  2.22171187]
+Time to update coords : 0.00449705123901
+Starting energy is -444.163781282
+
+
+Angle is original, pe is -444.163781282 delpe is 0.0
+
+Initialization time is 0.101211071014
+Time to update coords : 0.00457406044006
+Energy is -444.16380252 delPE is -2.12381794427e-05 angle is 0.282
+Time to update coords : 0.00451493263245
+Energy is -444.163790969 delPE is -9.68675612967e-06 angle is 3.293
+Time to update coords : 0.0049741268158
+Energy is -444.163851241 delPE is -6.99591655007e-05 angle is 1.352
+Time to update coords : 0.00476121902466
+Energy is -444.164919839 delPE is -0.00113855716154 angle is 4.033
+Evaluating trials takes 0.0740070343018
+Probabilities are [ 1.00003586  1.00001636  1.00011814  1.00192448  1.        ]
+Time to update coords : 0.0045599937439
+Total regrow time is 0.366925001144
+Starting energy is -443.691051563
+
+
+Initialization time is 0.0993540287018
+Time to update coords : 0.00474190711975
+Energy is -444.049936073 delPE is -0.358884510298 angle is 5.455
+Time to update coords : 0.0046648979187
+Energy is -443.910683349 delPE is -0.219631786364 angle is 3.675
+Time to update coords : 0.00445699691772
+Energy is -443.919376382 delPE is -0.228324819055 angle is 0.695
+Time to update coords : 0.00456714630127
+Energy is -444.208847494 delPE is -0.517795931443 angle is 3.085
+Time to update coords : 0.00480985641479
+Energy is -443.955052033 delPE is -0.264000470004 angle is 3.564
+Evaluating trials takes 0.0867681503296
+Probabilities are [ 1.83314411  1.44901294  1.47044068  2.39738691  1.56174854]
+Time to update coords : 0.00458884239197
+Starting energy is -444.049936073
+
+
+Initialization time is 0.098699092865
+Time to update coords : 0.00463700294495
+Energy is -444.050506606 delPE is -0.000570532957624 angle is 3.199
+Time to update coords : 0.00467109680176
+Energy is -444.056579076 delPE is -0.00664300264907 angle is 4.16
+Time to update coords : 0.00459909439087
+Energy is -444.061445681 delPE is -0.0115096078468 angle is 0.671
+Time to update coords : 0.00472187995911
+Energy is -444.05063795 delPE is -0.00070187729284 angle is 0.859
+Time to update coords : 0.0045120716095
+Energy is -444.054600502 delPE is -0.00466442948658 angle is 5.884
+Evaluating trials takes 0.0811991691589
+Probabilities are [ 1.0009639   1.0112809   1.01962588  1.00118593  1.00790772]
+Time to update coords : 0.0047070980072
+Total regrow time is 0.376970052719
+Weight1 is 43.9155362428 weight0 is 41.9284537492
+Time to update coords : 0.004714012146
+On loop: 20
+New PE is: -686.847191045 Old PE is: -555.549913911Delta PE is -131.297277134
+Move accepted
+
+
+CBMC Move
+
+
+Starting energy is -460.942337381
+
+
+Angle is original, pe is -461.142699822 delpe is -0.200362440728
+
+Initialization time is 0.102316856384
+Time to update coords : 0.00458908081055
+Energy is -461.261025515 delPE is -0.318688133772 angle is 5.137
+Time to update coords : 0.00465393066406
+Energy is -461.307947484 delPE is -0.365610102907 angle is 3.08
+Time to update coords : 0.00462698936462
+Energy is -461.298889747 delPE is -0.356552366353 angle is 2.991
+Time to update coords : 0.00463390350342
+Energy is -461.412715731 delPE is -0.470378349769 angle is 5.505
+Evaluating trials takes 0.0793409347534
+Probabilities are [ 1.71284327  1.85408219  1.82593904  2.21290771  1.40262193]
+Time to update coords : 0.00446605682373
+Starting energy is -461.142699822
+
+
+Angle is original, pe is -461.142699822 delpe is 0.0
+
+Initialization time is 0.101379871368
+Time to update coords : 0.00451922416687
+Energy is -461.14285001 delPE is -0.000150188637917 angle is 3.818
+Time to update coords : 0.00479102134705
+Energy is -461.142773124 delPE is -7.3301893849e-05 angle is 4.87
+Time to update coords : 0.00454783439636
+Energy is -461.142908877 delPE is -0.000209054691027 angle is 0.292
+Time to update coords : 0.0047869682312
+Energy is -461.14269987 delPE is -4.78804054183e-08 angle is 3.805
+Evaluating trials takes 0.0301430225372
+Probabilities are [ 1.00025365  1.00012379  1.00035308  1.00000008  1.        ]
+Time to update coords : 0.00449299812317
+Total regrow time is 0.323777198792
+Starting energy is -460.942337381
+
+
+Initialization time is 0.0996599197388
+Time to update coords : 0.00460886955261
+Energy is -461.368564926 delPE is -0.426227544559 angle is 4.545
+Time to update coords : 0.00454902648926
+Energy is -461.286218767 delPE is -0.343881386076 angle is 0.447
+Time to update coords : 0.00441288948059
+Energy is -461.304532131 delPE is -0.362194750301 angle is 3.198
+Time to update coords : 0.0046169757843
+Energy is -461.389514955 delPE is -0.447177574162 angle is 1.517
+Time to update coords : 0.00444722175598
+Energy is -461.380505819 delPE is -0.438168437528 angle is 6.092
+Evaluating trials takes 0.0864109992981
+Probabilities are [ 2.05392341  1.78728456  1.84341982  2.12788648  2.09575923]
+Time to update coords : 0.00448608398438
+Starting energy is -461.304532131
+
+
+Initialization time is 0.0988521575928
+Time to update coords : 0.00467705726624
+Energy is -461.304549956 delPE is -1.78244187055e-05 angle is 2.821
+Time to update coords : 0.00466513633728
+Energy is -461.304523198 delPE is 8.93360697773e-06 angle is 0.853
+Time to update coords : 0.00449109077454
+Energy is -461.3045382 delPE is -6.06891052257e-06 angle is 4.377
+Time to update coords : 0.0045280456543
+Energy is -461.304542248 delPE is -1.01164413309e-05 angle is 2.974
+Time to update coords : 0.00459384918213
+Energy is -461.304532466 delPE is -3.34668470714e-07 angle is 3.17
+Evaluating trials takes 0.0811870098114
+Probabilities are [ 1.0000301   0.99998491  1.00001025  1.00001708  1.00000057]
+Time to update coords : 0.00451898574829
+Total regrow time is 0.37677192688
+Weight1 is 49.5417926414 weight0 is 45.0485522961
+Move accepted
+
+On loop 21
+
+
+
+CBMC Move
+
+
+Starting energy is -265.296262171
+
+
+Angle is original, pe is -265.946609934 delpe is -0.650347763382
+
+Initialization time is 0.101006031036
+Time to update coords : 0.0045428276062
+Energy is -18.0885328062 delPE is 247.207729365 angle is 3.095
+Time to update coords : 0.00471687316895
+Energy is -259.382131748 delPE is 5.91413042219 angle is 0.552
+Time to update coords : 0.00464797019958
+Energy is -259.291754257 delPE is 6.00450791331 angle is 3.324
+Time to update coords : 0.00454497337341
+Energy is -256.340893154 delPE is 8.95536901624 angle is 2.901
+Evaluating trials takes 0.0786788463593
+Probabilities are [  5.06118385e-182   4.59970395e-005   3.94865662e-005   2.70622711e-007
+   2.99880489e+000]
+Time to update coords : 0.00451302528381
+Traceback (most recent call last):
+  File "../src/mc_routine.py", line 320, in <module>
+    accepted = cbmc(atoms,mol,beta,lmp,dih_cdf_norm,startindex)
+  File "../src/mc_routine.py", line 219, in cbmc
+    (weight0,new_positions) = regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=True)
+  File "../src/mc_routine.py", line 158, in regrow_chain
+    lmp.command("run 0 post no")
+  File "/home/green/mylammps/python/lammps.py", line 72, in command
+    self.lib.lammps_command(self.lmp,cmd)
+KeyboardInterrupt

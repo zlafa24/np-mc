@@ -4,4 +4,6 @@
 *.pyc
 *.c
 *.lmi
-
+*.out
+*.txt
+trial*/
