@@ -12,7 +12,7 @@ import read_lmp_rev6 as rdlmp
 import itertools as itt
 from ctypes import *
 from scipy.stats import rv_discrete
-
+import pypar
 
 def atom2xyz(filename,atoms):
 	xyzfile = open(filename,'a')
@@ -44,7 +44,7 @@ def quat_mult(q1,q2):
 	w = w1*w2-x1*x2-y1*y2-z1*z2
 	x = w1*x2 + x1*w2 + y1*z2 - z1*y2
 	y = w1*y2 + y1*w2 + z1*x2 - x1*z2
-    	z = w1*z2 + z1*w2 + x1*y2 - y1*x2
+	z = w1*z2 + z1*w2 + x1*y2 - y1*x2
 	return np.array([w,x,y,z])
 
 def rot_quat(vector,theta,rot_axis):
@@ -117,7 +117,7 @@ def delete_chain(mol,delindex,lmp,delete=True):
 	if(delete):	
 		atoms2del = mol[delindex:].astype(int)
 		lmp.command("group restOfchain id 1")
-                lmp.command("group restOfchain clear")
+		lmp.command("group restOfchain clear")
 		lmp.command("group restOfchain id "+(" ".join([str(atom) for atom in atoms2del])))
 		lmp.command("neigh_modify exclude group restOfchain all")
 		lmp.command("delete_bonds restOfchain multi any")
@@ -145,66 +145,87 @@ def regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=F
 	mol_id = int(atoms[np.where((atoms[:,0]==mol[0]))][0,1])
 	lmp.command("group cbmc_mol molecule "+str(mol_id))
 	lmp.command("group all_else subtract all cbmc_mol")
+	lmp.command("neigh_modify exclude group all_else all_else")
+	lmp.command("run 0 post no")
+	energy = lmp.extract_compute("pair_pe",0,0)
 	for idx in xrange(startindex,len(mol)):
-		#start = time.time()
-		lmp.command("neigh_modify exclude group all_else all_else")
-		lmp.command("run 0 post no")
-		energy = lmp.extract_compute("pair_pe",0,0)
+		start = time.time()
+		#lmp.command("neigh_modify exclude group all_else all_else")
+		#lmp.command("run 0 post no")
+		#energy = lmp.extract_compute("pair_pe",0,0)
+		start_delchain = time.time()
 		delete_chain(mol,idx,lmp,delete=False)
+		finish_delchain = time.time()
+		print "Undeleting chain takes "+str(finish_delchain-start_delchain)
 		lmp.command("neigh_modify exclude group all_else all_else")
 		lmp.command("run 0 post no")
-		#lmp_time = time.time()-start
-		#print "Time setting up neighbor list conditions is "+str(lmp_time)
+		lmp_time = time.time()-start
+		print "Time setting up neighbor list conditions is "+str(lmp_time)
 		if(idx>2):
+			start = time.time()
 			probs = np.empty((numtrials))
 			positions = np.empty((numtrials,(mol.shape[0]-idx),3))
+			energies = np.empty((numtrials))
 			dih_atoms = atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[(idx-3):(idx+1)]]).flatten()]
 			original_pos = np.copy(atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[idx:]]).flatten(),4:7])
 			chosen_pos = 0
 			atoms2rotate = atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[idx:]]).flatten()]
 			#print "Starting energy is "+str(energy)+"\n\n"
+			finish = time.time()
+			print "Initialization time is "+str(finish-start)
 			if(keep_original):
+				start = time.time()
 				lmp.command("run 1 pre no post no")
 				pe = lmp.extract_compute("pair_pe",0,0)
 				delta_pe = pe-energy
 				print "Angle is original, pe is "+str(pe)+" delpe is "+str(delta_pe)+"\n"
 				probs[numtrials-1] = exp(-beta*delta_pe) if -beta*delta_pe<700 else float('inf')
-			#finish = time.time()
-			#print "Initialization time is "+str(finish-start)
+				energies[numtrials-1] = pe
+				finish = time.time()
+				print "Original evaluation time is "+str(finish-start)
 			#start = time.time()
 			for i in xrange(actual_trials):
+				start = time.time()
 				chosen_index = np.searchsorted(dih_cdf[:,1],rnd.uniform(0,1))
 				angle = dih_cdf[chosen_index,0]
 				newpositions = rotate_dihedral_quat(dih_atoms,angle,atoms2rotate)
 				positions[i,:,:] = newpositions[:,4:7]
 				atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[idx:]]).flatten()] = newpositions
+				#finish = time.time()
+				#print "Time to update positions is "+str(finish-start)
 				#dih_atoms[3,4:7] = positions[i,0,:]
 				update_coords(atoms,lmp)
+				#start = time.time()
 				lmp.command("run 1 pre no post no")
+				finish = time.time()
+				print "Time to perform one energy evaluation "+str(finish-start)
 				pe = lmp.extract_compute("pair_pe",0,0)
 				delta_pe = pe-energy
 				#print "Energy is "+str(pe)+" delPE is "+str(delta_pe)+" angle is "+str(angle)
 				probs[i] = exp(-beta*(delta_pe)) if -beta*(delta_pe)<700 else float('inf')
+				energies[i] = pe
 			finish = time.time()
 			#print "Evaluating trials takes "+str(finish-start)
 			#print "Probabilities are "+str(probs)
 			if(keep_original):
+				energy = energies[numtrials-1]
 				for count,position in enumerate(original_pos):
-                                        atoms[np.where(atoms[:,0]==mol[idx+count])[0],4:7] = position
+					atoms[np.where(atoms[:,0]==mol[idx+count])[0],4:7] = position
 			else:
 				angle_cdf = np.cumsum(probs)/np.sum(probs)
 				chosen_pos = np.searchsorted(angle_cdf,rnd.uniform(0,1))
+				energy = energies[chosen_pos]
 				for count,position in enumerate(positions[chosen_pos]):
 					atoms[np.where(atoms[:,0]==mol[idx+count])[0],4:7] = position
 			update_coords(atoms,lmp)
-			#lmp.command("run 1 post no")
+			#lmp.command("run 1 pre no post no")
 		stepweight=np.sum(probs) if idx>2 else 1
 		weight1*=stepweight
 	lmp.command("neigh_modify exclude none")
 	lmp.command("neigh_modify exclude type 1 1")
 	totalfinish = time.time()
 	print "Total regrow time is "+str(totalfinish-totalstart)
-	return (weight1,atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[idx:]]).flatten(),4:7])
+	return (weight1,atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[startindex:]]).flatten()])
 			
 
 
@@ -215,14 +236,18 @@ def cbmc(atoms,mol,beta,lmp,dih_cdf,startindex):
 	#startindex = rnd.choice(range(1,len(mol)))
 	atoms2del = mol[startindex:].astype(int)
 	#print "Atoms to delete are "+str(atoms2del)
-	(weight0,new_positions) = regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=True)
+	(weight0,original_positions) = regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=True)
 	(weight1,new_positions) = regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials)
 	acceptance_prob = weight1/weight0 if weight0>0 else float('inf')
 	print "Weight1 is "+str(weight1)+" weight0 is "+str(weight0)
 	if(rnd.uniform(0,1)>acceptance_prob):
-		return (False,weight1,weight0)
+		print atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[startindex:]]).flatten()].shape
+		print original_positions.shape
+		atoms[np.array([np.where(atoms[:,0]==atom)[0] for atom in mol[startindex:]]).flatten()] = original_positions
+		update_coords(atoms,lmp)
+		return (False,weight1,weight0,original_positions)
 	else:
-		return (True,weight1,weight0)
+		return (True,weight1,weight0,original_positions)
 
 if __name__ == "__main__":
 	T=298
@@ -303,6 +328,7 @@ if __name__ == "__main__":
 			cbmcs=0
 			cbmcs_accepted=0
 		if(move=='swap'):
+			start = time.time()
 			swaps+=1
 			print "swapping"
 			ddtmol = rnd.choice(ddts)
@@ -312,9 +338,10 @@ if __name__ == "__main__":
 			#ddtmol_id = rnd.choice(ddtMols)
 			#meohmol_id = rnd.choice(meohMols)
 			swapMolecules(ddtmol_id,meohmol_id,atoms,centerRotation,rotationtype)
-			ddt_accepted = cbmc(atoms,ddtmol,beta,lmp,dih_cdf_norm,3)
-			meoh_accepted = cbmc(atoms,meohmol,beta,lmp,dih_cdf_norm,3)
-			
+			#ddt_accepted = cbmc(atoms,ddtmol,beta,lmp,dih_cdf_norm,3)
+			#meoh_accepted = cbmc(atoms,meohmol,beta,lmp,dih_cdf_norm,3)
+			finish = time.time()
+			print "Swap time is "+str(finish-start)
 		elif(move=='rotate'):
 			rotates+=1
 			print "rotating"
