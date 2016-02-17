@@ -249,11 +249,21 @@ def cbmc(atoms,mol,beta,lmp,dih_cdf,startindex):
 	else:
 		return (True,weight1,weight0,original_positions)
 
+def randomShift(atoms,molId,max_radius):
+	atomIndices = np.where((atoms[:,1]==molId))[0]
+	radius = rnd.uniform(0,max_radius)
+	phi = rnd.uniform(0,2*pi)
+	theta = rnd.uniform(0,pi)
+	shiftX = radius*sin(theta)*cos(phi)
+	shiftY = radius*sin(theta)*sin(phi)
+	shiftZ = radius*cos(theta)	
+	shiftMolecule(atoms,atomIndices,shiftX,shiftY,shiftZ)
+
 if __name__ == "__main__":
-	T=298
+	T=278
 	kb = 0.0019872041
 	beta = 1/(kb*T)
-	tries = 200000
+	tries = 400000
 	agID = 1
 	ch2ID = 2
 	ch3ID = 3
@@ -274,7 +284,10 @@ if __name__ == "__main__":
 	dih_cdf = np.cumsum(np.exp(-beta*dih_potential[:,1]))
 	dih_cdf_norm = dih_cdf/dih_cdf[dih_cdf.shape[0]-1]
 	dih_cdf_norm = np.hstack((dih_potential[:,0].reshape((dih_cdf.shape[0],1)),dih_cdf_norm.reshape((dih_cdf.shape[0],1))))
+	
 	max_angle = 0.34906585
+	max_radius = 1.4	
+
 	inputfile = 'addmolecule_184_rand.lmp'
 	(atoms,bonds,angles,dihedrals) = rdlmp.readAll(inputfile)
 	natoms = atoms.shape[0]
@@ -308,6 +321,8 @@ if __name__ == "__main__":
 	swaps_accepted=0
 	rotates=0
 	rotates_accepted=0
+	shifts = 0
+	shifts_accepted = 0
 	cbmcs=0
 	cbmcs_accepted=0
 	for i in xrange(tries):
@@ -316,15 +331,17 @@ if __name__ == "__main__":
 		pe_old = pe
 		atoms_old = np.copy(atoms)
 		coord_old = coords
-		move = rnd.choice(['swap','cbmc','rotate'])
+		move = rnd.choice(['swap','cbmc','rotate','shift'])
 		if((i+1)%100==0):
-			acceptancefile.write(str(i)+'\t'+str(swaps)+'\t'+str(float(swaps_accepted)/float(swaps+0.01))+'\t'+str(rotates)+'\t'+str(float(rotates_accepted)/float(rotates+0.01))+'\t'+str(cbmcs)+'\t'+str(float(cbmcs_accepted)/float(cbmcs+0.01))+'\n')
+			acceptancefile.write(str(i)+'\t'+str(swaps)+'\t'+str(float(swaps_accepted)/float(swaps+0.01))+'\t'+str(rotates)+'\t'+str(float(rotates_accepted)/float(rotates+0.01))+'\t'+str(cbmcs)+'\t'+str(float(cbmcs_accepted)/float(cbmcs+0.01))+'\t'+str(shifts)+'\t'+str(float(shifts_accepted)/float(shifts+0.01))+'\n')
 			lmp.command("write_data configuration_"+str(i)+".lmp")
 			acceptancefile.flush()
 			swaps=0
 			swaps_accepted=0
 			rotates=0
 			rotates_accepted=0
+			shifts=0
+			shifts_accepted=0
 			cbmcs=0
 			cbmcs_accepted=0
 		if(move=='swap'):
@@ -347,6 +364,11 @@ if __name__ == "__main__":
 			print "rotating"
 			molId = rnd.choice(molIDs)
 			randomRotate(atoms,molId,max_angle)
+		elif(move=='shift'):
+			shifts+=1
+			print "shifting"
+			molId = rnd.choice(molIDs)
+			randomShift(atoms,molId,max_radius)
 		elif(move=='cbmc'):
 			cbmcs+=1
 			print "\n\nCBMC Move\n\n"
@@ -381,8 +403,10 @@ if __name__ == "__main__":
 			print "Move accepted"
 			if(move=='rotate'):
 				rotates_accepted+=1
-			else:
+			elif(move=='swap'):
 				swaps_accepted+=1
+			elif(move=='shift'):
+				shifts_accepted+=1
 		else:
 			print "Move rejected"
 			atoms = atoms_old
