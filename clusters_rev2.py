@@ -62,15 +62,17 @@ if __name__ == "__main__":
 
 	indegree=0
 	outdegree=0
-	print "Number of clusters is "+str(nwkx.number_strongly_connected_components(directed_graph))
-	print "Average cluster size is "+str(float(newch3s.shape[0])/float(nwkx.number_strongly_connected_components(directed_graph)))
 	sorted_clusters = sorted(nwkx.strongly_connected_components(directed_graph),key=len,reverse=True)
+	numclusters = len(sorted_clusters)
+	avgclusters = float(newch3s.shape[0])/float(numclusters)
 	sizes = [len(x) for x in sorted_clusters]
-	print "Median cluster size is "+str(np.median(sizes))
-	print "Max cluster size is "+str(np.amax(sizes))
-	
 	cluster_xyzfile.write(str(newch3s.shape[0])+"\n\n")
 	cluster_num=0
+
+	mdnclusters = np.median(sizes)
+	maxclusters = np.amax(sizes)
+	print str(numclusters)+'\t'+str(avgclusters)+'\t'+str(mdnclusters)+'\t'+str(maxclusters)
+
 	for cluster in sorted_clusters:
 		cluster_num+=1
 		for mol in cluster:

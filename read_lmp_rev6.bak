@@ -9,14 +9,14 @@ import itertools as itt
 
 def readAtoms(filename):
 	input = open(filename,"r")
-	#print "reading file " + filename
+	print "reading file " + filename
 	currentId=0
 	line = input.readline()
 	out = line.find("atoms")
 	while(out==-1):
 		line = input.readline()
 		out = line.find("atoms")
-	#print line
+	print line
 	numwords = line.split()
 	numatms = int(numwords[0])
 	atoms = np.zeros((numatms,7))
@@ -36,14 +36,14 @@ def readAtoms(filename):
 
 def readBonds(filename):
         input = open(filename,"r")
-        #print "reading file " + filename
+        print "reading file " + filename
         currentId=0
         line = input.readline()
         out = line.find("bonds")
         while(out==-1):
                 line = input.readline()
                 out = line.find("bonds")
-        #print line
+        print line
         numwords = line.split()
         numbonds = int(numwords[0])
         bonds = np.zeros((numbonds,4))
@@ -60,14 +60,14 @@ def readBonds(filename):
 
 def readAngles(filename):
 	input = open(filename,"r")
-        #print "reading file " + filename
+        print "reading file " + filename
         currentId=0
         line = input.readline()
         out = line.find("angles")
         while(out==-1):
                 line = input.readline()
                 out = line.find("angles")
-        #print line
+        print line
         numwords = line.split()
         numangles = int(numwords[0])
         angles = np.zeros((numangles,5))
@@ -84,14 +84,14 @@ def readAngles(filename):
 
 def readDihedrals(filename):
         input = open(filename,"r")
-        #print "reading file " + filename
+        print "reading file " + filename
         currentId=0
         line = input.readline()
         out = line.find("dihedrals")
         while(out==-1):
                 line = input.readline()
                 out = line.find("dihedrals")
-        #print line
+        print line
         numwords = line.split()
         numdiheds = int(numwords[0])
         diheds = np.zeros((numdiheds,6))
@@ -397,33 +397,6 @@ def getMoleculeAtoms(bonds,startID):
 		bondedAtoms = getBondedAtoms(bonds,actAtoms[0])
 		actAtoms = [atom for atom in bondedAtoms if ((atom>0) and (not (atom in atomIDs)))]
 	return atomIDs
-
-def initializeMols(atoms,bonds):
-    ch3ID = 3
-    sulfurID = 4
-    oxygenID = 5
-    
-    sulfurMols = atoms[np.where(atoms[:,2]==sulfurID)][:,1]
-    ddtMols = np.intersect1d(atoms[np.where(atoms[:,2]==ch3ID)][:,1],sulfurMols)
-    meohMols = np.intersect1d(atoms[np.where(atoms[:,2]==oxygenID)][:,1],sulfurMols)
-    ethMols = np.intersect1d(atoms[np.where(atoms[:,2]==oxygenID)][:,1],atoms[np.where(atoms[:,2]==ch3ID)][:,1])
-
-    ddtsulfurs = [atom[0] for atom in atoms if (atom[2]==sulfurID and (atom[1] in ddtMols))]
-    meohsulfurs = [atom[0] for atom in atoms if (atom[2]==sulfurID and (atom[1] in meohMols))]
-    eth_ch3s = [atom[0] for atom in atoms if (atom[2]==ch3ID and (atom[1] in ethMols))]
-
-    ddts = np.empty([ddtMols.shape[0],13])
-    meohs = np.empty([meohMols.shape[0],5])
-    eths = np.empty([ethMols.shape[0],4])          
-
-    for idx,(ddtsulfur,meohsulfur,eth_ch3) in enumerate(itt.izip_longest(ddtsulfurs,meohsulfurs,eth_ch3s)):
-        if(not (ddtsulfur==None)):
-            ddts[idx,:] = getMoleculeAtoms(bonds,ddtsulfur)
-        if(not (meohsulfur==None)):
-            meohs[idx,:] = getMoleculeAtoms(bonds,meohsulfur)
-        if(not (eth_ch3==None)):
-            eths[idx,:] = getMoleculeAtoms(bonds,eth_ch3)   
-    return (ddts,meohs,eths)
 
 if __name__ == "__main__":
 	inputfile=sys.argv[1]

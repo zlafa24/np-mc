@@ -302,7 +302,7 @@ if __name__ == "__main__":
     #lmp = lammps("",["-screen","lammps.out"])
     #lmp = lammps()
     print "Running equilibration steps..."
-    lmp.file("ddt_me_200.lmi")
+    lmp.file("in.lmi")
     lmp.command("compute pair_pe all pe pair")
     lmp.command("neigh_modify exclude type 1 1")
     #lmp.command("compute unique all pe/atom pair")

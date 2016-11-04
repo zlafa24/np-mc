@@ -59,6 +59,14 @@ print "x of silver atoms is "+str(np.amin(silveratoms[:,4]))+"-"+str(np.amax(sil
 print "y of silver atoms is "+str(np.amin(silveratoms[:,5]))+"-"+str(np.amax(silveratoms[:,5]))
 print "z of silver atoms is "+str(np.amin(silveratoms[:,6]))+"-"+str(np.amax(silveratoms[:,6]))
 
+def checkCollision(newcoords,atoms):
+		dists = [np.linalg.norm(newcoords-coord) for coord in atoms[:,4:7] ]
+		collisions=[dist for dist in dists if dist<2.8]
+		if(len(collisions)>0):
+			print "Collision imminent"
+			print "collsions are:"+str(collisions)
+		return (len(collisions)>0)
+
 def selectMolecule(molecules,molId): 
 	molBonds=np.array([])
 	molAngles=np.array([])
@@ -81,6 +89,7 @@ def selectMolecule(molecules,molId):
 	newangles=np.take(angles,molAngles,0)
 	newdiheds=np.take(diheds,molDiheds,0)
 	return (newatoms,newbonds,newangles,newdiheds)
+
 phi=0.01
 theta=0
 
@@ -107,14 +116,17 @@ for mol in range(numLigands):
 	if(config_list[molnumber]==1):
 		newmolecule = selectMolecule(molecules,ddtmols[0])
 	else:
-                newmolecule = selectMolecule(molecules,meohmols[0])
+		newmolecule = selectMolecule(molecules,meohmols[0])
 	molnumber+=1
 
 	atoms = newmolecule[0]
 	sulfur = atoms[(atoms[:,2]==4)]
+	newtheta =theta+dPhi/sin(phi)
+	newcoords = [r*sin(phi)*cos(newtheta)+center[0],r*sin(phi)*sin(newtheta)+center[1],r*cos(phi)+center[2]]
 	if(sulfur.size==0):
 		continue
-	if((r*sin(phi)*((2*pi+row*sqrt(3)*cos(30)-theta-dPhi/sin(phi))))<2.8):
+	#if(((r*sin(phi)*((2*pi+row*sqrt(3)*cos(30)-newtheta)))<2.8) or checkCollision(newcoords,blankmolecule[0])):
+	if(checkCollision(newcoords,blankmolecule[0])):
 		row+=1
 		theta=row*sqrt(3)*cos(30)
 		phi+=dPhi 
