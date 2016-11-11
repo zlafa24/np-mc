@@ -271,7 +271,7 @@ if __name__ == "__main__":
     oxygenID = 5
     hydrogenID = 6
 
-    centerRotation = [40.9,40.9,40.9]
+    centerRotation = [0.,0.,0.]
     rotationtype = 'align'
 
     potentialfile = open('Potential_Energy.txt','w')
@@ -288,7 +288,7 @@ if __name__ == "__main__":
     max_angle = 0.34906585
     max_radius = 1.4    
 
-    inputfile = 'addmolecule_184_rand.lmp'
+    inputfile = 'system.data'
     (atoms,bonds,angles,dihedrals) = rdlmp.readAll(inputfile)
     print "Initializing atoms from lmp input file..."
     natoms = atoms.shape[0]
@@ -302,21 +302,16 @@ if __name__ == "__main__":
     #lmp = lammps("",["-screen","lammps.out"])
     #lmp = lammps()
     print "Running equilibration steps..."
-    lmp.file("in.lmi")
+    lmp.file("system.in")
+    lmp.command("minimize 1.0e-5 1.0e-7 1000 10000")
     lmp.command("compute pair_pe all pe pair")
     lmp.command("neigh_modify exclude type 1 1")
     #lmp.command("compute unique all pe/atom pair")
-    lmp.command("run 1 pre no post yes")
+    #lmp.command("read_data relaxed.lmp")
+    #lmp.command("run 1")
     #cont = raw_input("continue?")
     pe = lmp.extract_compute("thermo_pe",0,0)
-    #print "Extracted pe is "+str(pe)
-    #print "About to print per atom energies"
-    #print "Per atom energies are: "
-    #pe_atom1 = lmp.extract_compute("unique",1,1)[0]
-    #print pe_atom1
-    #forces = lmp.extract_atom("type",0)
-    #for i in xrange(4299):
-    #   print forces[i]
+    
     coords = lmp.gather_atoms("x",1,3)
     atoms = atoms[atoms[:,0].argsort()]
     loop_start = time.time()

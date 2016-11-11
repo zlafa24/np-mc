@@ -6,6 +6,7 @@ from math import *
 import sys
 import random as rnd
 import networkx as nwkx
+import getopt
 
 def getDist(atom1,atom2):
 	dist = sqrt((atom1[0,4]-atom2[0,4])**2+(atom1[0,5]-atom2[0,5])**2+(atom1[0,6]-atom2[0,6])**2)
@@ -43,12 +44,25 @@ def createGraph(atoms,cutoff):
 		DG.add_weighted_edges_from(connections)
 	return DG	
 
-if __name__ == "__main__":
+if __name__ == "__main__":	
 	ch3Id = 3
-	filename=sys.argv[1]
+	try:
+		opts, args = getopt.getopt(sys.argv[1:],'f:i:d:')
+	except getopt.GetoptError:
+		usage()
+		sys.exit(2)
+
+	for opt,arg in opts:
+		if opt == '-i':
+			ch3Id =arg
+		elif opt=='-f':
+			filename = arg
+		elif opt=='-d':
+			distCrit = float(arg)
+	#filename=sys.argv[1]
 	cluster_xyzfile = open("cluster.xyz",mode='w')
 	atoms = rdlmp.readAtoms(filename)
-	distCrit=float(sys.argv[2])
+	#distCrit=float(sys.argv[2])
 	
 	#Find CH3 atoms
 	ch3s = atoms[(atoms[:,2]==ch3Id)]
@@ -73,11 +87,11 @@ if __name__ == "__main__":
 	maxclusters = np.amax(sizes)
 	print str(numclusters)+'\t'+str(avgclusters)+'\t'+str(mdnclusters)+'\t'+str(maxclusters)
 
-	for cluster in sorted_clusters:
-		cluster_num+=1
-		for mol in cluster:
-			curatom = newch3s[(newch3s[:,1]==mol)]
-			cluster_xyzfile.write(str(cluster_num)+"\t"+str(curatom[0,4])+"\t"+str(curatom[0,5])+"\t"+str(curatom[0,6])+"\n")
+	#for cluster in sorted_clusters:
+	#	cluster_num+=1
+	#	for mol in cluster:
+	#		curatom = newch3s[(newch3s[:,1]==mol)]
+	#		cluster_xyzfile.write(str(cluster_num)+"\t"+str(curatom[0,4])+"\t"+str(curatom[0,5])+"\t"+str(curatom[0,6])+"\n")
 
 
 
