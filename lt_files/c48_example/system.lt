@@ -1,0 +1,51 @@
+import "glotzer_ff.lt"
+import "begin_cap.lt"
+import "end_cap.lt"
+import "2bead.lt"
+
+
+bcap = new Begin_cap.rot(0,1,0,0).move(-2.042,0,0) 
+beads = new 2bead [22].rot(180,1,0,0).move(2.042,0,0) 
+ecap = new End_cap.move(33.789,0,0)
+
+write("Data Bonds"){
+	$bond:bb1 @bond:2bead/CC $atom:bcap/C1 $atom:beads[0]/C1
+	$bond:bb2 @bond:2bead/CC $atom:beads[0]/C2 $atom:beads[1]/C1
+	$bond:bb3 @bond:2bead/CC $atom:beads[1]/C2 $atom:beads[2]/C1
+	$bond:bb4 @bond:2bead/CC $atom:beads[2]/C2 $atom:beads[3]/C1
+	$bond:bb5 @bond:2bead/CC $atom:beads[3]/C2 $atom:beads[4]/C1
+	$bond:bb6 @bond:2bead/CC $atom:beads[4]/C2 $atom:beads[5]/C1
+	$bond:bb7 @bond:2bead/CC $atom:beads[5]/C2 $atom:beads[6]/C1
+	$bond:bb8 @bond:2bead/CC $atom:beads[6]/C2 $atom:beads[7]/C1
+	$bond:bb9 @bond:2bead/CC $atom:beads[7]/C2 $atom:beads[8]/C1
+	$bond:bb10 @bond:2bead/CC $atom:beads[8]/C2 $atom:beads[9]/C1
+	$bond:bb11 @bond:2bead/CC $atom:beads[9]/C2 $atom:beads[10]/C1
+	$bond:bb12 @bond:2bead/CC $atom:beads[10]/C2 $atom:beads[11]/C1
+	$bond:bb13 @bond:2bead/CC $atom:beads[11]/C2 $atom:beads[12]/C1
+	$bond:bb14 @bond:2bead/CC $atom:beads[12]/C2 $atom:beads[13]/C1
+	$bond:bb15 @bond:2bead/CC $atom:beads[13]/C2 $atom:beads[14]/C1
+	$bond:bb16 @bond:2bead/CC $atom:beads[14]/C2 $atom:beads[15]/C1
+	$bond:bb17 @bond:2bead/CC $atom:beads[15]/C2 $atom:beads[16]/C1
+	$bond:bb18 @bond:2bead/CC $atom:beads[16]/C2 $atom:beads[17]/C1
+	$bond:bb19 @bond:2bead/CC $atom:beads[17]/C2 $atom:beads[18]/C1
+	$bond:bb20 @bond:2bead/CC $atom:beads[18]/C2 $atom:beads[19]/C1
+	$bond:bb21 @bond:2bead/CC $atom:beads[19]/C2 $atom:beads[20]/C1
+	$bond:bb22 @bond:2bead/CC $atom:beads[20]/C2 $atom:beads[21]/C1
+	$bond:bb23 @bond:2bead/CC $atom:beads[21]/C2 $atom:ecap/C11
+}
+
+write_once("Data Boundary"){
+	-50.0 50.0 xlo xhi
+	-50.0 50.0 ylo yhi
+	-50.0 50.0 zlo zhi
+
+}
+write_once("In Run"){
+	dump dxyz all xyz 10 md.xyz
+	thermo 100
+	minimize 1.0e-5 1.0e-7 1000 10000
+	timestep 1.0
+	fix   fxnvt all nvt temp 300.0 300.0 500.0 tchain 1
+	run   50000
+}
+ 

@@ -1,0 +1,3 @@
+		$/angle:meohs[0]/SCC	@/angle:MEOH/SCC $/atom:meohs[0]/S $/atom:meohs[0]/C1 $/atom:meohs[0]/C2
+		$/angle:meohs[0]/CCO	@/angle:MEOH/CCO $/atom:meohs[0]/C1 $/atom:meohs[0]/C2 $/atom:meohs[0]/O
+		$/angle:meohs[0]/COH  @/angle:MEOH/COH $/atom:meohs[0]/C2 $/atom:meohs[0]/O $/atom:meohs[0]/H

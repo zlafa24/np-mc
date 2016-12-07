@@ -1,0 +1,12 @@
+		$/bond:ddts[0]/SC @/bond:Glotzer/SC $/atom:ddts[0]/S $/atom:ddts[0]/C1
+		$/bond:ddts[0]/CC1 @/bond:Glotzer/CC $/atom:ddts[0]/C1 $/atom:ddts[0]/C2
+		$/bond:ddts[0]/CC2 @/bond:Glotzer/CC $/atom:ddts[0]/C2 $/atom:ddts[0]/C3
+        $/bond:ddts[0]/CC3 @/bond:Glotzer/CC $/atom:ddts[0]/C3 $/atom:ddts[0]/C4      
+        $/bond:ddts[0]/CC4 @/bond:Glotzer/CC $/atom:ddts[0]/C4 $/atom:ddts[0]/C5      
+        $/bond:ddts[0]/CC5 @/bond:Glotzer/CC $/atom:ddts[0]/C5 $/atom:ddts[0]/C6
+        $/bond:ddts[0]/CC6 @/bond:Glotzer/CC $/atom:ddts[0]/C6 $/atom:ddts[0]/C7
+		$/bond:ddts[0]/CC7 @/bond:Glotzer/CC $/atom:ddts[0]/C7 $/atom:ddts[0]/C8 
+		$/bond:ddts[0]/CC8 @/bond:Glotzer/CC $/atom:ddts[0]/C8 $/atom:ddts[0]/C9
+        $/bond:ddts[0]/CC9 @/bond:Glotzer/CC $/atom:ddts[0]/C9 $/atom:ddts[0]/C10
+        $/bond:ddts[0]/CC10 @/bond:Glotzer/CC $/atom:ddts[0]/C10 $/atom:ddts[0]/C11
+		$/bond:ddts[0]/CC11 @/bond:Glotzer/CC $/atom:ddts[0]/C11 $/atom:ddts[0]/C12 

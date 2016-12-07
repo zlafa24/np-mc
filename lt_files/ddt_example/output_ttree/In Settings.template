@@ -1,0 +1,17 @@
+		pair_coeff *		*		 coul/wolf
+		pair_coeff @/atom:Glotzer/C2 @/atom:Glotzer/C2 lj/cut 0.118  3.905
+		pair_coeff @/atom:Glotzer/C3 @/atom:Glotzer/C3 lj/cut 0.175  3.905
+		pair_coeff @/atom:Glotzer/S  @/atom:Glotzer/S	 lj/cut	0.39743	4.25
+
+		pair_coeff	@/atom:Glotzer/C2 @/atom:Glotzer/C3	lj/cut	0.143701079	3.905
+		pair_coeff	@/atom:Glotzer/C2 @/atom:Glotzer/S	lj/cut	0.216556552	4.0775
+		pair_coeff	@/atom:Glotzer/C3 @/atom:Glotzer/S	lj/cut	0.263723814	4.0775
+
+		bond_coeff	@/bond:Glotzer/CC harmonic 260 1.54
+		bond_coeff  @/bond:Glotzer/SC harmonic 222 1.81
+
+		angle_coeff @/angle:Glotzer/SCC harmonic 62.5 114.4
+		angle_coeff @/angle:Glotzer/CCC harmonic 63.0 109.47
+		
+		dihedral_coeff @/dihedral:Glotzer/SCCC opls 2.8238 -0.54374 6.294058 0.
+		dihedral_coeff @/dihedral:Glotzer/CCCC opls 2.8238 -0.54374 6.294058 0.

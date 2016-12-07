@@ -1,0 +1,43 @@
+Glotzer{
+	write_once("Data Masses"){
+		@atom:C2	14.02658
+		@atom:C3	15.03452
+		@atom:S		32.065
+	}
+	write_once("Data Angles By Type"){
+		@angle:SCC @atom:S  @atom:C* @atom:C* @bond:SC @bond:CC
+		@angle:CCC @atom:C* @atom:C* @atom:C* @bond:CC @bond:CC
+	}
+	write_once("Data Dihedrals By Type"){
+		@dihedral:SCCC @atom:S @atom:C* @atom:C* @atom:C* @bond:SC @bond:CC @bond:CC
+		@dihedral:CCCC @atom:C* @atom:C* @atom:C* @atom:C* @bond:CC @bond:CC @bond:CC
+	}
+	write_once("In Settings"){
+		pair_coeff *		*		 coul/wolf
+		pair_coeff @atom:C2 @atom:C2 lj/cut 0.118  3.905
+		pair_coeff @atom:C3 @atom:C3 lj/cut 0.175  3.905
+		pair_coeff @atom:S  @atom:S	 lj/cut	0.39743	4.25
+
+		pair_coeff	@atom:C2 @atom:C3	lj/cut	0.143701079	3.905
+		pair_coeff	@atom:C2 @atom:S	lj/cut	0.216556552	4.0775
+		pair_coeff	@atom:C3 @atom:S	lj/cut	0.263723814	4.0775
+
+		bond_coeff	@bond:CC harmonic 260 1.54
+		bond_coeff  @bond:SC harmonic 222 1.81
+
+		angle_coeff @angle:SCC harmonic 62.5 114.4
+		angle_coeff @angle:CCC harmonic 63.0 109.47
+		
+		dihedral_coeff @dihedral:SCCC opls 2.8238 -0.54374 6.294058 0.
+		dihedral_coeff @dihedral:CCCC opls 2.8238 -0.54374 6.294058 0.
+	}
+	write_once("In Init"){
+		units real
+		atom_style full
+		pair_style hybrid/overlay lj/cut 10.0 coul/wolf 0.2 15.0
+		bond_style hybrid harmonic
+		angle_style hybrid harmonic
+		dihedral_style hybrid opls
+		pair_modify mix arithmetic
+	}
+}

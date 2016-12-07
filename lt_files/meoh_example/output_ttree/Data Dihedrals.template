@@ -1,0 +1,2 @@
+		$/dihedral:meohs[0]/SCCO @/dihedral:MEOH/SCCO $/atom:meohs[0]/S $/atom:meohs[0]/C1 $/atom:meohs[0]/C2 $/atom:meohs[0]/O
+		$/dihedral:meohs[0]/CCOH @/dihedral:MEOH/CCOH $/atom:meohs[0]/C1 $/atom:meohs[0]/C2 $/atom:meohs[0]/O $/atom:meohs[0]/H

@@ -1,0 +1,9 @@
+import "ddt.lt"
+
+ddts = new DDT[1]
+
+write_once("Data Boundary"){
+	-50. 50. xlo xhi
+	-50. 50. ylo yhi
+	-50. 50. zlo zhi
+}

@@ -1,0 +1,13 @@
+import "meoh.lt"
+
+meohs = new MEOH[1]
+
+write_once("In Run"){
+	timestep 1.0
+}
+
+write_once("Data Boundary"){
+	-50.0 50.0 xlo xhi
+	-50.0 50.0 ylo yhi
+	-50.0 50.0 zlo zhi
+}

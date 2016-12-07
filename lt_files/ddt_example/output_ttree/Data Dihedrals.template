@@ -1,0 +1,10 @@
+$/dihedral:bytype1 @/dihedral:Glotzer/SCCC $/atom:ddts[0]/S $/atom:ddts[0]/C1 $/atom:ddts[0]/C2 $/atom:ddts[0]/C3
+$/dihedral:bytype2 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C9 $/atom:ddts[0]/C10 $/atom:ddts[0]/C11 $/atom:ddts[0]/C12
+$/dihedral:bytype3 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C1 $/atom:ddts[0]/C2 $/atom:ddts[0]/C3 $/atom:ddts[0]/C4
+$/dihedral:bytype4 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C2 $/atom:ddts[0]/C3 $/atom:ddts[0]/C4 $/atom:ddts[0]/C5
+$/dihedral:bytype5 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C3 $/atom:ddts[0]/C4 $/atom:ddts[0]/C5 $/atom:ddts[0]/C6
+$/dihedral:bytype6 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C4 $/atom:ddts[0]/C5 $/atom:ddts[0]/C6 $/atom:ddts[0]/C7
+$/dihedral:bytype7 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C5 $/atom:ddts[0]/C6 $/atom:ddts[0]/C7 $/atom:ddts[0]/C8
+$/dihedral:bytype8 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C6 $/atom:ddts[0]/C7 $/atom:ddts[0]/C8 $/atom:ddts[0]/C9
+$/dihedral:bytype9 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C7 $/atom:ddts[0]/C8 $/atom:ddts[0]/C9 $/atom:ddts[0]/C10
+$/dihedral:bytype10 @/dihedral:Glotzer/CCCC $/atom:ddts[0]/C8 $/atom:ddts[0]/C9 $/atom:ddts[0]/C10 $/atom:ddts[0]/C11

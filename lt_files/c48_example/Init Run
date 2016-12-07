@@ -1,0 +1,2 @@
+	dump dxyz all xyz 10 md.xyz
+	minimize 1.0e-5 1.0e-7 1000 10000

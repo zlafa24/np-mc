@@ -24,6 +24,9 @@ def initializeMols(atoms,bonds):
     ch3ID = 3
     sulfurID = 4
     oxygenID = 5
+    
+    ddtMols = atoms[np.where(atoms[:,2]==ch3ID)][:,1]
+    meohMols = atoms[np.where(atoms[:,2]==oxygenID)][:,1]
 
     ddtsulfurs = [atom[0] for atom in atoms if (atom[2]==sulfurID and (atom[1] in ddtMols))]
     meohsulfurs = [atom[0] for atom in atoms if (atom[2]==sulfurID and (atom[1] in meohMols))]
@@ -66,14 +69,10 @@ def rotate_dihedral_quat(dih_atoms,angle,atoms2rotate):
         atom[4:7] = rot_quat((atom[4:7]-dih_atoms[2,4:7]),rot_angle,rot_axis)+dih_atoms[2,4:7]
     return atoms2rotate
 
-
-
 def calc_dih_angle(dih_atoms):
     b1 = dih_atoms[1,4:7]-dih_atoms[0,4:7]
     b2 = dih_atoms[2,4:7]-dih_atoms[1,4:7]
     b3 = dih_atoms[3,4:7]-dih_atoms[2,4:7]
-    #b4 = np.cross(b1,b2)
-    #b5 = np.cross(b2,b4)
     b2norm = b2/np.linalg.norm(b2)
     n1 = np.cross(b1,b2)/np.linalg.norm(np.cross(b1,b2))
     n2 = np.cross(b2,b3)/np.linalg.norm(np.cross(b2,b3))
@@ -81,31 +80,23 @@ def calc_dih_angle(dih_atoms):
     angle = atan2(np.dot(m1,n2),np.dot(n1,n2))
     angle=((angle-pi)*(-1)+2*pi)%(2*pi)
     return angle
-    #angle =  atan2(np.dot(b3,b4),np.dot(b3,b5)*sqrt(np.dot(b2,b2)))
-    #norm_angle = angle if angle>=0 else 2*pi+angle
-    #return norm_angle
 
 def rotate_dihedral(dih_atoms,angle,atoms2rotate):
     b2 = dih_atoms[2,4:7]-dih_atoms[1,4:7]
     b3 = dih_atoms[3,4:7]-dih_atoms[2,4:7]
     rot_axis = b2/np.linalg.norm(b2)
     init_vector = b3
-    #n1 = np.cross((dih_atoms[1,4:7]-dih_atoms[0,4:7]),rot_axis)
-    #n2 = np.cross((dih_atoms[3,4:7]-dih_atoms[2,4:7]),rot_axis)
-    #init_angle = np.arccos(np.dot((n1/np.linalg.norm(n1)),(n2/np.linalg.norm(n2))))
     init_angle = calc_dih_angle(dih_atoms)
     rot_angle = angle-init_angle
-    #print "Initial angle is "+str(init_angle)+" desired angle is "+str(angle)+" therefore rotating "+str(rot_angle)
     skewmat = np.array([[0,-rot_axis[2],rot_axis[1]],[rot_axis[2],0,-rot_axis[0]],[-rot_axis[1],rot_axis[0],0]])
     rot_matrix = np.identity(3)+sin(rot_angle)*skewmat+(2*sin(rot_angle/2)**2)*np.linalg.matrix_power(skewmat,2)
-    #print "\nDihedral atoms looks like this "+str(dih_atoms[:,4:7])+"\n"
     for atom in atoms2rotate:   
         atom[4:7] = atom[4:7] - dih_atoms[2,4:7]
         atom[4:7] = np.transpose(np.dot(rot_matrix,np.transpose(atom[4:7])))+dih_atoms[2,4:7]
-    #print "\nNow dihedral atoms looks like this "+str(dih_atoms[:,4:7])+"\n"
     return atoms2rotate
 
 def update_coords(atoms,lmp):
+    atoms = atoms[np.argsort(atoms[:,0],axis=0)] 
     coords = lmp.gather_atoms("x",1,3)
     for idx in xrange(atoms.shape[0]):
         coords[idx*3]=atoms[idx,4]
@@ -121,7 +112,6 @@ def delete_chain(mol,delindex,lmp,delete=True):
         lmp.command("group restOfchain id "+(" ".join([str(atom) for atom in atoms2del])))
         lmp.command("neigh_modify exclude group restOfchain all")
         lmp.command("delete_bonds restOfchain multi any")
-        #lmp.command("group restOfchain delete")
     else:
         lmp.command("neigh_modify exclude none")
         lmp.command("group beginOfchain id 1")  
@@ -133,9 +123,6 @@ def delete_chain(mol,delindex,lmp,delete=True):
             lmp.command("group restOfchain id "+(" ".join([str(atom) for atom in mol[(delindex+1):].astype(int)])))
             lmp.command("neigh_modify exclude group restOfchain all")
         lmp.command("delete_bonds beginOfchain multi undo")
-                #lmp.command("group beginOfchain delete")
-        #if(delindex<(mol.shape[0]-1)):
-            #lmp.command("group restOfchain clear")
 
 def regrow_chain(atoms,mol,beta,lmp,dih_cdf,startindex,numtrials,keep_original=False):
     totalstart = time.time()
@@ -293,8 +280,8 @@ if __name__ == "__main__":
     print "Initializing atoms from lmp input file..."
     natoms = atoms.shape[0]
     molIDs = atoms[np.where(atoms[:,2]==sulfurID)][:,1]
-    ddtMols = atoms[np.where(atoms[:,2]==ch3ID)][:,1]
-    meohMols = atoms[np.where(atoms[:,2]==oxygenID)][:,1]
+    #ddtMols = atoms[np.where(atoms[:,2]==ch3ID)][:,1]
+    #meohMols = atoms[np.where(atoms[:,2]==oxygenID)][:,1]
     print "Finding molecules..."
     (ddts,meohs) = initializeMols(atoms,bonds)
     print "Starting up lammps instance..."
