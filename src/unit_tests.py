@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/snm8xf/anaconda/bin/python
 from math import *
 import read_lmp_rev6 as rdlmp
 import mc_routine as mcr
@@ -9,9 +9,18 @@ from subprocess import call
 import os
 import random as rnd
 
-#def test_getmol(bonds,startID)
-
-#def test_cbmc(mol):
+def evaluate_new_coords(lmp,atoms):
+    new_atoms = np.copy(atoms)
+    lmp.command("run 0 pre yes post no")
+    old_energy = get_total_pe(lmp)
+    get_coords(lmp,atoms)
+    old_atoms = np.copy(atoms)
+    mcr.update_coords(new_atoms,lmp)
+    lmp.command("run 0 pre yes post no")
+    new_energy = get_total_pe(lmp)
+    mcr.update_coords(old_atoms,lmp)
+    atoms = new_atoms
+    return (old_energy,new_energy)
 
 def print_atoms(gatoms,natoms):
     for i in range(natoms):
@@ -36,7 +45,7 @@ def test_make_dih_cdf():
     kb = 0.0019872041
     T = 298.15
     beta = 1.0/(kb*T)
-    dih_cdf = make_dih_cdf("/home/green/np-mc/inputfiles/dih_potential_1",beta)
+    dih_cdf = make_dih_cdf("/scratch/snm8xf/np-mc/inputfiles/dih_potential_1",beta)
     plt.plot(dih_cdf[:,0],dih_cdf[:,1])
     plt.show()
 
@@ -60,26 +69,32 @@ def turn_off_atoms(lmp,atomIDS):
     lmp.command("set group offatoms charge 0.00")
     lmp.command("neigh_modify exclude group offatoms all")
 
+def dump_atoms(lmp,filename):
+    lmp.command("write_dump all xyz "+filename+" modify append yes")
+
 def start_lammps(config_file):
-    lmp = lammps()
+    lmp = lammps("",["-echo","none","-screen","lammps.out"])
     dname = os.path.dirname(config_file)
     print 'Directory name is '+dname
     #call(["cd",dname],shell=True)
     os.chdir(dname)
     lmp.file(config_file)
-    lmp.command("dump xyzdump all xyz 1 regrow.xyz")
-    lmp.command("dump_modify xyzdump element C C S")
+    #lmp.command("dump xyzdump all xyz 1 regrow.xyz")
+    #lmp.command("dump_modify xyzdump element Ag C C S O H")
     lmp.command("compute pair_pe all pe pair")
     lmp.command("compute mol_pe all pe dihedral")
     lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
     lmp.command("thermo 1")
-    lmp.command("minimize 1e-6 1e-8 100 1000")
+    lmp.command("minimize 1e-3 1e-5 200 2000")
     return lmp 
 
 def calc_beta(T):
     kb = 0.0019872041
     T = 298.15
     return 1.0/(kb*T)
+
+def get_total_pe(lmp):
+    return lmp.extract_compute("thermo_pe",0,0)
 
 def get_pair_pe(lmp):
     return lmp.extract_compute("pair_pe" ,0,0)
@@ -116,7 +131,7 @@ def get_rot_trials(lmp,atoms,mol,dih_cdf,index,ntrials,keep_orig):
     for i in range(ntrials):
         angles[i] = dih_cdf[np.searchsorted(dih_cdf[:,0],rnd.uniform(0,1)),1]
         rot_dih_index(atoms,mol,angles[i],index)
-        lmp.command("run 1 post no")
+        lmp.command("run 0 post no")
         pair_pe[i] = get_pair_pe(lmp)
         #mol_pe[i] = get_mol_pe(lmp)
     return (pair_pe,angles)
@@ -165,21 +180,49 @@ def get_end2end(atoms,mol):
 if __name__=='__main__':
     temp = 298.15
     beta = calc_beta(temp)
-    dih_cdf = make_dih_cdf('/home/green/np-mc/inputfiles/dih_potential_1',beta)
-    
-    molecule = rdlmp.readAll('/home/green/np-mc/lt_files/c48_example/system.data')
-    sulfurID = 3
+    dih_cdf = make_dih_cdf('/scratch/snm8xf/np-mc/inputfiles/dih_potential_1',beta)
+    max_angle =  0.34906585
+    max_radius = 1.4 
+
+    molecule = rdlmp.readAll('/scratch/snm8xf/np-mc/lt_files/nanoparticle/system.data')
+    sulfurID = 4
     atoms = molecule[0]
     orig_charges = np.copy(atoms[:,(0,3)])
-    startID = atoms[atoms[:,2]==sulfurID][:,0]
-    
-    mol = rdlmp.getMoleculeAtoms(molecule[1],startID)
-    lmp = start_lammps('/home/green/np-mc/lt_files/c48_example/system.in')
+    sulfurs = atoms[atoms[:,2]==sulfurID][:,0]
+    centerRotation = np.array([0.,0.,0.])
+    rotationType = 'align'
+
+    molIDs = atoms[np.where(atoms[:,2]==sulfurID)][:,1]
+    mols = [rdlmp.getMoleculeAtoms(molecule[1],startID) for startID in sulfurs]
+    (ddts,meohs) = mcr.initializeMols(atoms, molecule[1])
+    lmp = start_lammps('/scratch/snm8xf/np-mc/lt_files/nanoparticle/system.in')
+    get_coords(lmp,atoms)
     numregrowths = 5000
     end2ends = np.zeros(numregrowths)
     for i in range(numregrowths):
-        index = rnd.choice(np.arange(len(mol)))
-        cbmc(lmp,atoms,mol,index,dih_cdf,orig_charges,beta)
-        end2ends[i] = get_end2end(atoms,mol)
+        move = rnd.choice(["swap","rotate","shift","cbmc"])
+        accepted = False
+        if(move=="swap"):
+            (ddt,meoh) = (rnd.choice(ddts),rnd.choice(meohs))
+            print "Chosen DDT "+str(ddt)+" and MeOH "+str(meoh)
+            ddt_id = atoms[(atoms[:,0]==ddt[0])][:,1]
+            meoh_id = atoms[(atoms[:,0]==meoh[0])][:,1]
+            print "DDT mol ID is "+str(ddt_id)+" and MeOH ID is "+str(meoh_id)
+            mcr.swapMolecules(ddt_id[0],meoh_id[0],atoms,centerRotation,rotationType)
+            #accepted = True if exp(-beta*(new_energy-old_energy))>rnd.uniform(0,1) else False
+        elif(move=="rotate"):
+            molId = rnd.choice(molIDs)
+            mcr.randomRotate(atoms,molId,max_angle)
+        elif(move=="shift"):
+            molId = rnd.choice(molIDs)
+            randomShift(atoms,molId,max_radius)
+        elif(move=="cbmc"):
+            mol = rnd.choice(mols)
+            index = rnd.choice(np.arange(len(mol)))
+            cbmc(lmp,atoms,mol,index,dih_cdf,orig_charges,beta)
+            end2ends[i] = get_end2end(atoms,mol)
+        
+        mcr.update_coords(atoms,lmp)
+        dump_atoms(lmp,"regrow.xyz")
     print "Mean of end to end is "+str(np.mean(end2ends))
     print "Std dev of end to end is "+str(np.std(end2ends))

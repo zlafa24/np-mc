@@ -1,0 +1,17 @@
+	group silver type 1
+	group adsorbate type 2 3 4 5 6
+	compute PE all pe
+	compute myTemp adsorbate temp	
+	thermo_modify temp myTemp
+
+	thermo_style	custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press
+	thermo	10
+	timestep 0.5
+
+	fix fxfrc silver setforce 0. 0. 0.
+	fix fxtemp adsorbate nvt temp 298 298 10 
+	fix fxcalcpe all ave/time 100 1 100 c_PE file pe.out mode scalar
+
+	dump 2 all xyz 10 nanoparticle.xyz
+	minimize 1.0e-5 1.0e-7 1000 10000
+	run   0

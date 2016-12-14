@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/snm8xf/anaconda/bin/python
 import sys
 import numpy as np
 import string
@@ -11,7 +11,7 @@ from lammps import lammps
 import read_lmp_rev6 as rdlmp
 import itertools as itt
 from ctypes import *
-from scipy.stats import rv_discrete
+#from scipy.stats import rv_discrete
 #import pypar
 
 def atom2xyz(filename,atoms):

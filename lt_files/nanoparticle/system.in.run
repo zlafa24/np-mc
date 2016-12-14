@@ -1,0 +1,9 @@
+	group silver type 1
+	fix fxfrc silver setforce 0. 0. 0.
+
+	#dump 2 all xyz 10 nanoparticle.xyz
+	#thermo 10
+	#minimize 1.0e-5 1.0e-7 1000 10000
+	#timestep 1.0
+	#fix   fxnpt all npt iso 1.0 1.0 100 temp 300 300 100
+	#run   5000
