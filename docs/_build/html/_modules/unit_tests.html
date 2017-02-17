@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>unit_tests &#8212; NP Monolayer Monte Carlo 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for unit_tests</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">read_lmp_rev6</span> <span class="k">as</span> <span class="nn">rdlmp</span>
+<span class="kn">import</span> <span class="nn">mc_routine</span> <span class="k">as</span> <span class="nn">mcr</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">lammps</span> <span class="k">import</span> <span class="n">lammps</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">call</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span> <span class="k">as</span> <span class="nn">rnd</span>
+<span class="kn">import</span> <span class="nn">mc_library_rev3</span> <span class="k">as</span> <span class="nn">mclib</span>
+
+<div class="viewcode-block" id="create_cbmc_file"><a class="viewcode-back" href="../unit_tests.html#unit_tests.create_cbmc_file">[docs]</a><span class="k">def</span> <span class="nf">create_cbmc_file</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.data&quot;</span><span class="p">):</span>
+        <span class="n">i</span><span class="o">+=</span><span class="mi">1</span> 
+    <span class="n">cbmc_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.data&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cbmc_file</span></div>
+
+<div class="viewcode-block" id="metromc_prob"><a class="viewcode-back" href="../unit_tests.html#unit_tests.metromc_prob">[docs]</a><span class="k">def</span> <span class="nf">metromc_prob</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">new_atoms</span><span class="p">,</span><span class="n">old_atoms</span><span class="p">,</span><span class="n">old_energy</span><span class="p">,</span><span class="n">beta</span><span class="p">):</span>
+    <span class="n">mcr</span><span class="o">.</span><span class="n">update_coords</span><span class="p">(</span><span class="n">new_atoms</span><span class="p">,</span><span class="n">lmp</span><span class="p">)</span>
+    <span class="c1">#lmp.command(&quot;run 0 post no&quot;)</span>
+    <span class="n">new_energy</span> <span class="o">=</span> <span class="n">get_total_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s2">&quot;Old Energy is &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">old_energy</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; new energy is: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">new_energy</span><span class="p">)</span>
+    <span class="n">mcr</span><span class="o">.</span><span class="n">update_coords</span><span class="p">(</span><span class="n">old_atoms</span><span class="p">,</span><span class="n">lmp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="p">(</span><span class="n">new_energy</span><span class="o">-</span><span class="n">old_energy</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="print_atoms"><a class="viewcode-back" href="../unit_tests.html#unit_tests.print_atoms">[docs]</a><span class="k">def</span> <span class="nf">print_atoms</span><span class="p">(</span><span class="n">gatoms</span><span class="p">,</span><span class="n">natoms</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">gatoms</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="p">])</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">gatoms</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">gatoms</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+
+<div class="viewcode-block" id="get_coords"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_coords">[docs]</a><span class="k">def</span> <span class="nf">get_coords</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">):</span>
+    <span class="n">indxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">atoms</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">lmp</span><span class="o">.</span><span class="n">gather_atoms</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indxs</span><span class="p">,</span><span class="n">xrange</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="n">atoms</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">atoms</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">atoms</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="make_dih_cdf"><a class="viewcode-back" href="../unit_tests.html#unit_tests.make_dih_cdf">[docs]</a><span class="k">def</span> <span class="nf">make_dih_cdf</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">beta</span><span class="p">):</span>
+    <span class="n">dih_potential</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">dih_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="n">dih_potential</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">dih_cdf_norm</span> <span class="o">=</span> <span class="n">dih_cdf</span><span class="o">/</span><span class="n">dih_cdf</span><span class="p">[</span><span class="n">dih_cdf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dih_cdf_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">dih_potential</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">dih_cdf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span><span class="n">dih_cdf_norm</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">dih_cdf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">dih_cdf_norm</span> </div>
+
+<div class="viewcode-block" id="test_make_dih_cdf"><a class="viewcode-back" href="../unit_tests.html#unit_tests.test_make_dih_cdf">[docs]</a><span class="k">def</span> <span class="nf">test_make_dih_cdf</span><span class="p">():</span>
+    <span class="n">kb</span> <span class="o">=</span> <span class="mf">0.0019872041</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mf">298.15</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">kb</span><span class="o">*</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">dih_cdf</span> <span class="o">=</span> <span class="n">make_dih_cdf</span><span class="p">(</span><span class="s2">&quot;/scratch/snm8xf/np-mc/inputfiles/dih_potential_1&quot;</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dih_cdf</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">dih_cdf</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="turn_on_atoms"><a class="viewcode-back" href="../unit_tests.html#unit_tests.turn_on_atoms">[docs]</a><span class="k">def</span> <span class="nf">turn_on_atoms</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atomIDS</span><span class="p">,</span><span class="n">orig_charges</span><span class="p">):</span>
+    <span class="n">atomlist</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">atomIDS</span><span class="p">)))</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group onatoms id &quot;</span><span class="o">+</span><span class="n">atomlist</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group newoffatoms subtract offatoms onatoms&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group offatoms clear&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group offatoms union newoffatoms&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;neigh_modify exclude none&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;neigh_modify exclude group offatoms all&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atomIDS</span><span class="p">:</span>
+        <span class="n">charge</span> <span class="o">=</span> <span class="n">orig_charges</span><span class="p">[</span><span class="n">orig_charges</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">atom</span><span class="p">][:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s2">&quot;Setting charge to &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">charge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;set atom &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">atom</span><span class="p">))</span><span class="o">+</span><span class="s2">&quot; charge &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">charge</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="turn_off_atoms"><a class="viewcode-back" href="../unit_tests.html#unit_tests.turn_off_atoms">[docs]</a><span class="k">def</span> <span class="nf">turn_off_atoms</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atomIDS</span><span class="p">):</span>
+    <span class="n">stratoms</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">atomIDS</span><span class="p">)))</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group offatoms id &quot;</span><span class="o">+</span><span class="n">stratoms</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;set group offatoms charge 0.00&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;neigh_modify exclude group offatoms all&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="dump_atoms"><a class="viewcode-back" href="../unit_tests.html#unit_tests.dump_atoms">[docs]</a><span class="k">def</span> <span class="nf">dump_atoms</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;write_dump all xyz &quot;</span><span class="o">+</span><span class="n">filename</span><span class="o">+</span><span class="s2">&quot; modify append yes&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="start_lammps"><a class="viewcode-back" href="../unit_tests.html#unit_tests.start_lammps">[docs]</a><span class="k">def</span> <span class="nf">start_lammps</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+    <span class="n">lmp</span> <span class="o">=</span> <span class="n">lammps</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,[</span><span class="s2">&quot;-echo&quot;</span><span class="p">,</span><span class="s2">&quot;none&quot;</span><span class="p">,</span><span class="s2">&quot;-screen&quot;</span><span class="p">,</span><span class="s2">&quot;lammps.out&quot;</span><span class="p">])</span>
+    <span class="n">dname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s2">&quot;Configuration file is &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s1">&#39;Directory name is &#39;</span><span class="o">+</span><span class="n">dname</span>
+    <span class="c1">#call([&quot;cd&quot;,dname],shell=True)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s2">&quot;Directory changed&quot;</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+    <span class="c1">#lmp.command(&quot;dump xyzdump all xyz 1 regrow.xyz&quot;)</span>
+    <span class="c1">#lmp.command(&quot;dump_modify xyzdump element Ag C C S O H&quot;)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;neigh_modify every 1 check yes&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute pair_pe all pe pair&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute mol_pe all pe dihedral&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute coul_pe all pe kspace&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out&quot;</span><span class="p">)</span> 
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;thermo_style custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;thermo 1&quot;</span><span class="p">)</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;minimize 1e-3 1e-5 200 2000&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lmp</span> </div>
+
+<div class="viewcode-block" id="calc_beta"><a class="viewcode-back" href="../unit_tests.html#unit_tests.calc_beta">[docs]</a><span class="k">def</span> <span class="nf">calc_beta</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="n">kb</span> <span class="o">=</span> <span class="mf">0.0019872041</span>
+    <span class="k">return</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">kb</span><span class="o">*</span><span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_total_pe"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_total_pe">[docs]</a><span class="k">def</span> <span class="nf">get_total_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">):</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;run 1 pre yes post no&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lmp</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="s2">&quot;thermo_pe&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_pair_pe"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_pair_pe">[docs]</a><span class="k">def</span> <span class="nf">get_pair_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">):</span>
+    <span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;run 1 pre yes post no&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lmp</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="s2">&quot;pair_pe&quot;</span> <span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_mol_pe"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_mol_pe">[docs]</a><span class="k">def</span> <span class="nf">get_mol_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">lmp</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="s2">&quot;mol_pe&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_atom"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_atom">[docs]</a><span class="k">def</span> <span class="nf">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">atomID</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">atoms</span><span class="p">[</span><span class="n">atoms</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="nb">int</span><span class="p">(</span><span class="n">atomID</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="rot_dih_index"><a class="viewcode-back" href="../unit_tests.html#unit_tests.rot_dih_index">[docs]</a><span class="k">def</span> <span class="nf">rot_dih_index</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">angle</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">index</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">rotIDS</span> <span class="o">=</span> <span class="n">mol</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+    <span class="n">dihIDS</span> <span class="o">=</span> <span class="n">mol</span><span class="p">[(</span><span class="n">index</span><span class="o">-</span><span class="mi">3</span><span class="p">):(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">dih_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">dihIDS</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">dihIDS</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">dihIDS</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">dihIDS</span><span class="p">[</span><span class="mi">3</span><span class="p">])])</span>
+    <span class="n">atoms2rotate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span> <span class="k">if</span> <span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">rotIDS</span><span class="p">)])</span>
+    <span class="n">atoms2rotate</span> <span class="o">=</span> <span class="n">mcr</span><span class="o">.</span><span class="n">rotate_dihedral_quat</span><span class="p">(</span><span class="n">dih_atoms</span><span class="p">,</span><span class="n">angle</span><span class="p">,</span><span class="n">atoms2rotate</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms2rotate</span><span class="p">:</span>
+        <span class="n">atoms</span><span class="p">[</span><span class="n">atoms</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">atom</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="n">atom</span>
+    <span class="n">mcr</span><span class="o">.</span><span class="n">update_coords</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">lmp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_rot_trials"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_rot_trials">[docs]</a><span class="k">def</span> <span class="nf">get_rot_trials</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">dih_cdf</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">ntrials</span><span class="p">,</span><span class="n">keep_orig</span><span class="p">):</span>
+    <span class="n">pair_pe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ntrials</span><span class="p">)</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ntrials</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">keep_orig</span><span class="p">):</span>
+        <span class="n">angles</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">mcr</span><span class="o">.</span><span class="n">calc_dih_angle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">3</span><span class="p">]),</span>
+                                                        <span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">2</span><span class="p">]),</span>
+                                                        <span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                                                        <span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">[</span><span class="n">index</span><span class="p">])]))</span>
+        <span class="c1">#lmp.command(&quot;run 0 post no&quot;)</span>
+        <span class="n">pair_pe</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_pair_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">)</span>
+        <span class="n">ntrials</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ntrials</span><span class="p">):</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dih_cdf</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">dih_cdf</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">rnd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">rot_dih_index</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">angles</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">index</span><span class="p">)</span>
+        <span class="c1">#lmp.command(&quot;run 0 post no&quot;)</span>
+        <span class="n">pair_pe</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_pair_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">pair_pe</span><span class="p">,</span><span class="n">angles</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_rosenbluth"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_rosenbluth">[docs]</a><span class="k">def</span> <span class="nf">get_rosenbluth</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">prev_energy</span><span class="p">,</span><span class="n">beta</span><span class="p">):</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="p">(</span><span class="n">energies</span><span class="o">-</span><span class="n">prev_energy</span><span class="p">))</span>
+    <span class="n">sum_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">norm_weights</span> <span class="o">=</span> <span class="n">weights</span><span class="o">/</span><span class="n">sum_weights</span>
+    <span class="nb">print</span> <span class="s2">&quot;Weights are &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; normed weights are &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">norm_weights</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">norm_weights</span><span class="p">,</span><span class="n">weights</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="regrow_chain"><a class="viewcode-back" href="../unit_tests.html#unit_tests.regrow_chain">[docs]</a><span class="k">def</span> <span class="nf">regrow_chain</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">dih_cdf</span><span class="p">,</span><span class="n">orig_charges</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">keep_orig</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">turn_off_atoms</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">mol</span><span class="p">[</span><span class="n">index</span><span class="p">:])</span>
+    <span class="c1">#lmp.command(&quot;run 0 post no&quot;)</span>
+    <span class="n">prev_energy</span> <span class="o">=</span> <span class="n">get_pair_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">)</span>
+    <span class="n">ntrials</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">rosenbluth</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">cbmc_file</span> <span class="o">=</span> <span class="n">create_cbmc_file</span><span class="p">(</span><span class="s2">&quot;cbmc_move&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+        <span class="n">turn_on_atoms</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">mol</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span><span class="n">orig_charges</span><span class="p">)</span>
+        <span class="n">trials</span> <span class="o">=</span>  <span class="n">get_rot_trials</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">dih_cdf</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">ntrials</span><span class="p">,</span><span class="n">keep_orig</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">probs</span><span class="p">,</span><span class="n">weights</span><span class="p">)</span> <span class="o">=</span>  <span class="n">get_rosenbluth</span><span class="p">(</span><span class="n">trials</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">prev_energy</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+        <span class="n">cbmc_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="s2">&quot; ,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">probs</span><span class="p">))</span><span class="o">+</span><span class="s2">&quot;;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="s2">&quot; ,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">weights</span><span class="p">))</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">weights</span><span class="o">&lt;</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span><span class="p">)):</span>
+            <span class="nb">print</span> <span class="s2">&quot;All trials result in collision&quot;</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">keep_orig</span><span class="p">):</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="n">trials</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rot_dih_index</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">angle</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">rosenbluth</span><span class="o">*=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trial_choice</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ntrials</span><span class="p">),</span><span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">)</span>
+            <span class="n">rot_dih_index</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">trials</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">trial_choice</span><span class="p">],</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">rosenbluth</span><span class="o">*=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="c1">#lmp.command(&quot;run 0 post no&quot;)</span>
+        <span class="n">prev_energy</span> <span class="o">=</span> <span class="n">get_pair_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">)</span>
+    <span class="n">cbmc_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">rosenbluth</span></div>
+
+<div class="viewcode-block" id="cbmc"><a class="viewcode-back" href="../unit_tests.html#unit_tests.cbmc">[docs]</a><span class="k">def</span> <span class="nf">cbmc</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">dih_cdf</span><span class="p">,</span><span class="n">orig_charges</span><span class="p">,</span><span class="n">beta</span><span class="p">):</span>
+    <span class="n">old_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">orig_rosen</span> <span class="o">=</span> <span class="n">regrow_chain</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">dih_cdf</span><span class="p">,</span><span class="n">orig_charges</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">keep_orig</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">new_rosen</span> <span class="o">=</span> <span class="n">regrow_chain</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">dih_cdf</span><span class="p">,</span><span class="n">orig_charges</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">new_rosen</span><span class="o">==-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">new_rosen</span><span class="o">/</span><span class="n">orig_rosen</span>
+    <span class="k">return</span> <span class="n">prob</span></div>
+
+<div class="viewcode-block" id="get_end2end"><a class="viewcode-back" href="../unit_tests.html#unit_tests.get_end2end">[docs]</a><span class="k">def</span> <span class="nf">get_end2end</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">):</span>
+    <span class="n">first_atom</span> <span class="o">=</span> <span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">last_atom</span> <span class="o">=</span> <span class="n">get_atom</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">first_atom</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span><span class="o">-</span><span class="n">last_atom</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="mf">298.15</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">calc_beta</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+    <span class="n">source_path</span> <span class="o">=</span> <span class="s1">&#39;/home/slow89&#39;</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">dih_cdf</span> <span class="o">=</span> <span class="n">make_dih_cdf</span><span class="p">(</span><span class="n">source_path</span><span class="o">+</span><span class="s1">&#39;/np-mc/inputfiles/dih_potential_1&#39;</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+    <span class="n">max_angle</span> <span class="o">=</span>  <span class="mf">0.34906585</span>
+    <span class="n">max_radius</span> <span class="o">=</span> <span class="mf">1.4</span> 
+
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readAll</span><span class="p">(</span><span class="n">directory</span><span class="o">+</span><span class="s1">&#39;/system.data&#39;</span><span class="p">)</span>
+    <span class="n">sulfurID</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">oxygenID</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">ch3ID</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">atomIDs</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch3ID</span><span class="p">,</span><span class="n">sulfurID</span><span class="p">,</span><span class="n">oxygenID</span><span class="p">]</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">molecule</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">orig_charges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">atoms</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">)])</span>
+    <span class="n">sulfurs</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="n">atoms</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="n">sulfurID</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">centerRotation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">])</span>
+    <span class="n">rotationType</span> <span class="o">=</span> <span class="s1">&#39;align&#39;</span>
+    <span class="n">potential_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;Potential_Energy.txt&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">potential_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Step</span><span class="se">\t</span><span class="s2">Energy</span><span class="se">\t</span><span class="s2">Move</span><span class="se">\t</span><span class="s2">Accepted?</span><span class="se">\t</span><span class="s2">Prob.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">molIDs</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">atoms</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="n">sulfurID</span><span class="p">)][:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">mols</span> <span class="o">=</span> <span class="p">[</span><span class="n">rdlmp</span><span class="o">.</span><span class="n">getMoleculeAtoms</span><span class="p">(</span><span class="n">molecule</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">startID</span><span class="p">)</span> <span class="k">for</span> <span class="n">startID</span> <span class="ow">in</span> <span class="n">sulfurs</span><span class="p">]</span>
+    <span class="nb">print</span> <span class="s2">&quot;Mol IDs are: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">molIDs</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">ddts</span><span class="p">,</span><span class="n">meohs</span><span class="p">)</span> <span class="o">=</span> <span class="n">mcr</span><span class="o">.</span><span class="n">initializeMols</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">molecule</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">atomIDs</span><span class="p">)</span>
+    <span class="n">lmp</span> <span class="o">=</span> <span class="n">start_lammps</span><span class="p">(</span><span class="n">directory</span><span class="o">+</span><span class="s1">&#39;/system.in&#39;</span><span class="p">)</span>
+    <span class="n">get_coords</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">numregrowths</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="n">end2ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numregrowths</span><span class="p">)</span>
+    <span class="n">old_energy</span> <span class="o">=</span> <span class="n">get_total_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">)</span>
+    <span class="n">old_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numregrowths</span><span class="p">):</span>
+        <span class="n">move</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;rotate&quot;</span><span class="p">,</span><span class="s2">&quot;swap&quot;</span><span class="p">,</span><span class="s2">&quot;shift&quot;</span><span class="p">,</span><span class="s2">&quot;cbmc&quot;</span><span class="p">])</span>
+        <span class="n">accepted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">move</span><span class="o">==</span><span class="s2">&quot;swap&quot;</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">ddt</span><span class="p">,</span><span class="n">meoh</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">ddts</span><span class="p">),</span><span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">meohs</span><span class="p">))</span>
+            <span class="n">ddt_id</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[(</span><span class="n">atoms</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">ddt</span><span class="p">[</span><span class="mi">0</span><span class="p">])][:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">meoh_id</span> <span class="o">=</span> <span class="n">atoms</span><span class="p">[(</span><span class="n">atoms</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">meoh</span><span class="p">[</span><span class="mi">0</span><span class="p">])][:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mcr</span><span class="o">.</span><span class="n">swapMolecules</span><span class="p">(</span><span class="n">ddt_id</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">meoh_id</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">atoms</span><span class="p">,</span><span class="n">centerRotation</span><span class="p">,</span><span class="n">rotationType</span><span class="p">)</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">metromc_prob</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">old_atoms</span><span class="p">,</span><span class="n">old_energy</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="s2">&quot;Swapped with prob &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+            <span class="c1">#accepted = True if exp(-beta*(new_energy-old_energy))&gt;rnd.uniform(0,1) else False</span>
+        <span class="k">elif</span><span class="p">(</span><span class="n">move</span><span class="o">==</span><span class="s2">&quot;rotate&quot;</span><span class="p">):</span>
+            <span class="n">molId</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">molIDs</span><span class="p">)</span>
+            <span class="n">mcr</span><span class="o">.</span><span class="n">randomRotate</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">molId</span><span class="p">,</span><span class="n">max_angle</span><span class="p">)</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">metromc_prob</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">old_atoms</span><span class="p">,</span><span class="n">old_energy</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="s2">&quot;Rotated with prob &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+        <span class="k">elif</span><span class="p">(</span><span class="n">move</span><span class="o">==</span><span class="s2">&quot;shift&quot;</span><span class="p">):</span>
+            <span class="n">molId</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">molIDs</span><span class="p">)</span>
+            <span class="n">mcr</span><span class="o">.</span><span class="n">randomShift</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">molId</span><span class="p">,</span><span class="n">max_radius</span><span class="p">)</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">metromc_prob</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">old_atoms</span><span class="p">,</span><span class="n">old_energy</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="s2">&quot;Shifted with prob &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+        <span class="k">elif</span><span class="p">(</span><span class="n">move</span><span class="o">==</span><span class="s2">&quot;cbmc&quot;</span><span class="p">):</span>
+            <span class="n">mol</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">mols</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)))</span>
+            <span class="c1">#cbmc_data = mcr.cbmc(atoms,mol,beta,lmp,dih_cdf,index)</span>
+            <span class="c1">#prob = cbmc_data[1]/cbmc_data[2] </span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">cbmc</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">mol</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">dih_cdf</span><span class="p">,</span><span class="n">orig_charges</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="s2">&quot;Regrowth prob is &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+        <span class="n">accepted</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">&lt;</span><span class="n">prob</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">accepted</span><span class="p">):</span>
+            <span class="nb">print</span> <span class="s2">&quot;Accepted!&quot;</span>
+            <span class="n">mcr</span><span class="o">.</span><span class="n">update_coords</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">lmp</span><span class="p">)</span>
+            <span class="c1">#lmp.command(&quot;run 0 post no&quot;)</span>
+            <span class="n">old_energy</span> <span class="o">=</span> <span class="n">get_total_pe</span><span class="p">(</span><span class="n">lmp</span><span class="p">)</span>
+            <span class="n">old_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="s2">&quot;Rejected!&quot;</span>
+            <span class="n">mcr</span><span class="o">.</span><span class="n">update_coords</span><span class="p">(</span><span class="n">old_atoms</span><span class="p">,</span><span class="n">lmp</span><span class="p">)</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">old_atoms</span>
+        <span class="n">mol_pe</span> <span class="o">=</span> <span class="n">lmp</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="s2">&quot;mol_pe&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">coul_pe</span> <span class="o">=</span> <span class="n">lmp</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="s2">&quot;coul_pe&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">potential_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">old_energy</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">mol_pe</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">coul_pe</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">move</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">accepted</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">potential_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">dump_atoms</span><span class="p">(</span><span class="n">lmp</span><span class="p">,</span><span class="s2">&quot;regrow.xyz&quot;</span><span class="p">)</span>
+        
+    <span class="nb">print</span> <span class="s2">&quot;Mean of end to end is &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">end2ends</span><span class="p">))</span>
+    <span class="nb">print</span> <span class="s2">&quot;Std dev of end to end is &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">end2ends</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Steven Merz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>molecule_class &#8212; NP Monolayer Monte Carlo 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for molecule_class</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains the molecule class and all classes and functions</span>
+<span class="sd">related to molecules.  This includes Bond, Angle, and Dihedral classes as well as helper functions that take in atom and bond lists and generate molecules.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">read_lmp_rev6</span> <span class="k">as</span> <span class="nn">rdlmp</span>
+<span class="kn">import</span> <span class="nn">atom_class</span> <span class="k">as</span> <span class="nn">atm</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">groupby</span><span class="p">,</span> <span class="n">permutations</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">ntwkx</span>
+
+<div class="viewcode-block" id="Molecule"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule">[docs]</a><span class="k">class</span> <span class="nc">Molecule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This class is used to represent a molecule in a simulation and holds all</span>
+<span class="sd">            the objects related to a molecule including the related Atom, Bond, Angle, and Dihedral Objects.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            molID : int</span>
+<span class="sd">                The unique integer identifier of the molecule as set in the LAMMPS input file</span>
+<span class="sd">            atoms : list of type Atom</span>
+<span class="sd">                The Atom objects associated with this molecule</span>
+<span class="sd">            bonds : list of type Bond</span>
+<span class="sd">                The Bond objects associated with this molecule</span>
+<span class="sd">            angles : list of type Angle</span>
+<span class="sd">                The Angle objects associated with this molecule</span>
+<span class="sd">            dihedrals : list of type Dihedral</span>
+<span class="sd">                The Dihedral objects associated with this molecule</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">molID</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">bonds</span><span class="p">,</span><span class="n">angles</span><span class="p">,</span><span class="n">dihedrals</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">molID</span> <span class="o">=</span> <span class="n">molID</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">bonds</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="n">angles</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="n">dihedrals</span>
+<div class="viewcode-block" id="Molecule.setAnchorAtom"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule.setAnchorAtom">[docs]</a>	<span class="k">def</span> <span class="nf">setAnchorAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">atomID</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.</span>
+<span class="sd">                </span>
+<span class="sd">                Parameters</span>
+<span class="sd">                ----------</span>
+<span class="sd">                atomID : (int)</span>
+<span class="sd">                    The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+		<span class="n">atom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAtomByID</span><span class="p">(</span><span class="n">atomID</span><span class="p">)</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">atom</span><span class="o">!=</span><span class="kc">None</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">anchorAtom</span> <span class="o">=</span> <span class="n">atom</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span></div>
+	
+<div class="viewcode-block" id="Molecule.atomsAsGraph"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule.atomsAsGraph">[docs]</a>	<span class="k">def</span> <span class="nf">atomsAsGraph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Returns the graph data structure of the atoms in the molecule defined by the connectivity defined by the Bond objects of the molecule.  </span>
+<span class="sd">                The nodes of the graph are the atom ID&#39;s of the atoms.</span>
+
+<span class="sd">                Returns</span>
+<span class="sd">                -------</span>
+<span class="sd">                Networkx Graph Object</span>
+<span class="sd">                    A Networkx Graph object with the nodes being the atom ID&#39;s of the atoms in the molecule and the connections defined by the Molecule&#39;s Bonds</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">molecule2graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">)</span></div>
+<div class="viewcode-block" id="Molecule.getAtomByID"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule.getAtomByID">[docs]</a>	<span class="k">def</span> <span class="nf">getAtomByID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">atomID</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Returns the Atom object associated with the given atom ID as long as the atom is associated with the molecule.</span>
+
+<span class="sd">                Parameters</span>
+<span class="sd">                ----------</span>
+<span class="sd">                atomID : (int)</span>
+<span class="sd">                    The unique atom ID identifier of the Atom object which you hope to retrieve</span>
+
+<span class="sd">                Returns</span>
+<span class="sd">                -------</span>
+<span class="sd">                    Atom</span>
+<span class="sd">                        The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">atomID</span><span class="o">==</span><span class="n">atomID</span><span class="p">):</span>
+				<span class="k">return</span> <span class="n">atom</span>
+		<span class="k">return</span> <span class="kc">None</span></div></div>
+
+<div class="viewcode-block" id="Bond"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Bond">[docs]</a><span class="k">class</span> <span class="nc">Bond</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a </span>
+<span class="sd">        Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID&#39;s of the two atoms involved in the bond.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bondID : (int)</span>
+<span class="sd">            The unique integer identifying the bonds same as the one defined in the LAMMPS input file</span>
+<span class="sd">        bondType : (int)</span>
+<span class="sd">            An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.</span>
+<span class="sd">        atom1 : (int)</span>
+<span class="sd">            The atom ID associated with the first atom in the bond</span>
+<span class="sd">        atom2 : (int)</span>
+<span class="sd">            The atom ID associated with the second atom in the bond</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">bondID</span><span class="p">,</span><span class="n">bondType</span><span class="p">,</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bondID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bondID</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bondType</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bondType</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom1</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Angle"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Angle">[docs]</a><span class="k">class</span> <span class="nc">Angle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angleID : (int)</span>
+<span class="sd">            The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file</span>
+<span class="sd">        angleType : (int)</span>
+<span class="sd">            The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file</span>
+<span class="sd">        atom1 : (int)</span>
+<span class="sd">            The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.</span>
+<span class="sd">        atom2 : (int)</span>
+<span class="sd">            The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.</span>
+<span class="sd">        atom3 : (int)</span>
+<span class="sd">            The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angleID</span><span class="p">,</span><span class="n">angleType</span><span class="p">,</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">,</span><span class="n">atom3</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">angleID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">angleID</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">angleType</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">angleType</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom1</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom2</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom3</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dihedral"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Dihedral">[docs]</a><span class="k">class</span> <span class="nc">Dihedral</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dihID</span><span class="p">,</span><span class="n">dihType</span><span class="p">,</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">,</span><span class="n">atom3</span><span class="p">,</span><span class="n">atom4</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dihID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dihID</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dihType</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dihType</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom1</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom2</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom3</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atom4</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom4</span><span class="p">)</span>
+<div class="viewcode-block" id="Dihedral.getAngle"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Dihedral.getAngle">[docs]</a>	<span class="k">def</span> <span class="nf">getAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">b1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">b2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">b3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom4</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">b2norm</span> <span class="o">=</span> <span class="n">b2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+		<span class="n">n1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">))</span>
+		<span class="n">n2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span><span class="n">b3</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span><span class="n">b3</span><span class="p">))</span>
+		<span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">b2norm</span><span class="p">)</span>
+		<span class="n">angle</span> <span class="o">=</span> <span class="n">atan2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">n2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">n2</span><span class="p">))</span>
+		<span class="n">angle</span><span class="o">=</span><span class="p">((</span><span class="n">angle</span><span class="o">-</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">%</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">angle</span></div>
+<div class="viewcode-block" id="Dihedral.rotate"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Dihedral.rotate">[docs]</a>	<span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">angle</span><span class="p">):</span>
+		<span class="n">rot_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">rot_angle</span> <span class="o">=</span> <span class="n">angle</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">getAngle</span><span class="p">()</span></div></div>
+		<span class="c1">#for atom in atoms2rotate:</span>
+		<span class="c1">#	atom[4:7] = rot_quat((atom[4:7]-dih_atoms[2,4:7]),rot_angle,rot_axis)+dih_atoms[2,4:7]</span>
+
+
+
+<div class="viewcode-block" id="loadBonds"><a class="viewcode-back" href="../molecule_class.html#molecule_class.loadBonds">[docs]</a><span class="k">def</span> <span class="nf">loadBonds</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="n">bonds</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readBonds</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">Bond</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">bond</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">bond</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="loadAngles"><a class="viewcode-back" href="../molecule_class.html#molecule_class.loadAngles">[docs]</a><span class="k">def</span> <span class="nf">loadAngles</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="n">angles</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readAngles</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">Angle</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="loadDihedrals"><a class="viewcode-back" href="../molecule_class.html#molecule_class.loadDihedrals">[docs]</a><span class="k">def</span> <span class="nf">loadDihedrals</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="n">dihedrals</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readDihedrals</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">Dihedral</span><span class="p">(</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="k">for</span> <span class="n">dihedral</span> <span class="ow">in</span> <span class="n">dihedrals</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="getBondsFromAtoms"><a class="viewcode-back" href="../molecule_class.html#molecule_class.getBondsFromAtoms">[docs]</a><span class="k">def</span> <span class="nf">getBondsFromAtoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">bonds</span><span class="p">):</span>
+	<span class="n">id_combos</span> <span class="o">=</span> <span class="p">[(</span><span class="n">atom1</span><span class="o">.</span><span class="n">atomID</span><span class="p">,</span><span class="n">atom2</span><span class="o">.</span><span class="n">atomID</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+	<span class="n">bondlist</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom1</span><span class="p">,</span><span class="n">bond</span><span class="o">.</span><span class="n">atom2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">id_combos</span><span class="p">:</span>
+			<span class="n">bondlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond</span><span class="p">)</span>			
+	<span class="k">return</span> <span class="n">bondlist</span></div>
+
+<div class="viewcode-block" id="getAnglesFromAtoms"><a class="viewcode-back" href="../molecule_class.html#molecule_class.getAnglesFromAtoms">[docs]</a><span class="k">def</span> <span class="nf">getAnglesFromAtoms</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">,</span><span class="n">angles</span><span class="p">):</span>
+	<span class="n">mol_graph</span> <span class="o">=</span> <span class="n">molecule2graph</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">)</span>
+	<span class="n">angle_combos</span><span class="o">=</span><span class="p">[]</span>
+	<span class="c1">#Get possible angles by getting subgraphs with only 2 steps</span>
+	<span class="k">for</span> <span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">mol_graph</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(),</span><span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">ntwkx</span><span class="o">.</span><span class="n">shortest_path_length</span><span class="p">(</span><span class="n">mol_graph</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="n">atom1</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="n">atom2</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+				<span class="n">angle_combos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ntwkx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">mol_graph</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="n">atom1</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="n">atom2</span><span class="p">))</span>	  
+	<span class="n">anglelist</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">:</span>
+		<span class="k">if</span><span class="p">([</span><span class="n">angle</span><span class="o">.</span><span class="n">atom1</span><span class="p">,</span><span class="n">angle</span><span class="o">.</span><span class="n">atom2</span><span class="p">,</span><span class="n">angle</span><span class="o">.</span><span class="n">atom3</span><span class="p">]</span> <span class="ow">in</span> <span class="n">angle_combos</span><span class="p">):</span>
+			<span class="n">anglelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">anglelist</span></div>
+
+<div class="viewcode-block" id="getDihedralsFromAtoms"><a class="viewcode-back" href="../molecule_class.html#molecule_class.getDihedralsFromAtoms">[docs]</a><span class="k">def</span> <span class="nf">getDihedralsFromAtoms</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">,</span><span class="n">dihedrals</span><span class="p">):</span>
+	<span class="n">mol_graph</span> <span class="o">=</span> <span class="n">molecule2graph</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">)</span>
+	<span class="n">dihedral_combos</span><span class="o">=</span><span class="p">[]</span>
+	<span class="c1">#Get possible angles by getting subgraphs with only 2 steps</span>
+	<span class="k">for</span> <span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">mol_graph</span><span class="o">.</span><span class="n">nodes_iter</span><span class="p">(),</span><span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">ntwkx</span><span class="o">.</span><span class="n">shortest_path_length</span><span class="p">(</span><span class="n">mol_graph</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="n">atom1</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="n">atom2</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">):</span>
+				<span class="n">dihedral_combos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ntwkx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">mol_graph</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="n">atom1</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="n">atom2</span><span class="p">))</span>	  
+	<span class="n">dihedral_list</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">dihedral</span> <span class="ow">in</span> <span class="n">dihedrals</span><span class="p">:</span>
+		<span class="k">if</span><span class="p">([</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom1</span><span class="p">,</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom2</span><span class="p">,</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom3</span><span class="p">,</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom4</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dihedral_combos</span><span class="p">):</span>
+			<span class="n">dihedral_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dihedral</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">dihedral_list</span></div>
+
+<div class="viewcode-block" id="groupAtomsByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupAtomsByMol">[docs]</a><span class="k">def</span> <span class="nf">groupAtomsByMol</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+	<span class="n">mol_dict</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">g</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">key</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get_mol_ID</span><span class="p">())):</span>
+		<span class="n">mol_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">mol_dict</span></div>
+
+<div class="viewcode-block" id="groupBondsByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupBondsByMol">[docs]</a><span class="k">def</span> <span class="nf">groupBondsByMol</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">,</span><span class="n">bonds</span><span class="p">):</span>
+	<span class="n">bond_dict</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">molid</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span> 
+		<span class="n">bond_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">]</span> <span class="o">=</span> <span class="n">getBondsFromAtoms</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">],</span><span class="n">bonds</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">bond_dict</span></div>
+
+<div class="viewcode-block" id="groupAnglesByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupAnglesByMol">[docs]</a><span class="k">def</span> <span class="nf">groupAnglesByMol</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">,</span><span class="n">bond_dict</span><span class="p">,</span><span class="n">angles</span><span class="p">):</span>
+	<span class="n">angle_dict</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">molid</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
+		<span class="n">angle_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">]</span><span class="o">=</span><span class="n">getAnglesFromAtoms</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">],</span><span class="n">bond_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">],</span><span class="n">angles</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">angle_dict</span></div>
+
+<div class="viewcode-block" id="groupDihedralsByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupDihedralsByMol">[docs]</a><span class="k">def</span> <span class="nf">groupDihedralsByMol</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">,</span><span class="n">bond_dict</span><span class="p">,</span><span class="n">dihedrals</span><span class="p">):</span>
+	<span class="n">dihedral_dict</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">molID</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
+		<span class="n">dihedral_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">]</span><span class="o">=</span><span class="n">getDihedralsFromAtoms</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">],</span><span class="n">bond_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">],</span><span class="n">dihedrals</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">dihedral_dict</span></div>
+
+<div class="viewcode-block" id="molecule2graph"><a class="viewcode-back" href="../molecule_class.html#molecule_class.molecule2graph">[docs]</a><span class="k">def</span> <span class="nf">molecule2graph</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">):</span>
+	<span class="n">molecule_graph</span> <span class="o">=</span> <span class="n">ntwkx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atomlist</span><span class="p">:</span>
+		<span class="n">molecule_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">atomID</span><span class="p">)</span>
+	<span class="n">molecule_graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom1</span><span class="p">,</span><span class="n">bond</span><span class="o">.</span><span class="n">atom2</span><span class="p">)</span> <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bondlist</span><span class="p">])</span>
+	<span class="k">return</span> <span class="n">molecule_graph</span></div>
+
+<div class="viewcode-block" id="constructMolecules"><a class="viewcode-back" href="../molecule_class.html#molecule_class.constructMolecules">[docs]</a><span class="k">def</span> <span class="nf">constructMolecules</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="nb">print</span> <span class="s2">&quot;Loading Data File:&quot;</span>
+	<span class="n">atoms</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">loadAtoms</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+	<span class="n">bonds</span> <span class="o">=</span> <span class="n">loadBonds</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+	<span class="n">angles</span> <span class="o">=</span> <span class="n">loadAngles</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+	<span class="n">dihedrals</span> <span class="o">=</span> <span class="n">loadDihedrals</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+	<span class="nb">print</span> <span class="s2">&quot;Grouping Atoms by Molecule&quot;</span>
+	<span class="n">atom_dict</span> <span class="o">=</span> <span class="n">groupAtomsByMol</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+	<span class="nb">print</span> <span class="s2">&quot;Grouping Bonds by Molecule&quot;</span>
+	<span class="n">bond_dict</span> <span class="o">=</span> <span class="n">groupBondsByMol</span><span class="p">(</span><span class="n">atom_dict</span><span class="p">,</span><span class="n">bonds</span><span class="p">)</span>
+	<span class="nb">print</span> <span class="s2">&quot;Grouping Angles by Molecule&quot;</span>
+	<span class="n">angle_dict</span> <span class="o">=</span> <span class="n">groupAnglesByMol</span><span class="p">(</span><span class="n">atom_dict</span><span class="p">,</span><span class="n">bond_dict</span><span class="p">,</span><span class="n">angles</span><span class="p">)</span>
+	<span class="nb">print</span> <span class="s2">&quot;Grouping Dihedrals by ID&quot;</span>
+	<span class="n">dihedral_dict</span> <span class="o">=</span> <span class="n">groupDihedralsByMol</span><span class="p">(</span><span class="n">atom_dict</span><span class="p">,</span><span class="n">bond_dict</span><span class="p">,</span><span class="n">dihedrals</span><span class="p">)</span>
+	<span class="nb">print</span> <span class="s2">&quot;Assembling Molecules&quot;</span> 
+	<span class="n">molecules</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">molID</span> <span class="ow">in</span> <span class="n">atom_dict</span><span class="p">:</span>
+		<span class="n">molecules</span><span class="p">[</span><span class="n">molID</span><span class="p">]</span><span class="o">=</span><span class="n">Molecule</span><span class="p">(</span><span class="n">molID</span><span class="p">,</span><span class="n">atom_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">],</span><span class="n">bond_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">],</span><span class="n">angle_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">],</span><span class="n">dihedral_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">])</span>
+	<span class="k">return</span> <span class="n">molecules</span></div>
+
+
+<div class="viewcode-block" id="rot_quat"><a class="viewcode-back" href="../molecule_class.html#molecule_class.rot_quat">[docs]</a><span class="k">def</span> <span class="nf">rot_quat</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">rot_axis</span><span class="p">):</span>
+	<span class="n">rot_axis</span> <span class="o">=</span> <span class="n">rot_axis</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rot_axis</span><span class="p">)</span>
+	<span class="n">vector_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+	<span class="n">quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+	<span class="n">quat_inverse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+	<span class="n">quat</span> <span class="o">=</span> <span class="n">quat</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+	<span class="n">quat_inverse</span> <span class="o">=</span> <span class="n">quat_inverse</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat_inverse</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+	<span class="n">vect_quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">vector</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">vector</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span><span class="o">/</span><span class="n">vector_mag</span>
+	<span class="n">new_vector</span> <span class="o">=</span> <span class="n">quat_mult</span><span class="p">(</span><span class="n">quat_mult</span><span class="p">(</span><span class="n">quat</span><span class="p">,</span><span class="n">vect_quat</span><span class="p">),</span><span class="n">quat_inverse</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">new_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">vector_mag</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Steven Merz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

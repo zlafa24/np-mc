@@ -1,16 +1,44 @@
+"""This module contains the molecule class and all classes and functions
+related to molecules.  This includes Bond, Angle, and Dihedral classes as well as helper functions that take in atom and bond lists and generate molecules.
+
+"""
 import read_lmp_rev6 as rdlmp
 import atom_class as atm
 from itertools import groupby, permutations
 import networkx as ntwkx
 
 class Molecule(object):
+        """This class is used to represent a molecule in a simulation and holds all
+            the objects related to a molecule including the related Atom, Bond, Angle, and Dihedral Objects.
+
+            Parameters
+            ----------
+            molID : int
+                The unique integer identifier of the molecule as set in the LAMMPS input file
+            atoms : list of type Atom
+                The Atom objects associated with this molecule
+            bonds : list of type Bond
+                The Bond objects associated with this molecule
+            angles : list of type Angle
+                The Angle objects associated with this molecule
+            dihedrals : list of type Dihedral
+                The Dihedral objects associated with this molecule
+
+        """
 	def __init__(self,molID,atoms,bonds,angles,dihedrals):
-		self.molID = molID
+                self.molID = molID
 		self.atoms = atoms
 		self.bonds = bonds
 		self.angles = angles
 		self.dihedrals = dihedrals
 	def setAnchorAtom(self,atomID):
+                """Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.
+                
+                Parameters
+                ----------
+                atomID : (int)
+                    The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.
+                """
 		atom = self.getAtomByID(atomID)
 		if(atom!=None):
 			self.anchorAtom = atom
@@ -18,15 +46,49 @@ class Molecule(object):
 		else:
 			return False
 	
-    def atomsAsGraph(self):
-        return molecule2graph(self.atoms,self.bonds)
-    def getAtomByID(self,atomID):
+	def atomsAsGraph(self):
+                """Returns the graph data structure of the atoms in the molecule defined by the connectivity defined by the Bond objects of the molecule.  
+                The nodes of the graph are the atom ID's of the atoms.
+
+                Returns
+                -------
+                Networkx Graph Object
+                    A Networkx Graph object with the nodes being the atom ID's of the atoms in the molecule and the connections defined by the Molecule's Bonds
+                """
+		return molecule2graph(self.atoms,self.bonds)
+	def getAtomByID(self,atomID):
+                """Returns the Atom object associated with the given atom ID as long as the atom is associated with the molecule.
+
+                Parameters
+                ----------
+                atomID : (int)
+                    The unique atom ID identifier of the Atom object which you hope to retrieve
+
+                Returns
+                -------
+                    Atom
+                        The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.
+                """
 		for atom in self.atoms:
 			if(atom.atomID==atomID):
 				return atom
 		return None
 
 class Bond(object):
+        """The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a 
+        Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID's of the two atoms involved in the bond.
+        
+        Parameters
+        ----------
+        bondID : (int)
+            The unique integer identifying the bonds same as the one defined in the LAMMPS input file
+        bondType : (int)
+            An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.
+        atom1 : (int)
+            The atom ID associated with the first atom in the bond
+        atom2 : (int)
+            The atom ID associated with the second atom in the bond
+        """
 	def __init__(self,bondID,bondType,atom1,atom2):
 		self.bondID = int(bondID)
 		self.bondType = int(bondType)
@@ -34,6 +96,21 @@ class Bond(object):
 		self.atom2 = int(atom2)
 
 class Angle(object):
+        """The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.
+        
+        Parameters
+        ----------
+        angleID : (int)
+            The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file
+        angleType : (int)
+            The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file
+        atom1 : (int)
+            The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.
+        atom2 : (int)
+            The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.
+        atom3 : (int)
+            The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.
+        """
 	def __init__(self, angleID,angleType,atom1,atom2,atom3):
 		self.angleID = int(angleID)
 		self.angleType =int(angleType)

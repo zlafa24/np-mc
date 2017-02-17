@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mc_routine module &#8212; NP Monolayer Monte Carlo 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mc_routine_dirty module" href="mc_routine_dirty.html" />
+    <link rel="prev" title="mc_library_rev3 module" href="mc_library_rev3.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-mc_routine">
+<span id="mc-routine-module"></span><h1>mc_routine module<a class="headerlink" href="#module-mc_routine" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="mc_routine.atom2xyz">
+<code class="descclassname">mc_routine.</code><code class="descname">atom2xyz</code><span class="sig-paren">(</span><em>filename</em>, <em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#atom2xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.atom2xyz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.calc_dih_angle">
+<code class="descclassname">mc_routine.</code><code class="descname">calc_dih_angle</code><span class="sig-paren">(</span><em>dih_atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#calc_dih_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.calc_dih_angle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.cbmc">
+<code class="descclassname">mc_routine.</code><code class="descname">cbmc</code><span class="sig-paren">(</span><em>atoms</em>, <em>mol</em>, <em>beta</em>, <em>lmp</em>, <em>dih_cdf</em>, <em>startindex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#cbmc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.cbmc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.delete_chain">
+<code class="descclassname">mc_routine.</code><code class="descname">delete_chain</code><span class="sig-paren">(</span><em>mol</em>, <em>delindex</em>, <em>lmp</em>, <em>delete=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#delete_chain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.delete_chain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.get_coords">
+<code class="descclassname">mc_routine.</code><code class="descname">get_coords</code><span class="sig-paren">(</span><em>lmp</em>, <em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#get_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.get_coords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.initializeMols">
+<code class="descclassname">mc_routine.</code><code class="descname">initializeMols</code><span class="sig-paren">(</span><em>atoms</em>, <em>bonds</em>, <em>molIDs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#initializeMols"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.initializeMols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.quat_mult">
+<code class="descclassname">mc_routine.</code><code class="descname">quat_mult</code><span class="sig-paren">(</span><em>q1</em>, <em>q2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#quat_mult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.quat_mult" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.randomShift">
+<code class="descclassname">mc_routine.</code><code class="descname">randomShift</code><span class="sig-paren">(</span><em>atoms</em>, <em>molId</em>, <em>max_radius</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#randomShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.randomShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.regrow_chain">
+<code class="descclassname">mc_routine.</code><code class="descname">regrow_chain</code><span class="sig-paren">(</span><em>atoms</em>, <em>mol</em>, <em>beta</em>, <em>lmp</em>, <em>dih_cdf</em>, <em>startindex</em>, <em>numtrials</em>, <em>keep_original=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#regrow_chain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.regrow_chain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.rot_quat">
+<code class="descclassname">mc_routine.</code><code class="descname">rot_quat</code><span class="sig-paren">(</span><em>vector</em>, <em>theta</em>, <em>rot_axis</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#rot_quat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.rot_quat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.rotate_dihedral">
+<code class="descclassname">mc_routine.</code><code class="descname">rotate_dihedral</code><span class="sig-paren">(</span><em>dih_atoms</em>, <em>angle</em>, <em>atoms2rotate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#rotate_dihedral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.rotate_dihedral" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.rotate_dihedral_quat">
+<code class="descclassname">mc_routine.</code><code class="descname">rotate_dihedral_quat</code><span class="sig-paren">(</span><em>dih_atoms</em>, <em>angle</em>, <em>atoms2rotate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#rotate_dihedral_quat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.rotate_dihedral_quat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mc_routine.update_coords">
+<code class="descclassname">mc_routine.</code><code class="descname">update_coords</code><span class="sig-paren">(</span><em>atoms</em>, <em>lmp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_routine.html#update_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_routine.update_coords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="mc_library_rev3.html" title="previous chapter">mc_library_rev3 module</a></li>
+      <li>Next: <a href="mc_routine_dirty.html" title="next chapter">mc_routine_dirty module</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/mc_routine.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Steven Merz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/mc_routine.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
