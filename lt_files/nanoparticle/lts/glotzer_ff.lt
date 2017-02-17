@@ -16,7 +16,7 @@ Glotzer{
 	write_once("Data Dihedrals By Type"){
 		@dihedral:SCCC @atom:S @atom:C* @atom:C* @atom:C* @bond:SC @bond:CC @bond:CC
 		@dihedral:CCCC @atom:C* @atom:C* @atom:C* @atom:C* @bond:CC @bond:CC @bond:CC
-		@dihedral:SCCO @atom:S @atom:C* @atom:C* @atom:C* @bond:SC @bond:CC @bond:CC
+		@dihedral:SCCO @atom:S @atom:C* @atom:C* @atom:O* @bond:SC @bond:CC @bond:CO
 		@dihedral:CCOH @atom:C* @atom:C* @atom:O @atom:H @bond:CC @bond:CO @bond:OH
 	}
 	write_once("In Settings"){

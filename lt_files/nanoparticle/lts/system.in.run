@@ -15,3 +15,4 @@
 	dump 2 all xyz 10 nanoparticle.xyz
 	minimize 1.0e-5 1.0e-7 1000 10000
 	run   0
+	write_data relaxed.lmp

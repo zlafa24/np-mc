@@ -1,0 +1,16 @@
+tolerance 4.0
+
+output sphere_meoh.xyz
+
+filetype xyz
+
+structure meoh.xyz
+	number 100
+	atoms 1
+		inside sphere 0. 0. 0. 20.
+	end atoms
+	atoms 5
+		outside sphere 0. 0. 0. 21.9
+	end atoms
+
+end structure

@@ -20,16 +20,20 @@ def atom2xyz(filename,atoms):
     for atom in atoms:
         xyzfile.write(str(atom[2])+'\t'+str(atom[4])+'\t'+str(atom[5])+'\t'+str(atom[6])+'\n')
 
-def initializeMols(atoms,bonds):
-    ch3ID = 3
-    sulfurID = 4
-    oxygenID = 5
-    
+def initializeMols(atoms,bonds,molIDs):
+    ch3ID = molIDs[0]
+    sulfurID = molIDs[1]
+    oxygenID = molIDs[2]
+   
+    print "Mol IDs are: "+str(molIDs) 
     ddtMols = atoms[np.where(atoms[:,2]==ch3ID)][:,1]
     meohMols = atoms[np.where(atoms[:,2]==oxygenID)][:,1]
+    print "ddtMols are: "+str(ddtMols)
+
 
     ddtsulfurs = [atom[0] for atom in atoms if (atom[2]==sulfurID and (atom[1] in ddtMols))]
     meohsulfurs = [atom[0] for atom in atoms if (atom[2]==sulfurID and (atom[1] in meohMols))]
+    #print "ddtsulfurs are: "+str(ddtsulfurs)
 
     ddts = np.empty([ddtMols.shape[0],13])
     meohs = np.empty([meohMols.shape[0],5])
@@ -94,6 +98,14 @@ def rotate_dihedral(dih_atoms,angle,atoms2rotate):
         atom[4:7] = atom[4:7] - dih_atoms[2,4:7]
         atom[4:7] = np.transpose(np.dot(rot_matrix,np.transpose(atom[4:7])))+dih_atoms[2,4:7]
     return atoms2rotate
+
+def get_coords(lmp,atoms):
+    indxs = np.argsort(atoms[:,0],axis=0)
+    coords = lmp.gather_atoms("x",1,3)
+    for idx,i in zip(indxs,xrange(atoms.shape[0])):
+        atoms[idx,4]=float(coords[i*3])
+        atoms[idx,5]=float(coords[i*3+1])
+        atoms[idx,6]=float(coords[i*3+2])
 
 def update_coords(atoms,lmp):
     atoms = atoms[np.argsort(atoms[:,0],axis=0)] 
@@ -258,6 +270,8 @@ if __name__ == "__main__":
     oxygenID = 5
     hydrogenID = 6
 
+    atomIDs = [ch3ID,sulfurID,oxygenID]
+
     centerRotation = [0.,0.,0.]
     rotationtype = 'align'
 
@@ -283,7 +297,7 @@ if __name__ == "__main__":
     #ddtMols = atoms[np.where(atoms[:,2]==ch3ID)][:,1]
     #meohMols = atoms[np.where(atoms[:,2]==oxygenID)][:,1]
     print "Finding molecules..."
-    (ddts,meohs) = initializeMols(atoms,bonds)
+    (ddts,meohs) = initializeMols(atoms,bonds,atomIDs)
     print "Starting up lammps instance..."
     lmp = lammps("",["-echo","none","-screen","lammps.out"])
     #lmp = lammps("",["-screen","lammps.out"])
@@ -298,7 +312,8 @@ if __name__ == "__main__":
     #lmp.command("run 1")
     #cont = raw_input("continue?")
     pe = lmp.extract_compute("thermo_pe",0,0)
-    
+    get_coords(lmp,atoms)  
+ 
     coords = lmp.gather_atoms("x",1,3)
     atoms = atoms[atoms[:,0].argsort()]
     loop_start = time.time()
