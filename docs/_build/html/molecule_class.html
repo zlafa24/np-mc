@@ -1,48 +1,151 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>molecule_class module &#8212; NP Monolayer Monte Carlo 1.0.0 documentation</title>
-    
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '1.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="read_lmp_rev6 module" href="read_lmp_rev6.html" />
-    <link rel="prev" title="mc_routine_rev3 module" href="mc_routine_rev3.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
   
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head>
-  <body role="document">
+  <title>molecule_class module &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
   
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="NP Monolayer Monte Carlo 1.0.0 documentation" href="index.html"/>
+        <link rel="next" title="read_lmp_rev6 module" href="read_lmp_rev6.html"/>
+        <link rel="prev" title="mc_routine_rev3 module" href="mc_routine_rev3.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> NP Monolayer Monte Carlo
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" />
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="coverage.html">Undocumented Python objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#mc-routine">mc_routine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#mc-routine-rev3">mc_routine_rev3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#read-lmp-rev6">read_lmp_rev6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#simulation-class">simulation_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#unit-tests">unit_tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="atom_class.html">atom_class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_tests.html">class_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mc_library_rev3.html">mc_library_rev3 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mc_routine.html">mc_routine module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mc_routine_rev3.html">mc_routine_rev3 module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">molecule_class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_lmp_rev6.html">read_lmp_rev6 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shuffle_np.html">shuffle_np module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">simulation_class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_test.html">simulation_test module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_molecule.html">test_molecule module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unit_tests.html">unit_tests module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">NP Monolayer Monte Carlo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>molecule_class module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/molecule_class.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-molecule_class">
 <span id="molecule-class-module"></span><h1>molecule_class module<a class="headerlink" href="#module-molecule_class" title="Permalink to this headline">¶</a></h1>
@@ -58,11 +161,11 @@ related to molecules.  This includes Bond, Angle, and Dihedral classes as well a
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>angleID</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file</li>
-<li><strong>angleType</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file</li>
-<li><strong>atom1</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.</li>
-<li><strong>atom2</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.</li>
-<li><strong>atom3</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.</li>
+<li><strong>angleID</strong> (<em>int</em>) &#8211; The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file</li>
+<li><strong>angleType</strong> (<em>int</em>) &#8211; The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file</li>
+<li><strong>atom1</strong> (<em>int</em>) &#8211; The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.</li>
+<li><strong>atom2</strong> (<em>int</em>) &#8211; The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.</li>
+<li><strong>atom3</strong> (<em>int</em>) &#8211; The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.</li>
 </ul>
 </td>
 </tr>
@@ -81,10 +184,10 @@ Bond object consists of a Bond ID which uniquely defines the bond, a bond type, 
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>bondID</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The unique integer identifying the bonds same as the one defined in the LAMMPS input file</li>
-<li><strong>bondType</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.</li>
-<li><strong>atom1</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The atom ID associated with the first atom in the bond</li>
-<li><strong>atom2</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The atom ID associated with the second atom in the bond</li>
+<li><strong>bondID</strong> (<em>int</em>) &#8211; The unique integer identifying the bonds same as the one defined in the LAMMPS input file</li>
+<li><strong>bondType</strong> (<em>int</em>) &#8211; An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.</li>
+<li><strong>atom1</strong> (<em>int</em>) &#8211; The atom ID associated with the first atom in the bond</li>
+<li><strong>atom2</strong> (<em>int</em>) &#8211; The atom ID associated with the second atom in the bond</li>
 </ul>
 </td>
 </tr>
@@ -96,15 +199,38 @@ Bond object consists of a Bond ID which uniquely defines the bond, a bond type, 
 <dt id="molecule_class.Dihedral">
 <em class="property">class </em><code class="descclassname">molecule_class.</code><code class="descname">Dihedral</code><span class="sig-paren">(</span><em>dihID</em>, <em>dihType</em>, <em>atom1</em>, <em>atom2</em>, <em>atom3</em>, <em>atom4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Dihedral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Dihedral" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The Dihedral object represents the dihedral between four connected atoms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dihID</strong> (<em>int</em>) &#8211; The unique integer identifier for the dihedral same as the one in the LAMMPS input file.</li>
+<li><strong>dihType</strong> (<em>int</em>) &#8211; The unique integer identifier for the dihedral type which corresponds to the dihedral type in the LAMMPS input file.</li>
+<li><strong>atom1</strong> (<em>int</em>) &#8211; The atom ID of the first atom in the dihedral.</li>
+<li><strong>atom2</strong> (<em>int</em>) &#8211; The atom ID of the second atom in the dihedral.</li>
+<li><strong>atom3</strong> (<em>int</em>) &#8211; The atom ID of the third atom in the dihedral.</li>
+<li><strong>atom4</strong> (<em>int</em>) &#8211; The atom ID of the fourth atom in the dihedral.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="molecule_class.Dihedral.getAngle">
 <code class="descname">getAngle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Dihedral.getAngle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Dihedral.getAngle" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="molecule_class.Dihedral.rotate">
-<code class="descname">rotate</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Dihedral.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Dihedral.rotate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculates the dihedral angle of the dihedral object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current dihedral angle of the Dihedral object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -154,7 +280,7 @@ The nodes of the graph are the atom ID&#8217;s of the atoms.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atomID</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The unique atom ID identifier of the Atom object which you hope to retrieve</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atomID</strong> (<em>int</em>) &#8211; The unique atom ID identifier of the Atom object which you hope to retrieve</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.</td>
 </tr>
@@ -172,7 +298,7 @@ The nodes of the graph are the atom ID&#8217;s of the atoms.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atomID</strong> (<em></em><em>(</em><em>int</em><em>)</em><em></em>) &#8211; The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atomID</strong> (<em>int</em>) &#8211; The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.</td>
 </tr>
 </tbody>
 </table>
@@ -183,119 +309,359 @@ The nodes of the graph are the atom ID&#8217;s of the atoms.</p>
 <dl class="function">
 <dt id="molecule_class.constructMolecules">
 <code class="descclassname">molecule_class.</code><code class="descname">constructMolecules</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#constructMolecules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.constructMolecules" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>From a LAMMPS input file construct a list of Molecule objects based on the molecules in the LAMMPS input file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; The name of the LAMMPS input file that contains the molecules</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>molecules</strong> &#8211; A list of Molecule objects with the data specified by the LAMMPS input file passed in.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Molecule List</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.getAnglesFromAtoms">
 <code class="descclassname">molecule_class.</code><code class="descname">getAnglesFromAtoms</code><span class="sig-paren">(</span><em>atomlist</em>, <em>bondlist</em>, <em>angles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#getAnglesFromAtoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.getAnglesFromAtoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a list of Atoms find all the Angles in angles which contains these atoms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>atomlist</strong> (<em>Atom List</em>) &#8211; A list of Atoms used to search through the Angle List.</li>
+<li><strong>bondlist</strong> (<em>Bond List</em>) &#8211; A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible angle combinations of the Atoms in atoms.</li>
+<li><strong>angles</strong> (<em>Angle List</em>) &#8211; A List of Angles which is searched through.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>anglelist</strong> &#8211; A list of Angles that are associated with the Atoms in atoms.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Angle List</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.getBondsFromAtoms">
 <code class="descclassname">molecule_class.</code><code class="descname">getBondsFromAtoms</code><span class="sig-paren">(</span><em>atoms</em>, <em>bonds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#getBondsFromAtoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.getBondsFromAtoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Based on a list of atoms find all bonds in Bond list, bonds that contain these atoms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>atoms</strong> (<em>Atom List</em>) &#8211; A list of Atom objects which are the basis for searching through the bond list.</li>
+<li><strong>bonds</strong> (<em>Bond List</em>) &#8211; A List of Bond objects which the function searches through.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of all Bond objects that contain any of the given Atom objects atoms.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Bond List</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.getDihedralsFromAtoms">
 <code class="descclassname">molecule_class.</code><code class="descname">getDihedralsFromAtoms</code><span class="sig-paren">(</span><em>atomlist</em>, <em>bondlist</em>, <em>dihedrals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#getDihedralsFromAtoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.getDihedralsFromAtoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a list of Atoms find all the Dihedral objects in dihedrals which contains these atoms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>atomlist</strong> (<em>Atom List</em>) &#8211; A list of Atoms used to search through the Dihedral List.</li>
+<li><strong>bondlist</strong> (<em>Bond List</em>) &#8211; A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible dihedral combinations of the Atoms in atoms.</li>
+<li><strong>angles</strong> (<em>Angle List</em>) &#8211; A List of Angles which is searched through.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>anglelist</strong> &#8211; A list of Angles that are associated with the Atoms in atoms.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Angle List</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.groupAnglesByMol">
 <code class="descclassname">molecule_class.</code><code class="descname">groupAnglesByMol</code><span class="sig-paren">(</span><em>mol_dict</em>, <em>bond_dict</em>, <em>angles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#groupAnglesByMol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.groupAnglesByMol" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Group angles by their associated molecular ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mol_dict</strong> (<em>Atom List Dictionary</em>) &#8211; A dictionary of Atom List with each entry indexed by molecule ID and the entries with that index being an Atom list of Atom objects associated with the molecule ID</li>
+<li><strong>bond_dict</strong> (<em>Bond List Dictionary</em>) &#8211; A dictionary of Bond List items indexed by their associated molecule ID.</li>
+<li><strong>angles</strong> (<em>Angle List</em>) &#8211; A list of Angle objects that you want grouped by molecule ID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>angle_dict</strong> &#8211; A dictionary with the molecule ID&#8217;s as keys and the list of angles associated with that molecule ID as the entries</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Angle List Dictionary</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.groupAtomsByMol">
 <code class="descclassname">molecule_class.</code><code class="descname">groupAtomsByMol</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#groupAtomsByMol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.groupAtomsByMol" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Group atoms by their associated molecular ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atoms</strong> (<em>Atom List</em>) &#8211; A list of Atom objects that you want grouped by molecule ID</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>mol_dict</strong> &#8211; A dictionary with the molecule ID&#8217;s as keys and the list of atoms associated with that molecule ID as the entries</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Atom List Dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.groupBondsByMol">
 <code class="descclassname">molecule_class.</code><code class="descname">groupBondsByMol</code><span class="sig-paren">(</span><em>mol_dict</em>, <em>bonds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#groupBondsByMol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.groupBondsByMol" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Group bonds by their associated molecular ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mol_dict</strong> (<em>Atom List Dictionary</em>) &#8211; A dictionary of Atom List with each entry indexed by molecule ID and the entries with that index being an Atom list of Atom objects associated with the molecule ID</li>
+<li><strong>bonds</strong> (<em>Bond List</em>) &#8211; A list of Bond objects that you want grouped by molecule ID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>bond_dict</strong> &#8211; A dictionary with the molecule ID&#8217;s as keys and the list of bonds associated with that molecule ID as the entries</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Bond List Dictionary</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.groupDihedralsByMol">
 <code class="descclassname">molecule_class.</code><code class="descname">groupDihedralsByMol</code><span class="sig-paren">(</span><em>mol_dict</em>, <em>bond_dict</em>, <em>dihedrals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#groupDihedralsByMol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.groupDihedralsByMol" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Group dihedrals by theri associated molecule ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mol_dict</strong> (<em>Atom List Dictionary</em>) &#8211; A dictionary of Atom Lists indexed by their associated molecule ID&#8217;s</li>
+<li><strong>bond_dict</strong> (<em>Bond List Dictionary</em>) &#8211; A dictionary of Bond Lists indexed by their associated molecule ID&#8217;s</li>
+<li><strong>dihedrals</strong> (<em>Dihedral List</em>) &#8211; A list of dihedrals to by grouped by molecule ID.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dihedral_dict</strong> &#8211; A dictionary of Dihedral Lists indexed by their associated molecule ID.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dihedral List Dictionary</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.loadAngles">
 <code class="descclassname">molecule_class.</code><code class="descname">loadAngles</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#loadAngles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.loadAngles" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This function loads the Angless from a LAMMPS input file and turns them into a list of Angle objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; The filename of the LAMMPS input file which has the Angles you wish to use.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of Angle objects with the same value as the Angles in the LAMMPS input file passed in.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Angle List</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.loadBonds">
 <code class="descclassname">molecule_class.</code><code class="descname">loadBonds</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#loadBonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.loadBonds" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This function loads the Bonds from a LAMMPS input file and turns them into a list of Bond objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; The filename of the LAMMPS input file which has the Bonds you wish to use.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of Bond objects with the same value as the Bonds in the LAMMPS input file passed in.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Bond List</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.loadDihedrals">
 <code class="descclassname">molecule_class.</code><code class="descname">loadDihedrals</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#loadDihedrals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.loadDihedrals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This function loads the Dihedrals from a LAMMPS input file and turns them into a list of Dihedral objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; The filename of the LAMMPS input file which has the Dihedrals you wish to use.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of Dihedral objects with the same value as the Dihedrals in the LAMMPS input file passed in.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dihedral List</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.molecule2graph">
 <code class="descclassname">molecule_class.</code><code class="descname">molecule2graph</code><span class="sig-paren">(</span><em>atomlist</em>, <em>bondlist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#molecule2graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.molecule2graph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Converts the Atom list and Bond list of a molecule to a graph data object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>atomlist</strong> (<em>Atom List</em>) &#8211; A list of atoms in the molecule</li>
+<li><strong>bondlist</strong> (<em>Bond List</em>) &#8211; A list of bonds associated with the molecule</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>molecule_graph</strong> &#8211; A Networkx Graph object with the nodes being the atom ID&#8217;s of the atoms and the connectivity of the graph defined by the bonds in the bondlist.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Networkx Graph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="molecule_class.rot_quat">
 <code class="descclassname">molecule_class.</code><code class="descname">rot_quat</code><span class="sig-paren">(</span><em>vector</em>, <em>theta</em>, <em>rot_axis</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#rot_quat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.rot_quat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-
-
-          </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="mc_routine_rev3.html" title="previous chapter">mc_routine_rev3 module</a></li>
-      <li>Next: <a href="read_lmp_rev6.html" title="next chapter">read_lmp_rev6 module</a></li>
-  </ul></li>
+<dd><p>Rotates a vector about a specified axis a specified angle theta using the quaternion method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>vector</strong> (<em>float vector</em>) &#8211; A vector of three elements that represents the X, Y, Z coordinates of the vector that one wishes to rotate</li>
+<li><strong>theta</strong> (<em>float</em>) &#8211; The angle by which the vector rotates.</li>
+<li><strong>rot_axis</strong> (<em>float vector</em>) &#8211; A vector of three elements which represents the X,Y,Z elements of the rotation axis.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>new_vector</strong> &#8211; A vector of three elements representing the X,Y,Z coordinates of the old vector after rotation</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float vector</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/molecule_class.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="read_lmp_rev6.html" class="btn btn-neutral float-right" title="read_lmp_rev6 module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mc_routine_rev3.html" class="btn btn-neutral" title="mc_routine_rev3 module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Steven Merz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2017, Steven Merz.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
-      
-      |
-      <a href="_sources/molecule_class.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
-    
-  </body>
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

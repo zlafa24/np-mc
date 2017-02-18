@@ -1,46 +1,150 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>molecule_class &#8212; NP Monolayer Monte Carlo 1.0.0 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
   
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head>
-  <body role="document">
+  <title>molecule_class &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
   
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="NP Monolayer Monte Carlo 1.0.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> NP Monolayer Monte Carlo
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" />
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../coverage.html">Undocumented Python objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../coverage.html#mc-routine">mc_routine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coverage.html#mc-routine-rev3">mc_routine_rev3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coverage.html#read-lmp-rev6">read_lmp_rev6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coverage.html#simulation-class">simulation_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coverage.html#unit-tests">unit_tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../atom_class.html">atom_class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../class_tests.html">class_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mc_library_rev3.html">mc_library_rev3 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mc_routine.html">mc_routine module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mc_routine_rev3.html">mc_routine_rev3 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecule_class.html">molecule_class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../read_lmp_rev6.html">read_lmp_rev6 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shuffle_np.html">shuffle_np module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation_class.html">simulation_class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation_test.html">simulation_test module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_molecule.html">test_molecule module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unit_tests.html">unit_tests module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">NP Monolayer Monte Carlo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>molecule_class</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <h1>Source code for molecule_class</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This module contains the molecule class and all classes and functions</span>
@@ -53,37 +157,37 @@
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">ntwkx</span>
 
 <div class="viewcode-block" id="Molecule"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule">[docs]</a><span class="k">class</span> <span class="nc">Molecule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This class is used to represent a molecule in a simulation and holds all</span>
-<span class="sd">            the objects related to a molecule including the related Atom, Bond, Angle, and Dihedral Objects.</span>
+	<span class="sd">&quot;&quot;&quot;This class is used to represent a molecule in a simulation and holds all</span>
+<span class="sd">		the objects related to a molecule including the related Atom, Bond, Angle, and Dihedral Objects.</span>
 
-<span class="sd">            Parameters</span>
-<span class="sd">            ----------</span>
-<span class="sd">            molID : int</span>
-<span class="sd">                The unique integer identifier of the molecule as set in the LAMMPS input file</span>
-<span class="sd">            atoms : list of type Atom</span>
-<span class="sd">                The Atom objects associated with this molecule</span>
-<span class="sd">            bonds : list of type Bond</span>
-<span class="sd">                The Bond objects associated with this molecule</span>
-<span class="sd">            angles : list of type Angle</span>
-<span class="sd">                The Angle objects associated with this molecule</span>
-<span class="sd">            dihedrals : list of type Dihedral</span>
-<span class="sd">                The Dihedral objects associated with this molecule</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		molID : int</span>
+<span class="sd">			The unique integer identifier of the molecule as set in the LAMMPS input file</span>
+<span class="sd">		atoms : list of type Atom</span>
+<span class="sd">			The Atom objects associated with this molecule</span>
+<span class="sd">		bonds : list of type Bond</span>
+<span class="sd">			The Bond objects associated with this molecule</span>
+<span class="sd">		angles : list of type Angle</span>
+<span class="sd">			The Angle objects associated with this molecule</span>
+<span class="sd">		dihedrals : list of type Dihedral</span>
+<span class="sd">			The Dihedral objects associated with this molecule</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">molID</span><span class="p">,</span><span class="n">atoms</span><span class="p">,</span><span class="n">bonds</span><span class="p">,</span><span class="n">angles</span><span class="p">,</span><span class="n">dihedrals</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">molID</span> <span class="o">=</span> <span class="n">molID</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">molID</span> <span class="o">=</span> <span class="n">molID</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">bonds</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="n">angles</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="o">=</span> <span class="n">dihedrals</span>
 <div class="viewcode-block" id="Molecule.setAnchorAtom"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule.setAnchorAtom">[docs]</a>	<span class="k">def</span> <span class="nf">setAnchorAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">atomID</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot;Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.</span>
-<span class="sd">                </span>
-<span class="sd">                Parameters</span>
-<span class="sd">                ----------</span>
-<span class="sd">                atomID : (int)</span>
-<span class="sd">                    The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.</span>
-<span class="sd">                &quot;&quot;&quot;</span>
+		<span class="sd">&quot;&quot;&quot;Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		atomID : int</span>
+<span class="sd">			The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">atom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAtomByID</span><span class="p">(</span><span class="n">atomID</span><span class="p">)</span>
 		<span class="k">if</span><span class="p">(</span><span class="n">atom</span><span class="o">!=</span><span class="kc">None</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">anchorAtom</span> <span class="o">=</span> <span class="n">atom</span>
@@ -92,48 +196,48 @@
 			<span class="k">return</span> <span class="kc">False</span></div>
 	
 <div class="viewcode-block" id="Molecule.atomsAsGraph"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule.atomsAsGraph">[docs]</a>	<span class="k">def</span> <span class="nf">atomsAsGraph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot;Returns the graph data structure of the atoms in the molecule defined by the connectivity defined by the Bond objects of the molecule.  </span>
-<span class="sd">                The nodes of the graph are the atom ID&#39;s of the atoms.</span>
+		<span class="sd">&quot;&quot;&quot;Returns the graph data structure of the atoms in the molecule defined by the connectivity defined by the Bond objects of the molecule.  </span>
+<span class="sd">		The nodes of the graph are the atom ID&#39;s of the atoms.</span>
 
-<span class="sd">                Returns</span>
-<span class="sd">                -------</span>
-<span class="sd">                Networkx Graph Object</span>
-<span class="sd">                    A Networkx Graph object with the nodes being the atom ID&#39;s of the atoms in the molecule and the connections defined by the Molecule&#39;s Bonds</span>
-<span class="sd">                &quot;&quot;&quot;</span>
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		Networkx Graph Object</span>
+<span class="sd">			A Networkx Graph object with the nodes being the atom ID&#39;s of the atoms in the molecule and the connections defined by the Molecule&#39;s Bonds</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="n">molecule2graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">)</span></div>
 <div class="viewcode-block" id="Molecule.getAtomByID"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule.getAtomByID">[docs]</a>	<span class="k">def</span> <span class="nf">getAtomByID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">atomID</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot;Returns the Atom object associated with the given atom ID as long as the atom is associated with the molecule.</span>
+		<span class="sd">&quot;&quot;&quot;Returns the Atom object associated with the given atom ID as long as the atom is associated with the molecule.</span>
 
-<span class="sd">                Parameters</span>
-<span class="sd">                ----------</span>
-<span class="sd">                atomID : (int)</span>
-<span class="sd">                    The unique atom ID identifier of the Atom object which you hope to retrieve</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		atomID : int</span>
+<span class="sd">			The unique atom ID identifier of the Atom object which you hope to retrieve</span>
 
-<span class="sd">                Returns</span>
-<span class="sd">                -------</span>
-<span class="sd">                    Atom</span>
-<span class="sd">                        The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.</span>
-<span class="sd">                &quot;&quot;&quot;</span>
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">			Atom</span>
+<span class="sd">				The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
 			<span class="k">if</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">atomID</span><span class="o">==</span><span class="n">atomID</span><span class="p">):</span>
 				<span class="k">return</span> <span class="n">atom</span>
 		<span class="k">return</span> <span class="kc">None</span></div></div>
 
 <div class="viewcode-block" id="Bond"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Bond">[docs]</a><span class="k">class</span> <span class="nc">Bond</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a </span>
-<span class="sd">        Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID&#39;s of the two atoms involved in the bond.</span>
-<span class="sd">        </span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        bondID : (int)</span>
-<span class="sd">            The unique integer identifying the bonds same as the one defined in the LAMMPS input file</span>
-<span class="sd">        bondType : (int)</span>
-<span class="sd">            An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.</span>
-<span class="sd">        atom1 : (int)</span>
-<span class="sd">            The atom ID associated with the first atom in the bond</span>
-<span class="sd">        atom2 : (int)</span>
-<span class="sd">            The atom ID associated with the second atom in the bond</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+	<span class="sd">&quot;&quot;&quot;The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a </span>
+<span class="sd">	Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID&#39;s of the two atoms involved in the bond.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	bondID : int</span>
+<span class="sd">		The unique integer identifying the bonds same as the one defined in the LAMMPS input file</span>
+<span class="sd">	bondType : int</span>
+<span class="sd">		An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.</span>
+<span class="sd">	atom1 : int</span>
+<span class="sd">		The atom ID associated with the first atom in the bond</span>
+<span class="sd">	atom2 : int</span>
+<span class="sd">		The atom ID associated with the second atom in the bond</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">bondID</span><span class="p">,</span><span class="n">bondType</span><span class="p">,</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">bondID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bondID</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">bondType</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bondType</span><span class="p">)</span>
@@ -141,21 +245,21 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">atom2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Angle"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Angle">[docs]</a><span class="k">class</span> <span class="nc">Angle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.</span>
-<span class="sd">        </span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        angleID : (int)</span>
-<span class="sd">            The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file</span>
-<span class="sd">        angleType : (int)</span>
-<span class="sd">            The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file</span>
-<span class="sd">        atom1 : (int)</span>
-<span class="sd">            The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.</span>
-<span class="sd">        atom2 : (int)</span>
-<span class="sd">            The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.</span>
-<span class="sd">        atom3 : (int)</span>
-<span class="sd">            The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+	<span class="sd">&quot;&quot;&quot;The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	angleID : int</span>
+<span class="sd">		The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file</span>
+<span class="sd">	angleType : int</span>
+<span class="sd">		The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file</span>
+<span class="sd">	atom1 : int</span>
+<span class="sd">		The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.</span>
+<span class="sd">	atom2 : int</span>
+<span class="sd">		The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.</span>
+<span class="sd">	atom3 : int</span>
+<span class="sd">		The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angleID</span><span class="p">,</span><span class="n">angleType</span><span class="p">,</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">,</span><span class="n">atom3</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">angleID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">angleID</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">angleType</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">angleType</span><span class="p">)</span>
@@ -164,6 +268,23 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">atom3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom3</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dihedral"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Dihedral">[docs]</a><span class="k">class</span> <span class="nc">Dihedral</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;The Dihedral object represents the dihedral between four connected atoms.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	dihID : int</span>
+<span class="sd">		The unique integer identifier for the dihedral same as the one in the LAMMPS input file.</span>
+<span class="sd">	dihType : int</span>
+<span class="sd">		The unique integer identifier for the dihedral type which corresponds to the dihedral type in the LAMMPS input file.</span>
+<span class="sd">	atom1 : int</span>
+<span class="sd">		The atom ID of the first atom in the dihedral.</span>
+<span class="sd">	atom2 : int</span>
+<span class="sd">		The atom ID of the second atom in the dihedral.</span>
+<span class="sd">	atom3 : int</span>
+<span class="sd">		The atom ID of the third atom in the dihedral.</span>
+<span class="sd">	atom4 : int</span>
+<span class="sd">		The atom ID of the fourth atom in the dihedral.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dihID</span><span class="p">,</span><span class="n">dihType</span><span class="p">,</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">,</span><span class="n">atom3</span><span class="p">,</span><span class="n">atom4</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">dihID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dihID</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">dihType</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dihType</span><span class="p">)</span>
@@ -172,6 +293,13 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">atom3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom3</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">atom4</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom4</span><span class="p">)</span>
 <div class="viewcode-block" id="Dihedral.getAngle"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Dihedral.getAngle">[docs]</a>	<span class="k">def</span> <span class="nf">getAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Calculates the dihedral angle of the dihedral object.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		float</span>
+<span class="sd">			The current dihedral angle of the Dihedral object</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">b1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span>
 		<span class="n">b2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">position</span>
 		<span class="n">b3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom4</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span>
@@ -181,28 +309,71 @@
 		<span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">b2norm</span><span class="p">)</span>
 		<span class="n">angle</span> <span class="o">=</span> <span class="n">atan2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">n2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="n">n2</span><span class="p">))</span>
 		<span class="n">angle</span><span class="o">=</span><span class="p">((</span><span class="n">angle</span><span class="o">-</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">%</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
-		<span class="k">return</span> <span class="n">angle</span></div>
-<div class="viewcode-block" id="Dihedral.rotate"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Dihedral.rotate">[docs]</a>	<span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">angle</span><span class="p">):</span>
-		<span class="n">rot_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">atom2</span><span class="o">.</span><span class="n">position</span>
-		<span class="n">rot_angle</span> <span class="o">=</span> <span class="n">angle</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">getAngle</span><span class="p">()</span></div></div>
-		<span class="c1">#for atom in atoms2rotate:</span>
-		<span class="c1">#	atom[4:7] = rot_quat((atom[4:7]-dih_atoms[2,4:7]),rot_angle,rot_axis)+dih_atoms[2,4:7]</span>
-
-
+		<span class="k">return</span> <span class="n">angle</span></div></div>
 
 <div class="viewcode-block" id="loadBonds"><a class="viewcode-back" href="../molecule_class.html#molecule_class.loadBonds">[docs]</a><span class="k">def</span> <span class="nf">loadBonds</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;This function loads the Bonds from a LAMMPS input file and turns them into a list of Bond objects.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	filename : str</span>
+<span class="sd">		The filename of the LAMMPS input file which has the Bonds you wish to use.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	Bond List</span>
+<span class="sd">		A list of Bond objects with the same value as the Bonds in the LAMMPS input file passed in.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">bonds</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readBonds</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">Bond</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">bond</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">bond</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="loadAngles"><a class="viewcode-back" href="../molecule_class.html#molecule_class.loadAngles">[docs]</a><span class="k">def</span> <span class="nf">loadAngles</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;This function loads the Angless from a LAMMPS input file and turns them into a list of Angle objects.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	filename : str</span>
+<span class="sd">		The filename of the LAMMPS input file which has the Angles you wish to use.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	Angle List</span>
+<span class="sd">		A list of Angle objects with the same value as the Angles in the LAMMPS input file passed in.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">angles</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readAngles</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">Angle</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">angle</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="loadDihedrals"><a class="viewcode-back" href="../molecule_class.html#molecule_class.loadDihedrals">[docs]</a><span class="k">def</span> <span class="nf">loadDihedrals</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;This function loads the Dihedrals from a LAMMPS input file and turns them into a list of Dihedral objects.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	filename : str</span>
+<span class="sd">		The filename of the LAMMPS input file which has the Dihedrals you wish to use.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	Dihedral List</span>
+<span class="sd">		A list of Dihedral objects with the same value as the Dihedrals in the LAMMPS input file passed in.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">dihedrals</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readDihedrals</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">Dihedral</span><span class="p">(</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">dihedral</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="k">for</span> <span class="n">dihedral</span> <span class="ow">in</span> <span class="n">dihedrals</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="getBondsFromAtoms"><a class="viewcode-back" href="../molecule_class.html#molecule_class.getBondsFromAtoms">[docs]</a><span class="k">def</span> <span class="nf">getBondsFromAtoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">bonds</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Based on a list of atoms find all bonds in Bond list, bonds that contain these atoms.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	atoms : Atom List</span>
+<span class="sd">		A list of Atom objects which are the basis for searching through the bond list.</span>
+<span class="sd">	bonds : Bond List</span>
+<span class="sd">		A List of Bond objects which the function searches through.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	Bond List</span>
+<span class="sd">		A list of all Bond objects that contain any of the given Atom objects atoms.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">id_combos</span> <span class="o">=</span> <span class="p">[(</span><span class="n">atom1</span><span class="o">.</span><span class="n">atomID</span><span class="p">,</span><span class="n">atom2</span><span class="o">.</span><span class="n">atomID</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">atom1</span><span class="p">,</span><span class="n">atom2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
 	<span class="n">bondlist</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
@@ -211,6 +382,22 @@
 	<span class="k">return</span> <span class="n">bondlist</span></div>
 
 <div class="viewcode-block" id="getAnglesFromAtoms"><a class="viewcode-back" href="../molecule_class.html#molecule_class.getAnglesFromAtoms">[docs]</a><span class="k">def</span> <span class="nf">getAnglesFromAtoms</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">,</span><span class="n">angles</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Given a list of Atoms find all the Angles in angles which contains these atoms.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	atomlist : Atom List</span>
+<span class="sd">		A list of Atoms used to search through the Angle List.</span>
+<span class="sd">	bondlist : Bond List</span>
+<span class="sd">		A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible angle combinations of the Atoms in atoms.</span>
+<span class="sd">	angles : Angle List</span>
+<span class="sd">		A List of Angles which is searched through.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	anglelist : Angle List</span>
+<span class="sd">		A list of Angles that are associated with the Atoms in atoms.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">mol_graph</span> <span class="o">=</span> <span class="n">molecule2graph</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">)</span>
 	<span class="n">angle_combos</span><span class="o">=</span><span class="p">[]</span>
 	<span class="c1">#Get possible angles by getting subgraphs with only 2 steps</span>
@@ -224,6 +411,22 @@
 	<span class="k">return</span> <span class="n">anglelist</span></div>
 
 <div class="viewcode-block" id="getDihedralsFromAtoms"><a class="viewcode-back" href="../molecule_class.html#molecule_class.getDihedralsFromAtoms">[docs]</a><span class="k">def</span> <span class="nf">getDihedralsFromAtoms</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">,</span><span class="n">dihedrals</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Given a list of Atoms find all the Dihedral objects in dihedrals which contains these atoms.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	atomlist : Atom List</span>
+<span class="sd">		A list of Atoms used to search through the Dihedral List.</span>
+<span class="sd">	bondlist : Bond List</span>
+<span class="sd">		A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible dihedral combinations of the Atoms in atoms.</span>
+<span class="sd">	angles : Angle List</span>
+<span class="sd">		A List of Angles which is searched through.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	anglelist : Angle List</span>
+<span class="sd">		A list of Angles that are associated with the Atoms in atoms.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">mol_graph</span> <span class="o">=</span> <span class="n">molecule2graph</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">)</span>
 	<span class="n">dihedral_combos</span><span class="o">=</span><span class="p">[]</span>
 	<span class="c1">#Get possible angles by getting subgraphs with only 2 steps</span>
@@ -237,30 +440,102 @@
 	<span class="k">return</span> <span class="n">dihedral_list</span></div>
 
 <div class="viewcode-block" id="groupAtomsByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupAtomsByMol">[docs]</a><span class="k">def</span> <span class="nf">groupAtomsByMol</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Group atoms by their associated molecular ID</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	atoms : Atom List</span>
+<span class="sd">		A list of Atom objects that you want grouped by molecule ID</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	mol_dict : Atom List Dictionary</span>
+<span class="sd">		A dictionary with the molecule ID&#39;s as keys and the list of atoms associated with that molecule ID as the entries</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">mol_dict</span> <span class="o">=</span> <span class="p">{}</span>
 	<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">g</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">key</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get_mol_ID</span><span class="p">())):</span>
 		<span class="n">mol_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">mol_dict</span></div>
 
 <div class="viewcode-block" id="groupBondsByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupBondsByMol">[docs]</a><span class="k">def</span> <span class="nf">groupBondsByMol</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">,</span><span class="n">bonds</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Group bonds by their associated molecular ID</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	mol_dict : Atom List Dictionary</span>
+<span class="sd">		A dictionary of Atom List with each entry indexed by molecule ID and the entries with that index being an Atom list of Atom objects associated with the molecule ID</span>
+<span class="sd">	bonds : Bond List</span>
+<span class="sd">		A list of Bond objects that you want grouped by molecule ID</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	bond_dict : Bond List Dictionary</span>
+<span class="sd">		A dictionary with the molecule ID&#39;s as keys and the list of bonds associated with that molecule ID as the entries</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">bond_dict</span><span class="o">=</span><span class="p">{}</span>
 	<span class="k">for</span> <span class="n">molid</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span> 
 		<span class="n">bond_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">]</span> <span class="o">=</span> <span class="n">getBondsFromAtoms</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">],</span><span class="n">bonds</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">bond_dict</span></div>
 
 <div class="viewcode-block" id="groupAnglesByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupAnglesByMol">[docs]</a><span class="k">def</span> <span class="nf">groupAnglesByMol</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">,</span><span class="n">bond_dict</span><span class="p">,</span><span class="n">angles</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Group angles by their associated molecular ID</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	mol_dict : Atom List Dictionary</span>
+<span class="sd">		A dictionary of Atom List with each entry indexed by molecule ID and the entries with that index being an Atom list of Atom objects associated with the molecule ID</span>
+<span class="sd">	bond_dict : Bond List Dictionary</span>
+<span class="sd">		A dictionary of Bond List items indexed by their associated molecule ID.</span>
+<span class="sd">	angles : Angle List</span>
+<span class="sd">		A list of Angle objects that you want grouped by molecule ID</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	angle_dict : Angle List Dictionary</span>
+<span class="sd">		A dictionary with the molecule ID&#39;s as keys and the list of angles associated with that molecule ID as the entries</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">angle_dict</span><span class="o">=</span><span class="p">{}</span>
 	<span class="k">for</span> <span class="n">molid</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
 		<span class="n">angle_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">]</span><span class="o">=</span><span class="n">getAnglesFromAtoms</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">],</span><span class="n">bond_dict</span><span class="p">[</span><span class="n">molid</span><span class="p">],</span><span class="n">angles</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">angle_dict</span></div>
 
 <div class="viewcode-block" id="groupDihedralsByMol"><a class="viewcode-back" href="../molecule_class.html#molecule_class.groupDihedralsByMol">[docs]</a><span class="k">def</span> <span class="nf">groupDihedralsByMol</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">,</span><span class="n">bond_dict</span><span class="p">,</span><span class="n">dihedrals</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Group dihedrals by theri associated molecule ID</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	mol_dict : Atom List Dictionary</span>
+<span class="sd">		A dictionary of Atom Lists indexed by their associated molecule ID&#39;s</span>
+<span class="sd">	bond_dict : Bond List Dictionary</span>
+<span class="sd">		A dictionary of Bond Lists indexed by their associated molecule ID&#39;s</span>
+<span class="sd">	dihedrals : Dihedral List</span>
+<span class="sd">		A list of dihedrals to by grouped by molecule ID.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dihedral_dict : Dihedral List Dictionary</span>
+<span class="sd">		A dictionary of Dihedral Lists indexed by their associated molecule ID.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">dihedral_dict</span><span class="o">=</span><span class="p">{}</span>
 	<span class="k">for</span> <span class="n">molID</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
 		<span class="n">dihedral_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">]</span><span class="o">=</span><span class="n">getDihedralsFromAtoms</span><span class="p">(</span><span class="n">mol_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">],</span><span class="n">bond_dict</span><span class="p">[</span><span class="n">molID</span><span class="p">],</span><span class="n">dihedrals</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">dihedral_dict</span></div>
 
 <div class="viewcode-block" id="molecule2graph"><a class="viewcode-back" href="../molecule_class.html#molecule_class.molecule2graph">[docs]</a><span class="k">def</span> <span class="nf">molecule2graph</span><span class="p">(</span><span class="n">atomlist</span><span class="p">,</span><span class="n">bondlist</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Converts the Atom list and Bond list of a molecule to a graph data object</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	atomlist : Atom List</span>
+<span class="sd">		A list of atoms in the molecule</span>
+<span class="sd">	bondlist : Bond List</span>
+<span class="sd">		A list of bonds associated with the molecule</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	molecule_graph : Networkx Graph</span>
+<span class="sd">		A Networkx Graph object with the nodes being the atom ID&#39;s of the atoms and the connectivity of the graph defined by the bonds in the bondlist.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">molecule_graph</span> <span class="o">=</span> <span class="n">ntwkx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
 	<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atomlist</span><span class="p">:</span>
 		<span class="n">molecule_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">atomID</span><span class="p">)</span>
@@ -268,6 +543,18 @@
 	<span class="k">return</span> <span class="n">molecule_graph</span></div>
 
 <div class="viewcode-block" id="constructMolecules"><a class="viewcode-back" href="../molecule_class.html#molecule_class.constructMolecules">[docs]</a><span class="k">def</span> <span class="nf">constructMolecules</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;From a LAMMPS input file construct a list of Molecule objects based on the molecules in the LAMMPS input file.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	filename : str</span>
+<span class="sd">		The name of the LAMMPS input file that contains the molecules</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	molecules : Molecule List</span>
+<span class="sd">		A list of Molecule objects with the data specified by the LAMMPS input file passed in.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="nb">print</span> <span class="s2">&quot;Loading Data File:&quot;</span>
 	<span class="n">atoms</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">loadAtoms</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 	<span class="n">bonds</span> <span class="o">=</span> <span class="n">loadBonds</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -290,6 +577,22 @@
 
 
 <div class="viewcode-block" id="rot_quat"><a class="viewcode-back" href="../molecule_class.html#molecule_class.rot_quat">[docs]</a><span class="k">def</span> <span class="nf">rot_quat</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">rot_axis</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Rotates a vector about a specified axis a specified angle theta using the quaternion method</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	vector : float vector</span>
+<span class="sd">		A vector of three elements that represents the X, Y, Z coordinates of the vector that one wishes to rotate</span>
+<span class="sd">	theta : float</span>
+<span class="sd">		The angle by which the vector rotates.</span>
+<span class="sd">	rot_axis : float vector</span>
+<span class="sd">		A vector of three elements which represents the X,Y,Z elements of the rotation axis.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	new_vector : float vector</span>
+<span class="sd">		A vector of three elements representing the X,Y,Z coordinates of the old vector after rotation</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">rot_axis</span> <span class="o">=</span> <span class="n">rot_axis</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rot_axis</span><span class="p">)</span>
 	<span class="n">vector_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
 	<span class="n">quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rot_axis</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
@@ -304,44 +607,63 @@
 
 </pre></div>
 
+           </div>
           </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Steven Merz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2017, Steven Merz.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
-      
-    </div>
 
-    
+    </section>
 
-    
-  </body>
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

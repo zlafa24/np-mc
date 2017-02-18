@@ -8,37 +8,37 @@ from itertools import groupby, permutations
 import networkx as ntwkx
 
 class Molecule(object):
-        """This class is used to represent a molecule in a simulation and holds all
-            the objects related to a molecule including the related Atom, Bond, Angle, and Dihedral Objects.
+	"""This class is used to represent a molecule in a simulation and holds all
+		the objects related to a molecule including the related Atom, Bond, Angle, and Dihedral Objects.
 
-            Parameters
-            ----------
-            molID : int
-                The unique integer identifier of the molecule as set in the LAMMPS input file
-            atoms : list of type Atom
-                The Atom objects associated with this molecule
-            bonds : list of type Bond
-                The Bond objects associated with this molecule
-            angles : list of type Angle
-                The Angle objects associated with this molecule
-            dihedrals : list of type Dihedral
-                The Dihedral objects associated with this molecule
+		Parameters
+		----------
+		molID : int
+			The unique integer identifier of the molecule as set in the LAMMPS input file
+		atoms : list of type Atom
+			The Atom objects associated with this molecule
+		bonds : list of type Bond
+			The Bond objects associated with this molecule
+		angles : list of type Angle
+			The Angle objects associated with this molecule
+		dihedrals : list of type Dihedral
+			The Dihedral objects associated with this molecule
 
-        """
+	"""
 	def __init__(self,molID,atoms,bonds,angles,dihedrals):
-                self.molID = molID
+		self.molID = molID
 		self.atoms = atoms
 		self.bonds = bonds
 		self.angles = angles
 		self.dihedrals = dihedrals
 	def setAnchorAtom(self,atomID):
-                """Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.
-                
-                Parameters
-                ----------
-                atomID : (int)
-                    The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.
-                """
+		"""Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.
+		
+		Parameters
+		----------
+		atomID : int
+			The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.
+		"""
 		atom = self.getAtomByID(atomID)
 		if(atom!=None):
 			self.anchorAtom = atom
@@ -47,48 +47,48 @@ class Molecule(object):
 			return False
 	
 	def atomsAsGraph(self):
-                """Returns the graph data structure of the atoms in the molecule defined by the connectivity defined by the Bond objects of the molecule.  
-                The nodes of the graph are the atom ID's of the atoms.
+		"""Returns the graph data structure of the atoms in the molecule defined by the connectivity defined by the Bond objects of the molecule.  
+		The nodes of the graph are the atom ID's of the atoms.
 
-                Returns
-                -------
-                Networkx Graph Object
-                    A Networkx Graph object with the nodes being the atom ID's of the atoms in the molecule and the connections defined by the Molecule's Bonds
-                """
+		Returns
+		-------
+		Networkx Graph Object
+			A Networkx Graph object with the nodes being the atom ID's of the atoms in the molecule and the connections defined by the Molecule's Bonds
+		"""
 		return molecule2graph(self.atoms,self.bonds)
 	def getAtomByID(self,atomID):
-                """Returns the Atom object associated with the given atom ID as long as the atom is associated with the molecule.
+		"""Returns the Atom object associated with the given atom ID as long as the atom is associated with the molecule.
 
-                Parameters
-                ----------
-                atomID : (int)
-                    The unique atom ID identifier of the Atom object which you hope to retrieve
+		Parameters
+		----------
+		atomID : int
+			The unique atom ID identifier of the Atom object which you hope to retrieve
 
-                Returns
-                -------
-                    Atom
-                        The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.
-                """
+		Returns
+		-------
+			Atom
+				The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.
+		"""
 		for atom in self.atoms:
 			if(atom.atomID==atomID):
 				return atom
 		return None
 
 class Bond(object):
-        """The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a 
-        Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID's of the two atoms involved in the bond.
-        
-        Parameters
-        ----------
-        bondID : (int)
-            The unique integer identifying the bonds same as the one defined in the LAMMPS input file
-        bondType : (int)
-            An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.
-        atom1 : (int)
-            The atom ID associated with the first atom in the bond
-        atom2 : (int)
-            The atom ID associated with the second atom in the bond
-        """
+	"""The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a 
+	Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID's of the two atoms involved in the bond.
+	
+	Parameters
+	----------
+	bondID : int
+		The unique integer identifying the bonds same as the one defined in the LAMMPS input file
+	bondType : int
+		An integer which represents the type of bond this is, the same as the bond type number defined in LAMMPS input file.
+	atom1 : int
+		The atom ID associated with the first atom in the bond
+	atom2 : int
+		The atom ID associated with the second atom in the bond
+	"""
 	def __init__(self,bondID,bondType,atom1,atom2):
 		self.bondID = int(bondID)
 		self.bondType = int(bondType)
@@ -96,21 +96,21 @@ class Bond(object):
 		self.atom2 = int(atom2)
 
 class Angle(object):
-        """The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.
-        
-        Parameters
-        ----------
-        angleID : (int)
-            The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file
-        angleType : (int)
-            The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file
-        atom1 : (int)
-            The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.
-        atom2 : (int)
-            The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.
-        atom3 : (int)
-            The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.
-        """
+	"""The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.
+	
+	Parameters
+	----------
+	angleID : int
+		The unique integer identifier of the angle, the same as the one defined in the LAMMPS inpit file
+	angleType : int
+		The integer identifier of the angle type which is the same as the angle type number defined in the LAMMPS input file
+	atom1 : int
+		The atom ID of the first atom associated with the angle, same as the one defined in LAMMPS input file.
+	atom2 : int
+		The atom ID of the second atom associated with the angle, same as the one defined in LAMMPS input file.
+	atom3 : int
+		The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.
+	"""
 	def __init__(self, angleID,angleType,atom1,atom2,atom3):
 		self.angleID = int(angleID)
 		self.angleType =int(angleType)
@@ -119,6 +119,23 @@ class Angle(object):
 		self.atom3 = int(atom3)
 
 class Dihedral(object):
+	"""The Dihedral object represents the dihedral between four connected atoms.
+
+	Parameters
+	----------
+	dihID : int
+		The unique integer identifier for the dihedral same as the one in the LAMMPS input file.
+	dihType : int
+		The unique integer identifier for the dihedral type which corresponds to the dihedral type in the LAMMPS input file.
+	atom1 : int
+		The atom ID of the first atom in the dihedral.
+	atom2 : int
+		The atom ID of the second atom in the dihedral.
+	atom3 : int
+		The atom ID of the third atom in the dihedral.
+	atom4 : int
+		The atom ID of the fourth atom in the dihedral.
+	"""
 	def __init__(self,dihID,dihType,atom1,atom2,atom3,atom4):
 		self.dihID = int(dihID)
 		self.dihType = int(dihType)
@@ -127,6 +144,13 @@ class Dihedral(object):
 		self.atom3 = int(atom3)
 		self.atom4 = int(atom4)
 	def getAngle(self):
+		"""Calculates the dihedral angle of the dihedral object.
+
+		Returns
+		-------
+		float
+			The current dihedral angle of the Dihedral object
+		"""
 		b1 = self.atom2.position-self.atom1.position
 		b2 = self.atom3.position-self.atom2.position
 		b3 = self.atom4.position-self.atom3.position
@@ -137,27 +161,70 @@ class Dihedral(object):
 		angle = atan2(np.dot(m1,n2),np.dot(n1,n2))
 		angle=((angle-pi)*(-1)+2*pi)%(2*pi)
 		return angle
-	def rotate(self,angle):
-		rot_axis = self.atom3.position-self.atom2.position
-		rot_angle = angle-self.getAngle()
-		#for atom in atoms2rotate:
-		#	atom[4:7] = rot_quat((atom[4:7]-dih_atoms[2,4:7]),rot_angle,rot_axis)+dih_atoms[2,4:7]
-
-
 
 def loadBonds(filename):
+	"""This function loads the Bonds from a LAMMPS input file and turns them into a list of Bond objects.
+	
+	Parameters
+	----------
+	filename : str
+		The filename of the LAMMPS input file which has the Bonds you wish to use.
+	
+	Returns
+	-------
+	Bond List
+		A list of Bond objects with the same value as the Bonds in the LAMMPS input file passed in.
+	"""
 	bonds = rdlmp.readBonds(filename)
 	return [Bond(bond[0],bond[1],bond[2],bond[3]) for bond in bonds]
 
 def loadAngles(filename):
+	"""This function loads the Angless from a LAMMPS input file and turns them into a list of Angle objects.
+	
+	Parameters
+	----------
+	filename : str
+		The filename of the LAMMPS input file which has the Angles you wish to use.
+	
+	Returns
+	-------
+	Angle List
+		A list of Angle objects with the same value as the Angles in the LAMMPS input file passed in.
+	"""
 	angles = rdlmp.readAngles(filename)
 	return [Angle(angle[0],angle[1],angle[2],angle[3],angle[4]) for angle in angles]
 
 def loadDihedrals(filename):
+	"""This function loads the Dihedrals from a LAMMPS input file and turns them into a list of Dihedral objects.
+	
+	Parameters
+	----------
+	filename : str
+		The filename of the LAMMPS input file which has the Dihedrals you wish to use.
+	
+	Returns
+	-------
+	Dihedral List
+		A list of Dihedral objects with the same value as the Dihedrals in the LAMMPS input file passed in.
+	"""
 	dihedrals = rdlmp.readDihedrals(filename)
 	return [Dihedral(dihedral[0],dihedral[1],dihedral[2],dihedral[3],dihedral[4],dihedral[5]) for dihedral in dihedrals]
 
 def getBondsFromAtoms(atoms,bonds):
+	"""Based on a list of atoms find all bonds in Bond list, bonds that contain these atoms.
+
+	Parameters
+	----------
+	atoms : Atom List
+		A list of Atom objects which are the basis for searching through the bond list.
+	bonds : Bond List
+		A List of Bond objects which the function searches through.
+
+	Returns
+	-------
+	Bond List
+		A list of all Bond objects that contain any of the given Atom objects atoms.
+	"""
 	id_combos = [(atom1.atomID,atom2.atomID) for (atom1,atom2) in permutations(atoms,r=2)]
 	bondlist = []
 	for bond in bonds:
@@ -166,6 +233,22 @@ def getBondsFromAtoms(atoms,bonds):
 	return bondlist
 
 def getAnglesFromAtoms(atomlist,bondlist,angles):
+	"""Given a list of Atoms find all the Angles in angles which contains these atoms.
+
+	Parameters
+	----------
+	atomlist : Atom List
+		A list of Atoms used to search through the Angle List.
+	bondlist : Bond List
+		A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible angle combinations of the Atoms in atoms.
+	angles : Angle List
+		A List of Angles which is searched through.
+
+	Returns
+	-------
+	anglelist : Angle List
+		A list of Angles that are associated with the Atoms in atoms.
+	"""
 	mol_graph = molecule2graph(atomlist,bondlist)
 	angle_combos=[]
 	#Get possible angles by getting subgraphs with only 2 steps
@@ -179,6 +262,22 @@ def getAnglesFromAtoms(atomlist,bondlist,angles):
 	return anglelist
 
 def getDihedralsFromAtoms(atomlist,bondlist,dihedrals):
+	"""Given a list of Atoms find all the Dihedral objects in dihedrals which contains these atoms.
+
+	Parameters
+	----------
+	atomlist : Atom List
+		A list of Atoms used to search through the Dihedral List.
+	bondlist : Bond List
+		A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible dihedral combinations of the Atoms in atoms.
+	angles : Angle List
+		A List of Angles which is searched through.
+
+	Returns
+	-------
+	anglelist : Angle List
+		A list of Angles that are associated with the Atoms in atoms.
+	"""
 	mol_graph = molecule2graph(atomlist,bondlist)
 	dihedral_combos=[]
 	#Get possible angles by getting subgraphs with only 2 steps
@@ -192,30 +291,102 @@ def getDihedralsFromAtoms(atomlist,bondlist,dihedrals):
 	return dihedral_list
 
 def groupAtomsByMol(atoms):
+	"""Group atoms by their associated molecular ID
+	
+	Parameters
+	----------
+	atoms : Atom List
+		A list of Atom objects that you want grouped by molecule ID
+
+	Returns
+	-------
+	mol_dict : Atom List Dictionary
+		A dictionary with the molecule ID's as keys and the list of atoms associated with that molecule ID as the entries
+	"""
 	mol_dict = {}
 	for k,g in groupby(atoms,key=(lambda x: x.get_mol_ID())):
 		mol_dict[k]=list(g)
 	return mol_dict
 
 def groupBondsByMol(mol_dict,bonds):
+	"""Group bonds by their associated molecular ID
+	
+	Parameters
+	----------
+	mol_dict : Atom List Dictionary
+		A dictionary of Atom List with each entry indexed by molecule ID and the entries with that index being an Atom list of Atom objects associated with the molecule ID
+	bonds : Bond List
+		A list of Bond objects that you want grouped by molecule ID
+
+	Returns
+	-------
+	bond_dict : Bond List Dictionary
+		A dictionary with the molecule ID's as keys and the list of bonds associated with that molecule ID as the entries
+	"""
 	bond_dict={}
 	for molid in mol_dict: 
 		bond_dict[molid] = getBondsFromAtoms(mol_dict[molid],bonds)
 	return bond_dict
 
 def groupAnglesByMol(mol_dict,bond_dict,angles):
+	"""Group angles by their associated molecular ID
+	
+	Parameters
+	----------
+	mol_dict : Atom List Dictionary
+		A dictionary of Atom List with each entry indexed by molecule ID and the entries with that index being an Atom list of Atom objects associated with the molecule ID
+	bond_dict : Bond List Dictionary
+		A dictionary of Bond List items indexed by their associated molecule ID.
+	angles : Angle List
+		A list of Angle objects that you want grouped by molecule ID
+
+	Returns
+	-------
+	angle_dict : Angle List Dictionary
+		A dictionary with the molecule ID's as keys and the list of angles associated with that molecule ID as the entries
+	"""
 	angle_dict={}
 	for molid in mol_dict:
 		angle_dict[molid]=getAnglesFromAtoms(mol_dict[molid],bond_dict[molid],angles)
 	return angle_dict
 
 def groupDihedralsByMol(mol_dict,bond_dict,dihedrals):
+	"""Group dihedrals by theri associated molecule ID
+
+	Parameters
+	----------
+	mol_dict : Atom List Dictionary
+		A dictionary of Atom Lists indexed by their associated molecule ID's
+	bond_dict : Bond List Dictionary
+		A dictionary of Bond Lists indexed by their associated molecule ID's
+	dihedrals : Dihedral List
+		A list of dihedrals to by grouped by molecule ID.
+
+	Returns
+	-------
+	dihedral_dict : Dihedral List Dictionary
+		A dictionary of Dihedral Lists indexed by their associated molecule ID.
+	"""
 	dihedral_dict={}
 	for molID in mol_dict:
 		dihedral_dict[molID]=getDihedralsFromAtoms(mol_dict[molID],bond_dict[molID],dihedrals)
 	return dihedral_dict
 
 def molecule2graph(atomlist,bondlist):
+	"""Converts the Atom list and Bond list of a molecule to a graph data object
+
+	Parameters
+	----------
+	atomlist : Atom List
+		A list of atoms in the molecule
+	bondlist : Bond List
+		A list of bonds associated with the molecule
+
+	Returns
+	-------
+	molecule_graph : Networkx Graph
+		A Networkx Graph object with the nodes being the atom ID's of the atoms and the connectivity of the graph defined by the bonds in the bondlist.
+	"""
 	molecule_graph = ntwkx.Graph()
 	for atom in atomlist:
 		molecule_graph.add_node(atom.atomID)
@@ -223,6 +394,18 @@ def molecule2graph(atomlist,bondlist):
 	return molecule_graph
 
 def constructMolecules(filename):
+	"""From a LAMMPS input file construct a list of Molecule objects based on the molecules in the LAMMPS input file.
+
+	Parameters
+	----------
+	filename : str
+		The name of the LAMMPS input file that contains the molecules
+
+	Returns
+	-------
+	molecules : Molecule List
+		A list of Molecule objects with the data specified by the LAMMPS input file passed in.
+	"""
 	print "Loading Data File:"
 	atoms = atm.loadAtoms(filename)
 	bonds = loadBonds(filename)
@@ -245,6 +428,22 @@ def constructMolecules(filename):
 
 
 def rot_quat(vector,theta,rot_axis):
+	"""Rotates a vector about a specified axis a specified angle theta using the quaternion method
+
+	Parameters
+	----------
+	vector : float vector
+		A vector of three elements that represents the X, Y, Z coordinates of the vector that one wishes to rotate
+	theta : float
+		The angle by which the vector rotates.
+	rot_axis : float vector
+		A vector of three elements which represents the X,Y,Z elements of the rotation axis.
+
+	Returns
+	-------
+	new_vector : float vector
+		A vector of three elements representing the X,Y,Z coordinates of the old vector after rotation
+	"""
 	rot_axis = rot_axis/np.linalg.norm(rot_axis)
 	vector_mag = np.linalg.norm(vector)
 	quat = np.array([cos(theta/2),sin(theta/2)*rot_axis[0],sin(theta/2)*rot_axis[1],sin(theta/2)*rot_axis[2]])
