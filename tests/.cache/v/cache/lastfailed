@@ -1,0 +1,3 @@
+{
+  "test_molecule.py::TestMoleculeClassMethods::test_getDihedralAngle_returns_expected_result_when_dihedral_rotated_with_rot_quat": true
+}

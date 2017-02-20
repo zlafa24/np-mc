@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>simulation_class module &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
+  <title>Simulation Class &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="NP Monolayer Monte Carlo 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="simulation_test module" href="simulation_test.html"/>
-        <link rel="prev" title="shuffle_np module" href="shuffle_np.html"/> 
+        <link rel="next" title="Molecule Class" href="molecule_class.html"/>
+        <link rel="prev" title="Undocumented Python objects" href="coverage.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,19 +82,14 @@
             
                 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="atom_class.html">atom_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="class_tests.html">class_tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_library_rev3.html">mc_library_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine.html">mc_routine module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine_rev3.html">mc_routine_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">molecule_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="read_lmp_rev6.html">read_lmp_rev6 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="shuffle_np.html">shuffle_np module</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">simulation_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_test.html">simulation_test module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_molecule.html">test_molecule module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unit_tests.html">unit_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inheritance.html">Plot of Module Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coverage.html">Undocumented Python objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#atom-class">atom_class</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulation Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">Molecule Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="atom_class.html">Atom Class</a></li>
 </ul>
 
             
@@ -125,7 +120,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>simulation_class module</li>
+    <li>Simulation Class</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -140,7 +135,77 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-simulation_class">
-<span id="simulation-class-module"></span><h1>simulation_class module<a class="headerlink" href="#module-simulation_class" title="Permalink to this headline">¶</a></h1>
+<span id="simulation-class"></span><h1>Simulation Class<a class="headerlink" href="#module-simulation_class" title="Permalink to this headline">¶</a></h1>
+<p>This module contains the simulation class and associated functions which are meant to encapsulate a LAMMPS simulation.</p>
+<dl class="class">
+<dt id="simulation_class.Simulation">
+<em class="property">class </em><code class="descclassname">simulation_class.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>init_file</em>, <em>datafile</em>, <em>dumpfile</em>, <em>temp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>init_file</strong> (<em>str</em>) &#8211; The file name of the initialization LAMMPS file. This file contains all the force field parameters computes and fixes that one wishes to specify for the LAMMPS simulation.</li>
+<li><strong>datafile</strong> (<em>str</em>) &#8211; The LAMMPS data file which contains the coordinates of the atoms and bond, angle, and dihedral information.</li>
+<li><strong>dumpfile</strong> (<em>str</em>) &#8211; The filename of the file which one wishes to dump the XYZ information of the simulation.</li>
+<li><strong>temp</strong> (<em>float</em>) &#8211; The temperature which one wishes to run the simulation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="simulation_class.Simulation.assignAtomTypes">
+<code class="descname">assignAtomTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.assignAtomTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.assignAtomTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign element names to the atom types in the simulation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation_class.Simulation.dump_atoms">
+<code class="descname">dump_atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.dump_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.dump_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the atom XYZ info to the dumpfile specified in the Simulation&#8217;s dumpfile variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation_class.Simulation.initializeComputes">
+<code class="descname">initializeComputes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeComputes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeComputes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the LAMMPS computes that one  wishes to use in the simulation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation_class.Simulation.initializeFixes">
+<code class="descname">initializeFixes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeFixes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeFixes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the fixes one wishes to use in the simulation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation_class.Simulation.initializeGroups">
+<code class="descname">initializeGroups</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeGroups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeGroups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the LAMMPS groups that one wishes to use in the simulation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation_class.Simulation.minimize">
+<code class="descname">minimize</code><span class="sig-paren">(</span><em>force_tol=0.001</em>, <em>e_tol=1e-05</em>, <em>max_iter=200</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimizes the system using LAMMPS minimize function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>force_tol</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; The force tolerance used in the minimization routine.</li>
+<li><strong>e_tol</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; The energy tolerance used in the minimization routine.</li>
+<li><strong>max_iter</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; The maximum allowed iterations in the minimization procedure.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -150,10 +215,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="simulation_test.html" class="btn btn-neutral float-right" title="simulation_test module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="molecule_class.html" class="btn btn-neutral float-right" title="Molecule Class" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="shuffle_np.html" class="btn btn-neutral" title="shuffle_np module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="coverage.html" class="btn btn-neutral" title="Undocumented Python objects" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

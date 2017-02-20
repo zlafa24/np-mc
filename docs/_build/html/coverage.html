@@ -34,8 +34,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="NP Monolayer Monte Carlo 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="atom_class module" href="atom_class.html"/>
-        <link rel="prev" title="Welcome to src’s documentation!" href="index.html"/> 
+        <link rel="next" title="Simulation Class" href="simulation_class.html"/>
+        <link rel="prev" title="Plot of Module Dependencies" href="inheritance.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,27 +82,14 @@
             
                 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inheritance.html">Plot of Module Dependencies</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Undocumented Python objects</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#mc-routine">mc_routine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mc-routine-rev3">mc_routine_rev3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#read-lmp-rev6">read_lmp_rev6</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#simulation-class">simulation_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#unit-tests">unit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#atom-class">atom_class</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="atom_class.html">atom_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="class_tests.html">class_tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_library_rev3.html">mc_library_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine.html">mc_routine module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine_rev3.html">mc_routine_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">molecule_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="read_lmp_rev6.html">read_lmp_rev6 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="shuffle_np.html">shuffle_np module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">simulation_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_test.html">simulation_test module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_molecule.html">test_molecule module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unit_tests.html">unit_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">Simulation Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">Molecule Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="atom_class.html">Atom Class</a></li>
 </ul>
 
             
@@ -149,112 +136,19 @@
             
   <div class="section" id="undocumented-python-objects">
 <h1>Undocumented Python objects<a class="headerlink" href="#undocumented-python-objects" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="mc-routine">
-<h2>mc_routine<a class="headerlink" href="#mc-routine" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>Functions:</dt>
-<dd><ul class="first last simple">
-<li>atom2xyz</li>
-<li>calc_dih_angle</li>
-<li>cbmc</li>
-<li>delete_chain</li>
-<li>get_coords</li>
-<li>initializeMols</li>
-<li>quat_mult</li>
-<li>randomShift</li>
-<li>regrow_chain</li>
-<li>rot_quat</li>
-<li>rotate_dihedral</li>
-<li>rotate_dihedral_quat</li>
-<li>update_coords</li>
-</ul>
-</dd>
-</dl>
-</div>
-<div class="section" id="mc-routine-rev3">
-<h2>mc_routine_rev3<a class="headerlink" href="#mc-routine-rev3" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>Functions:</dt>
-<dd><ul class="first last simple">
-<li>calcCOM</li>
-<li>comRotation</li>
-<li>editFile</li>
-<li>getPotential</li>
-<li>molCollide</li>
-<li>randomRotate</li>
-<li>readfile</li>
-<li>rotateAxis</li>
-<li>rotateMolecule</li>
-<li>shiftMolecule</li>
-<li>swapMolecules</li>
-</ul>
-</dd>
-</dl>
-</div>
-<div class="section" id="read-lmp-rev6">
-<h2>read_lmp_rev6<a class="headerlink" href="#read-lmp-rev6" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>Functions:</dt>
-<dd><ul class="first last simple">
-<li>addMolecule</li>
-<li>calcCOM</li>
-<li>comRotation</li>
-<li>deleteMolecule</li>
-<li>editFile</li>
-<li>getBondedAtoms</li>
-<li>getMoleculeAtoms</li>
-<li>getPotential</li>
-<li>molCollide</li>
-<li>readAll</li>
-<li>readAngles</li>
-<li>readAtoms</li>
-<li>readBonds</li>
-<li>readDihedrals</li>
-<li>rotateAxis</li>
-<li>rotateMolecule</li>
-<li>selectMolecule</li>
-<li>shiftMolecule</li>
-<li>swapMolecules</li>
-</ul>
-</dd>
-</dl>
-</div>
-<div class="section" id="simulation-class">
-<h2>simulation_class<a class="headerlink" href="#simulation-class" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="atom-class">
+<h2>atom_class<a class="headerlink" href="#atom-class" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>Classes:</dt>
 <dd><ul class="first last simple">
-<li>Simulation</li>
+<li>Atom &#8211; missing methods:<ul>
+<li>get_atom_ID</li>
+<li>get_charge</li>
+<li>get_mol_ID</li>
+<li>get_pos</li>
+<li>get_type</li>
 </ul>
-</dd>
-</dl>
-</div>
-<div class="section" id="unit-tests">
-<h2>unit_tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>Functions:</dt>
-<dd><ul class="first last simple">
-<li>calc_beta</li>
-<li>cbmc</li>
-<li>create_cbmc_file</li>
-<li>dump_atoms</li>
-<li>get_atom</li>
-<li>get_coords</li>
-<li>get_end2end</li>
-<li>get_mol_pe</li>
-<li>get_pair_pe</li>
-<li>get_rosenbluth</li>
-<li>get_rot_trials</li>
-<li>get_total_pe</li>
-<li>make_dih_cdf</li>
-<li>metromc_prob</li>
-<li>print_atoms</li>
-<li>regrow_chain</li>
-<li>rot_dih_index</li>
-<li>start_lammps</li>
-<li>test_make_dih_cdf</li>
-<li>turn_off_atoms</li>
-<li>turn_on_atoms</li>
+</li>
 </ul>
 </dd>
 </dl>
@@ -268,10 +162,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="atom_class.html" class="btn btn-neutral float-right" title="atom_class module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="simulation_class.html" class="btn btn-neutral float-right" title="Simulation Class" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Welcome to src’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="inheritance.html" class="btn btn-neutral" title="Plot of Module Dependencies" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

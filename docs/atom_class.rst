@@ -1,7 +1,5 @@
-atom_class module
-=================
+Atom Class
+==========
 
 .. automodule:: atom_class
     :members:
-    :undoc-members:
-    :show-inheritance:

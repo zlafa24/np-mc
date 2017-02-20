@@ -1,6 +1,5 @@
-molecule_class module
-=====================
+Molecule Class
+==============
 
 .. automodule:: molecule_class
     :members:
-    :show-inheritance:

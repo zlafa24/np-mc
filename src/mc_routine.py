@@ -1,3 +1,6 @@
+"""Contains the original logic for the CBMC simulation including necessary helper functions.
+
+"""
 #!/home/snm8xf/anaconda/bin/python
 import sys
 import numpy as np
@@ -11,10 +14,17 @@ from lammps import lammps
 import read_lmp_rev6 as rdlmp
 import itertools as itt
 from ctypes import *
-#from scipy.stats import rv_discrete
-#import pypar
 
 def atom2xyz(filename,atoms):
+    """Takes a list of atoms and writes them to an XYZ file.
+
+    Parameters
+    ----------
+    filename : str
+        Name of the file to dump the atom coordinates.
+    atoms : float array
+        An array of values with each row corresponding to an atom, column 2 corresponding to atom type, and columns 5-7 corresponding to the atoms position.
+    """
     xyzfile = open(filename,'a')
     xyzfile.write(str(atoms.shape[0])+'\n\n')
     for atom in atoms:

@@ -1,6 +1,5 @@
-simulation_class module
-=======================
+Simulation Class
+================
 
 .. automodule:: simulation_class
     :members:
-    :show-inheritance:

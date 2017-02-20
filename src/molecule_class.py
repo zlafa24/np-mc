@@ -6,6 +6,8 @@ import read_lmp_rev6 as rdlmp
 import atom_class as atm
 from itertools import groupby, permutations
 import networkx as ntwkx
+import numpy as np
+from math import *
 
 class Molecule(object):
 	"""This class is used to represent a molecule in a simulation and holds all
@@ -31,7 +33,16 @@ class Molecule(object):
 		self.bonds = bonds
 		self.angles = angles
 		self.dihedrals = dihedrals
-	def setAnchorAtom(self,atomID):
+	
+        def __eq__(self,other):
+                if isinstance(other,self.__class__):
+                    return all([self.atoms==other.atoms,self.bonds==other.bonds,self.angles==other.angles,self.dihedrals==other.dihedrals])
+                else:
+                    return False
+        def __neq__(self,other):
+                return not self.__eq__(other)
+
+        def setAnchorAtom(self,atomID):
 		"""Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.
 		
 		Parameters
@@ -74,6 +85,34 @@ class Molecule(object):
 				return atom
 		return None
 
+        def getDihedralAngle(self,dihedral):
+		"""Calculates the dihedral angle of a given dihedral.
+                
+                Parameters
+                ----------
+                dihedral : Dihedral 
+                        Dihedral Object that one wishes to calculate the dihedral angle of.
+
+		Returns
+		-------
+		float
+			The current dihedral angle of the Dihedral object
+		"""
+                atom1 = self.getAtomByID(dihedral.atom1)
+                atom2 = self.getAtomByID(dihedral.atom2)
+                atom3 = self.getAtomByID(dihedral.atom3)
+                atom4 = self.getAtomByID(dihedral.atom4)
+		b1 = atom2.position-atom1.position
+		b2 = atom3.position-atom2.position
+		b3 = atom4.position-atom3.position
+		b2norm = b2/np.linalg.norm(b2)
+		n1 = np.cross(b1,b2)/np.linalg.norm(np.cross(b1,b2))
+		n2 = np.cross(b2,b3)/np.linalg.norm(np.cross(b2,b3))
+		m1 = np.cross(n1,n2)
+		angle = atan2(np.dot(m1,b2norm),np.dot(n1,n2))	
+                angle=angle%(2*pi)
+                return angle
+
 class Bond(object):
 	"""The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a 
 	Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID's of the two atoms involved in the bond.
@@ -94,6 +133,14 @@ class Bond(object):
 		self.bondType = int(bondType)
 		self.atom1 = int(atom1)
 		self.atom2 = int(atom2)
+        
+        def __eq__(self,other):
+            if isinstance(other,self.__class__):
+                return self.bondID == other.bondID
+            else:
+                return False
+        def __neq__(self,other):
+            return not self.__eq__(other)
 
 class Angle(object):
 	"""The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.
@@ -117,6 +164,14 @@ class Angle(object):
 		self.atom1 = int(atom1)
 		self.atom2 = int(atom2)
 		self.atom3 = int(atom3)
+        
+        def __eq__(self,other):
+                if isinstance(other,self.__class__):
+                    return other.angleID == self.angleID
+                else:
+                    return False
+        def __neq__(self,other):
+                return not self.__eq__(other)
 
 class Dihedral(object):
 	"""The Dihedral object represents the dihedral between four connected atoms.
@@ -143,24 +198,15 @@ class Dihedral(object):
 		self.atom2 = int(atom2)
 		self.atom3 = int(atom3)
 		self.atom4 = int(atom4)
-	def getAngle(self):
-		"""Calculates the dihedral angle of the dihedral object.
+        
+        def __eq__(self,other):
+                if isinstance(other,self.__class__):
+                    return other.dihID == self.dihID
+                else:
+                    return False
+        def __neq__(self,other):
+                return not self.__eq__(other)
 
-		Returns
-		-------
-		float
-			The current dihedral angle of the Dihedral object
-		"""
-		b1 = self.atom2.position-self.atom1.position
-		b2 = self.atom3.position-self.atom2.position
-		b3 = self.atom4.position-self.atom3.position
-		b2norm = b2/np.linalg.norm(b2)
-		n1 = np.cross(b1,b2)/np.linalg.norm(np.cross(b1,b2))
-		n2 = np.cross(b2,b3)/np.linalg.norm(np.cross(b2,b3))
-		m1 = np.cross(n1,b2norm)
-		angle = atan2(np.dot(m1,n2),np.dot(n1,n2))
-		angle=((angle-pi)*(-1)+2*pi)%(2*pi)
-		return angle
 
 def loadBonds(filename):
 	"""This function loads the Bonds from a LAMMPS input file and turns them into a list of Bond objects.
@@ -435,7 +481,7 @@ def rot_quat(vector,theta,rot_axis):
 	vector : float vector
 		A vector of three elements that represents the X, Y, Z coordinates of the vector that one wishes to rotate
 	theta : float
-		The angle by which the vector rotates.
+		The angle in radians by which the vector rotates.
 	rot_axis : float vector
 		A vector of three elements which represents the X,Y,Z elements of the rotation axis.
 
@@ -448,11 +494,18 @@ def rot_quat(vector,theta,rot_axis):
 	vector_mag = np.linalg.norm(vector)
 	quat = np.array([cos(theta/2),sin(theta/2)*rot_axis[0],sin(theta/2)*rot_axis[1],sin(theta/2)*rot_axis[2]])
 	quat_inverse = np.array([cos(theta/2),-sin(theta/2)*rot_axis[0],-sin(theta/2)*rot_axis[1],-sin(theta/2)*rot_axis[2]])
-	quat = quat/np.linalg.norm(quat)
-	quat_inverse = quat_inverse/(np.linalg.norm(quat_inverse)**2)
 
 	vect_quat = np.array([0,vector[0],vector[1],vector[2]])/vector_mag
 	new_vector = quat_mult(quat_mult(quat,vect_quat),quat_inverse)
-	return new_vector[1:]*vector_mag
+        return new_vector[1:]*vector_mag
+
+def quat_mult(q1,q2):
+        w1,x1,y1,z1 = q1
+        w2,x2,y2,z2 = q2
+        w = w1*w2-x1*x2-y1*y2-z1*z2
+        x = w1*x2 + x1*w2 + y1*z2 - z1*y2
+        y = w1*y2 + y1*w2 + z1*x2 - x1*z2
+        z = w1*z2 + z1*w2 + x1*y2 - y1*x2
+        return np.array([w,x,y,z])
 
 

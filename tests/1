@@ -1,0 +1,37 @@
+import sys, os
+import unittest
+sys.path.insert(0,os.path.abspath('../src'))
+
+from molecule_class import *
+
+class TestMoleculeClassLoadFunctions(unittest.TestCase):
+    def setUp(self):
+        self.bond = Bond(1,1,1,4)
+        self.meoh_file = os.path.abspath("./test_files/meoh.data")
+        self.bond_list = [Bond(1,1,1,4),
+                        Bond(2,2,1,2),
+                        Bond(3,3,2,3),
+                        Bond(4,4,3,5)]
+        self.angle_list = [Angle(1,1,2,1,4),
+                        Angle(2,2,1,2,3),
+                        Angle(3,3,2,3,5)]
+        self.dihedral_list = [Dihedral(1,1,3,2,1,4),
+                            Dihedral(2,2,1,2,3,5)]
+
+    def test_loadBonds(self):
+        self.assertSequenceEqual(loadBonds(self.meoh_file),self.bond_list,msg="Bond list from loadBonds does not match expected Bond list")
+
+    def test_loadAngles(self):
+        self.assertSequenceEqual(loadAngles(self.meoh_file),self.angle_list,msg="Angle List from loadAngles does not match expected Angle List")
+
+    def test_loadDihedrals(self):
+        self.assertSequenceEqual(loadDihedrals(self.meoh_file),self.dihedral_list,msg = "Dihedral List from loadDihedrals does not match expected Dihedral List")
+
+
+class TestMoleculeClassGroupByFunctions(unittest.TestCase):
+    def setUp(self): 
+        self.three_meoh_file = os.path.abspath("./test_files/molecule_tests/three_meoh.data")
+
+
+    def test_groupAtomsByBonds(self):
+        self.assertEquals(True,True)

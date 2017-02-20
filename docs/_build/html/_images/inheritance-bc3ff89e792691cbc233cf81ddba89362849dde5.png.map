@@ -1,0 +1,7 @@
+<map id="inheritance7a1e5eac9d" name="inheritance7a1e5eac9d">
+<area shape="rect" id="node1" href="molecule_class.html#molecule_class.Angle" target="_top" title="The Angle object represents the angle between three connected atoms. &#160;The format is the same as in the Angles section of a LAMMPS input file." alt="" coords="15,252,87,277"/>
+<area shape="rect" id="node2" href="atom_class.html#atom_class.Atom" target="_top" title="The Atom class represents an atom described by the LAMMPS full atom style." alt="" coords="15,203,87,228"/>
+<area shape="rect" id="node3" href="molecule_class.html#molecule_class.Bond" target="_top" title="The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a " alt="" coords="15,153,87,179"/>
+<area shape="rect" id="node4" href="molecule_class.html#molecule_class.Dihedral" target="_top" title="The Dihedral object represents the dihedral between four connected atoms." alt="" coords="13,104,88,129"/>
+<area shape="rect" id="node5" href="molecule_class.html#molecule_class.Molecule" target="_top" title="This class is used to represent a molecule in a simulation and holds all" alt="" coords="11,55,90,80"/>
+</map>

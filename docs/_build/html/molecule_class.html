@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>molecule_class module &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
+  <title>Molecule Class &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="NP Monolayer Monte Carlo 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="read_lmp_rev6 module" href="read_lmp_rev6.html"/>
-        <link rel="prev" title="mc_routine_rev3 module" href="mc_routine_rev3.html"/> 
+        <link rel="next" title="Atom Class" href="atom_class.html"/>
+        <link rel="prev" title="Simulation Class" href="simulation_class.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,27 +82,14 @@
             
                 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inheritance.html">Plot of Module Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="coverage.html">Undocumented Python objects</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#mc-routine">mc_routine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#mc-routine-rev3">mc_routine_rev3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#read-lmp-rev6">read_lmp_rev6</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#simulation-class">simulation_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#unit-tests">unit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#atom-class">atom_class</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="atom_class.html">atom_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="class_tests.html">class_tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_library_rev3.html">mc_library_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine.html">mc_routine module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine_rev3.html">mc_routine_rev3 module</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">molecule_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="read_lmp_rev6.html">read_lmp_rev6 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="shuffle_np.html">shuffle_np module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">simulation_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_test.html">simulation_test module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_molecule.html">test_molecule module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unit_tests.html">unit_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">Simulation Class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Molecule Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="atom_class.html">Atom Class</a></li>
 </ul>
 
             
@@ -133,7 +120,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>molecule_class module</li>
+    <li>Molecule Class</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -148,14 +135,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-molecule_class">
-<span id="molecule-class-module"></span><h1>molecule_class module<a class="headerlink" href="#module-molecule_class" title="Permalink to this headline">¶</a></h1>
+<span id="molecule-class"></span><h1>Molecule Class<a class="headerlink" href="#module-molecule_class" title="Permalink to this headline">¶</a></h1>
 <p>This module contains the molecule class and all classes and functions
 related to molecules.  This includes Bond, Angle, and Dihedral classes as well as helper functions that take in atom and bond lists and generate molecules.</p>
 <dl class="class">
 <dt id="molecule_class.Angle">
 <em class="property">class </em><code class="descclassname">molecule_class.</code><code class="descname">Angle</code><span class="sig-paren">(</span><em>angleID</em>, <em>angleType</em>, <em>atom1</em>, <em>atom2</em>, <em>atom3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Angle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.</p>
+<dd><p>The Angle object represents the angle between three connected atoms.  The format is the same as in the Angles section of a LAMMPS input file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -176,8 +162,7 @@ related to molecules.  This includes Bond, Angle, and Dihedral classes as well a
 <dl class="class">
 <dt id="molecule_class.Bond">
 <em class="property">class </em><code class="descclassname">molecule_class.</code><code class="descname">Bond</code><span class="sig-paren">(</span><em>bondID</em>, <em>bondType</em>, <em>atom1</em>, <em>atom2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Bond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Bond" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a
+<dd><p>The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a
 Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID&#8217;s of the two atoms involved in the bond.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -198,8 +183,7 @@ Bond object consists of a Bond ID which uniquely defines the bond, a bond type, 
 <dl class="class">
 <dt id="molecule_class.Dihedral">
 <em class="property">class </em><code class="descclassname">molecule_class.</code><code class="descname">Dihedral</code><span class="sig-paren">(</span><em>dihID</em>, <em>dihType</em>, <em>atom1</em>, <em>atom2</em>, <em>atom3</em>, <em>atom4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Dihedral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Dihedral" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>The Dihedral object represents the dihedral between four connected atoms.</p>
+<dd><p>The Dihedral object represents the dihedral between four connected atoms.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -237,8 +221,7 @@ Bond object consists of a Bond ID which uniquely defines the bond, a bond type, 
 <dl class="class">
 <dt id="molecule_class.Molecule">
 <em class="property">class </em><code class="descclassname">molecule_class.</code><code class="descname">Molecule</code><span class="sig-paren">(</span><em>molID</em>, <em>atoms</em>, <em>bonds</em>, <em>angles</em>, <em>dihedrals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Molecule" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>This class is used to represent a molecule in a simulation and holds all
+<dd><p>This class is used to represent a molecule in a simulation and holds all
 the objects related to a molecule including the related Atom, Bond, Angle, and Dihedral Objects.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -602,10 +585,10 @@ The nodes of the graph are the atom ID&#8217;s of the atoms.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="read_lmp_rev6.html" class="btn btn-neutral float-right" title="read_lmp_rev6 module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="atom_class.html" class="btn btn-neutral float-right" title="Atom Class" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="mc_routine_rev3.html" class="btn btn-neutral" title="mc_routine_rev3 module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="simulation_class.html" class="btn btn-neutral" title="Simulation Class" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

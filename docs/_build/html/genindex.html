@@ -81,27 +81,14 @@
             
                 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="inheritance.html">Plot of Module Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="coverage.html">Undocumented Python objects</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#mc-routine">mc_routine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#mc-routine-rev3">mc_routine_rev3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#read-lmp-rev6">read_lmp_rev6</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#simulation-class">simulation_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage.html#unit-tests">unit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#atom-class">atom_class</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="atom_class.html">atom_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="class_tests.html">class_tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_library_rev3.html">mc_library_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine.html">mc_routine module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine_rev3.html">mc_routine_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">molecule_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="read_lmp_rev6.html">read_lmp_rev6 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="shuffle_np.html">shuffle_np module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">simulation_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_test.html">simulation_test module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_molecule.html">test_molecule module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unit_tests.html">unit_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">Simulation Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">Molecule Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="atom_class.html">Atom Class</a></li>
 </ul>
 
             
@@ -153,12 +140,11 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
- | <a href="#T"><strong>T</strong></a>
- | <a href="#U"><strong>U</strong></a>
  
 </div>
 <h2 id="A">A</h2>
@@ -166,10 +152,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="molecule_class.html#molecule_class.Angle">Angle (class in molecule_class)</a>
 </li>
-      <li><a href="atom_class.html#atom_class.Atom">Atom (class in atom_class)</a>
+      <li><a href="simulation_class.html#simulation_class.Simulation.assignAtomTypes">assignAtomTypes() (simulation_class.Simulation method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="atom_class.html#atom_class.Atom">Atom (class in atom_class)</a>
+</li>
       <li><a href="atom_class.html#module-atom_class">atom_class (module)</a>
 </li>
       <li><a href="molecule_class.html#molecule_class.Molecule.atomsAsGraph">atomsAsGraph() (molecule_class.Molecule method)</a>
@@ -188,10 +176,6 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="class_tests.html#module-class_tests">class_tests (module)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="molecule_class.html#molecule_class.constructMolecules">constructMolecules() (in module molecule_class)</a>
 </li>
   </ul></td>
@@ -203,31 +187,25 @@
       <li><a href="molecule_class.html#molecule_class.Dihedral">Dihedral (class in molecule_class)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="simulation_class.html#simulation_class.Simulation.dump_atoms">dump_atoms() (simulation_class.Simulation method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="atom_class.html#atom_class.Atom.get_atom_ID">get_atom_ID() (atom_class.Atom method)</a>
-</li>
-      <li><a href="atom_class.html#atom_class.Atom.get_charge">get_charge() (atom_class.Atom method)</a>
-</li>
-      <li><a href="atom_class.html#atom_class.Atom.get_mol_ID">get_mol_ID() (atom_class.Atom method)</a>
-</li>
-      <li><a href="atom_class.html#atom_class.Atom.get_pos">get_pos() (atom_class.Atom method)</a>
-</li>
-      <li><a href="atom_class.html#atom_class.Atom.get_type">get_type() (atom_class.Atom method)</a>
-</li>
       <li><a href="molecule_class.html#molecule_class.Dihedral.getAngle">getAngle() (molecule_class.Dihedral method)</a>
 </li>
       <li><a href="molecule_class.html#molecule_class.getAnglesFromAtoms">getAnglesFromAtoms() (in module molecule_class)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="molecule_class.html#molecule_class.Molecule.getAtomByID">getAtomByID() (molecule_class.Molecule method)</a>
 </li>
       <li><a href="molecule_class.html#molecule_class.getBondsFromAtoms">getBondsFromAtoms() (in module molecule_class)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="molecule_class.html#molecule_class.getDihedralsFromAtoms">getDihedralsFromAtoms() (in module molecule_class)</a>
 </li>
       <li><a href="molecule_class.html#molecule_class.groupAnglesByMol">groupAnglesByMol() (in module molecule_class)</a>
@@ -237,6 +215,20 @@
       <li><a href="molecule_class.html#molecule_class.groupBondsByMol">groupBondsByMol() (in module molecule_class)</a>
 </li>
       <li><a href="molecule_class.html#molecule_class.groupDihedralsByMol">groupDihedralsByMol() (in module molecule_class)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="simulation_class.html#simulation_class.Simulation.initializeComputes">initializeComputes() (simulation_class.Simulation method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="simulation_class.html#simulation_class.Simulation.initializeFixes">initializeFixes() (simulation_class.Simulation method)</a>
+</li>
+      <li><a href="simulation_class.html#simulation_class.Simulation.initializeGroups">initializeGroups() (simulation_class.Simulation method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -260,16 +252,12 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mc_library_rev3.html#module-mc_library_rev3">mc_library_rev3 (module)</a>
+      <li><a href="simulation_class.html#simulation_class.Simulation.minimize">minimize() (simulation_class.Simulation method)</a>
 </li>
-      <li><a href="mc_routine.html#module-mc_routine">mc_routine (module)</a>
-</li>
-      <li><a href="mc_routine_rev3.html#module-mc_routine_rev3">mc_routine_rev3 (module)</a>
+      <li><a href="molecule_class.html#molecule_class.Molecule">Molecule (class in molecule_class)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="molecule_class.html#molecule_class.Molecule">Molecule (class in molecule_class)</a>
-</li>
       <li><a href="molecule_class.html#molecule_class.molecule2graph">molecule2graph() (in module molecule_class)</a>
 </li>
       <li><a href="molecule_class.html#module-molecule_class">molecule_class (module)</a>
@@ -279,10 +267,6 @@
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="read_lmp_rev6.html#module-read_lmp_rev6">read_lmp_rev6 (module)</a>
-</li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="molecule_class.html#molecule_class.rot_quat">rot_quat() (in module molecule_class)</a>
 </li>
@@ -294,31 +278,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="molecule_class.html#molecule_class.Molecule.setAnchorAtom">setAnchorAtom() (molecule_class.Molecule method)</a>
 </li>
-      <li><a href="setup.html#module-setup">setup (module)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="shuffle_np.html#module-shuffle_np">shuffle_np (module)</a>
+      <li><a href="simulation_class.html#simulation_class.Simulation">Simulation (class in simulation_class)</a>
 </li>
       <li><a href="simulation_class.html#module-simulation_class">simulation_class (module)</a>
-</li>
-      <li><a href="simulation_test.html#module-simulation_test">simulation_test (module)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="T">T</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="test_molecule.html#module-test_molecule">test_molecule (module)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="U">U</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="unit_tests.html#module-unit_tests">unit_tests (module)</a>
 </li>
   </ul></td>
 </tr></table>

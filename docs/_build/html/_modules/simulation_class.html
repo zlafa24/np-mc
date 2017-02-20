@@ -81,27 +81,14 @@
             
                 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../inheritance.html">Plot of Module Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coverage.html">Undocumented Python objects</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../coverage.html#mc-routine">mc_routine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../coverage.html#mc-routine-rev3">mc_routine_rev3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../coverage.html#read-lmp-rev6">read_lmp_rev6</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../coverage.html#simulation-class">simulation_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../coverage.html#unit-tests">unit_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coverage.html#atom-class">atom_class</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../atom_class.html">atom_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../class_tests.html">class_tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mc_library_rev3.html">mc_library_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mc_routine.html">mc_routine module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mc_routine_rev3.html">mc_routine_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../molecule_class.html">molecule_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../read_lmp_rev6.html">read_lmp_rev6 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../setup.html">setup module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../shuffle_np.html">shuffle_np module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../simulation_class.html">simulation_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../simulation_test.html">simulation_test module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../test_molecule.html">test_molecule module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unit_tests.html">unit_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation_class.html">Simulation Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecule_class.html">Molecule Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../atom_class.html">Atom Class</a></li>
 </ul>
 
             
@@ -147,13 +134,28 @@
            <div itemprop="articleBody">
             
   <h1>Source code for simulation_class</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">lammps</span> <span class="k">import</span> <span class="n">lammps</span>
+<span></span><span class="sd">&quot;&quot;&quot;This module contains the simulation class and associated functions which are meant to encapsulate a LAMMPS simulation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">lammps</span> <span class="k">import</span> <span class="n">lammps</span>
 <span class="kn">import</span> <span class="nn">molecule_class</span> <span class="k">as</span> <span class="nn">mol</span>
 <span class="kn">import</span> <span class="nn">atom_class</span> <span class="k">as</span> <span class="nn">atm</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    init_file : str</span>
+<span class="sd">        The file name of the initialization LAMMPS file. This file contains all the force field parameters computes and fixes that one wishes to specify for the LAMMPS simulation.</span>
+<span class="sd">    datafile : str</span>
+<span class="sd">        The LAMMPS data file which contains the coordinates of the atoms and bond, angle, and dihedral information.</span>
+<span class="sd">    dumpfile : str</span>
+<span class="sd">        The filename of the file which one wishes to dump the XYZ information of the simulation.</span>
+<span class="sd">    temp : float</span>
+<span class="sd">        The temperature which one wishes to run the simulation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">init_file</span><span class="p">,</span><span class="n">datafile</span><span class="p">,</span><span class="n">dumpfile</span><span class="p">,</span><span class="n">temp</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span> <span class="o">=</span> <span class="n">lammps</span><span class="p">()</span>
         <span class="n">dname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">init_file</span><span class="p">)</span>
@@ -175,25 +177,46 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assignAtomTypes</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Simulation.initializeGroups"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.initializeGroups">[docs]</a>    <span class="k">def</span> <span class="nf">initializeGroups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the LAMMPS groups that one wishes to use in the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group silver type 1&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group adsorbate type 2 3 4 5 6&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Simulation.initializeComputes"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.initializeComputes">[docs]</a>    <span class="k">def</span> <span class="nf">initializeComputes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the LAMMPS computes that one  wishes to use in the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute pair_pe all pe&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute mol_pe all pe dihedral&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Simulation.initializeFixes"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.initializeFixes">[docs]</a>    <span class="k">def</span> <span class="nf">initializeFixes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the fixes one wishes to use in the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;fix fxfrc silver setforce 0. 0. 0.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out&quot;</span><span class="p">)</span> </div>
     
 <div class="viewcode-block" id="Simulation.minimize"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">force_tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">e_tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Minimizes the system using LAMMPS minimize function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        force_tol : float, optional</span>
+<span class="sd">            The force tolerance used in the minimization routine.</span>
+<span class="sd">        e_tol : float, optional</span>
+<span class="sd">            The energy tolerance used in the minimization routine.</span>
+<span class="sd">        max_iter : int, optional</span>
+<span class="sd">            The maximum allowed iterations in the minimization procedure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;dump xyzdump all xyz 10 &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dumpfile</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;minimize &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">force_tol</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e_tol</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">max_iter</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">max_iter</span><span class="o">*</span><span class="mi">10</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Simulation.dump_atoms"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.dump_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">dump_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump the atom XYZ info to the dumpfile specified in the Simulation&#39;s dumpfile variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;write_dump all xyz &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dumpfile</span><span class="o">+</span><span class="s2">&quot; modify append yes&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Simulation.assignAtomTypes"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.assignAtomTypes">[docs]</a>    <span class="k">def</span> <span class="nf">assignAtomTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assign element names to the atom types in the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">atoms</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">loadAtoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">)</span>
         <span class="n">atomtypes</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="n">atom</span><span class="o">.</span><span class="n">atomType</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
         <span class="n">atom_type_dict</span><span class="o">=</span><span class="p">{}</span>

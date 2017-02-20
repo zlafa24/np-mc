@@ -9,22 +9,12 @@ Welcome to src's documentation!
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
-   
+  
+   inheritance
    coverage
-   atom_class
-   class_tests
-   mc_library_rev3
-   mc_routine
-   mc_routine_rev3
-   molecule_class
-   read_lmp_rev6
-   setup
-   shuffle_np
    simulation_class
-   simulation_test
-   test_molecule
-   unit_tests
-
+   molecule_class
+   atom_class
 
 Indices and tables
 ==================

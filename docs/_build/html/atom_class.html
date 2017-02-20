@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>atom_class module &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
+  <title>Atom Class &mdash; NP Monolayer Monte Carlo 1.0.0 documentation</title>
   
 
   
@@ -34,8 +34,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="NP Monolayer Monte Carlo 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="class_tests module" href="class_tests.html"/>
-        <link rel="prev" title="Welcome to src’s documentation!" href="index.html"/> 
+        <link rel="prev" title="Molecule Class" href="molecule_class.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,19 +81,14 @@
             
                 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">atom_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="class_tests.html">class_tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_library_rev3.html">mc_library_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine.html">mc_routine module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc_routine_rev3.html">mc_routine_rev3 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">molecule_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="read_lmp_rev6.html">read_lmp_rev6 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="shuffle_np.html">shuffle_np module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">simulation_class module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_test.html">simulation_test module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_molecule.html">test_molecule module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unit_tests.html">unit_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inheritance.html">Plot of Module Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coverage.html">Undocumented Python objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coverage.html#atom-class">atom_class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_class.html">Simulation Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="molecule_class.html">Molecule Class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Atom Class</a></li>
 </ul>
 
             
@@ -125,7 +119,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>atom_class module</li>
+    <li>Atom Class</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -140,42 +134,46 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-atom_class">
-<span id="atom-class-module"></span><h1>atom_class module<a class="headerlink" href="#module-atom_class" title="Permalink to this headline">¶</a></h1>
+<span id="atom-class"></span><h1>Atom Class<a class="headerlink" href="#module-atom_class" title="Permalink to this headline">¶</a></h1>
+<p>This module contains the Atom class and all the helper functions associated with atoms.</p>
 <dl class="class">
 <dt id="atom_class.Atom">
 <em class="property">class </em><code class="descclassname">atom_class.</code><code class="descname">Atom</code><span class="sig-paren">(</span><em>atomID, molID, atomType, charge=0.0, position=[0.0, 0.0, 0.0]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/atom_class.html#Atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#atom_class.Atom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<dl class="method">
-<dt id="atom_class.Atom.get_atom_ID">
-<code class="descname">get_atom_ID</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/atom_class.html#Atom.get_atom_ID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#atom_class.Atom.get_atom_ID" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="atom_class.Atom.get_charge">
-<code class="descname">get_charge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/atom_class.html#Atom.get_charge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#atom_class.Atom.get_charge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="atom_class.Atom.get_mol_ID">
-<code class="descname">get_mol_ID</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/atom_class.html#Atom.get_mol_ID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#atom_class.Atom.get_mol_ID" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="atom_class.Atom.get_pos">
-<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/atom_class.html#Atom.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#atom_class.Atom.get_pos" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="atom_class.Atom.get_type">
-<code class="descname">get_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/atom_class.html#Atom.get_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#atom_class.Atom.get_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>The Atom class represents an atom described by the LAMMPS full atom style.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atomID</strong> (<em>int</em>) &#8211; The unique integer identifier of the atom as specified in the LAMMPS input file.</li>
+<li><strong>molID</strong> (<em>int</em>) &#8211; The unique integer identifier of the molecule associated with this atom as specified in the LAMMPS input file.</li>
+<li><strong>atomType</strong> (<em>int</em>) &#8211; The integer that identifies the atom type as specified in the LAMMPS input file.</li>
+<li><strong>charge</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; The charge on the atom defaults to 0.</li>
+<li><strong>position</strong> (<em>float vector</em><em>, </em><em>optional</em>) &#8211; A three element vector which represent the X,Y,Z coordinates of the atom.  It defaults to a vector of [X=0,Y=0,Z=0].</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="atom_class.loadAtoms">
 <code class="descclassname">atom_class.</code><code class="descname">loadAtoms</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/atom_class.html#loadAtoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#atom_class.loadAtoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Loads the atoms from a LAMMPS  input file and returns a list of Atom object which represent those atoms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; The name of the LAMMPS input file which contain the atoms</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of Atom objects which contains the atom info in the given LAMMPS input file.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Atom List</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -186,10 +184,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="class_tests.html" class="btn btn-neutral float-right" title="class_tests module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="index.html" class="btn btn-neutral" title="Welcome to src’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="molecule_class.html" class="btn btn-neutral" title="Molecule Class" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
