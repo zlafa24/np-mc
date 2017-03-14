@@ -1,0 +1,2 @@
+$/dihedral:bytype1 @/dihedral:Glotzer/SCCO $/atom:meohs[0]/S $/atom:meohs[0]/C1 $/atom:meohs[0]/C2 $/atom:meohs[0]/O
+$/dihedral:bytype2 @/dihedral:Glotzer/CCOH $/atom:meohs[0]/C1 $/atom:meohs[0]/C2 $/atom:meohs[0]/O $/atom:meohs[0]/H

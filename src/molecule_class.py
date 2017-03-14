@@ -33,7 +33,8 @@ class Molecule(object):
 		self.bonds = bonds
 		self.angles = angles
 		self.dihedrals = dihedrals
-	
+                self.graph = self.atomsAsGraph()
+
         def __eq__(self,other):
                 if isinstance(other,self.__class__):
                     return all([self.atoms==other.atoms,self.bonds==other.bonds,self.angles==other.angles,self.dihedrals==other.dihedrals])
@@ -84,6 +85,42 @@ class Molecule(object):
 			if(atom.atomID==atomID):
 				return atom
 		return None
+
+        def getAtomByMolIndex(self,index):
+                """Returns the Atom by it's index in the molecule where the index is defined as the number of bonds away from the anchor atom 
+                (i.e. the atom at index 1 is the atom directly connected to the anchor atom)
+
+                Parameters
+                ----------
+                index : int
+                    The molecular index of the Atom object one wishes to retrieve where the index is defined as the number of bonds away from the anchor atom.
+
+                Returns
+                -------
+                Atom Object
+                    The Atom Object located at the specified index if the index is greater than the number of atoms in the molecule minus one then 
+                    the function returns None as this is out of the range of the atom list.
+                """
+                if(index>(len(self.atoms)-1)):
+                    return None
+                successor_dict= ntwkx.dfs_successors(self.graph,source=self.anchorAtom.atomID)
+                currentID = self.anchorAtom.atomID
+                for i in range(index):
+                    currentID = successor_dict[currentID][0]
+                return self.getAtomByID(currentID)
+
+        def rotateDihedral(self,index,theta):
+                if(index<3 or index>(len(self.atoms)-1)):
+                    raise ValueError("In order to rotate dihedral you must pass an 3<=index<=len(atoms)-1 you passed %d" % index)
+                atom2 = self.getAtomByMolIndex(index-2)
+                atom3 = self.getAtomByMolIndex(index-1)
+                axis = atom3.position-atom2.position
+                for i in range(index,len(self.atoms)):
+                    atom4 = self.getAtomByMolIndex(i)
+                    #import pdb;pdb.set_trace()
+                    vector = atom4.position-atom3.position
+                    atom4.position = rot_quat(vector,theta,axis)+atom3.position
+                    #import pdb;pdb.set_trace()
 
         def getDihedralAngle(self,dihedral):
 		"""Calculates the dihedral angle of a given dihedral.

@@ -22,11 +22,11 @@ class Simulation(object):
     """
     def __init__(self,init_file,datafile,dumpfile,temp):
         self.lmp = lammps()
-        dname = os.path.dirname(init_file)
+        dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
         os.chdir(dname)
-        self.lmp.file(init_file)
+        self.lmp.file(os.path.abspath(init_file))
         self.molecules = mol.constructMolecules(datafile)
         self.lmp.command("thermo 1")
 	self.lmp.command("thermo_style	custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
@@ -38,7 +38,7 @@ class Simulation(object):
         self.initializeGroups()
         self.initializeComputes()
         self.initializeFixes()
-        self.assignAtomTypes()
+        #self.assignAtomTypes()
 
     def initializeGroups(self):
         """Initialize the LAMMPS groups that one wishes to use in the simulation.
@@ -72,6 +72,19 @@ class Simulation(object):
         """
         self.lmp.command("dump xyzdump all xyz 10 "+str(self.dumpfile))
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
+
+    def dump_group(self,group_name,filename):
+        """Dumps the atoms of the specified group to an XYZ file specified by filename
+
+        Parameters
+        ----------
+        group_name : str
+            The group ID of the group of atoms that one wishes to dump
+        filename : str
+            The name of the file that the group of atoms will be dumped to.  
+            As the specified format is XYZ it is a good idea to append .xyz to the end of the filename.
+        """
+        self.lmp.command("write_dump "+group_name+" xyz "+filename)
 
     def dump_atoms(self):
         """Dump the atom XYZ info to the dumpfile specified in the Simulation's dumpfile variable.

@@ -1,9 +1,9 @@
 MEOH{
 	write("Data Atoms"){
-		$atom:S  $mol:. @atom:S  0.000  0.1380    0.0000   -1.6540
 		$atom:C1 $mol:. @atom:C  0.000  0.4740    0.0000    1.0590
 		$atom:C2 $mol:. @atom:C  0.265 -0.6210    0.0000   -0.0070
 		$atom:O  $mol:. @atom:O -0.700 -0.1250    0.0000    2.3570
+		$atom:S  $mol:. @atom:S  0.000  0.1380    0.0000   -1.6540
 		$atom:H  $mol:. @atom:H  0.435  0.5980    0.0000    2.9990
 	}
 	write("Data Bonds"){
@@ -26,6 +26,7 @@ MEOH{
 		@atom:S  32.065
 		@atom:O  15.9994
 		@atom:H  1.00794
+		@atom:Ghost 1.00
 	}
 	write_once("In Init"){
 		units real
@@ -43,6 +44,7 @@ MEOH{
 		pair_coeff @atom:O @atom:O lj/cut 0.170 3.070
 		pair_coeff @atom:H @atom:H lj/cut 0.000 0.000
 		pair_coeff @atom:S @atom:S lj/cut 0.39743 4.25
+		pair_coeff @atom:Ghost @atom:Ghost lj/cut 0.000 0.000
 	
 		bond_coeff @bond:SC 222 1.81
 		bond_coeff @bond:CC 260 1.54

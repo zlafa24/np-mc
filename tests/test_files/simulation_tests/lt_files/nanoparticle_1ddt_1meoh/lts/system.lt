@@ -1,0 +1,23 @@
+import "ddt.lt"
+import "silver.lt"
+import "meoh.lt"
+
+silver = new SILVER [2445]
+ddts = new DDT [1]
+meohs = new MEOH [1]
+
+write_once("In Init"){
+		units real
+		atom_style full
+		pair_style hybrid/overlay lj/cut 10.0 coul/wolf 0.2 15.0 morse 10.0
+		bond_style hybrid harmonic
+		angle_style hybrid harmonic
+		dihedral_style hybrid opls
+		special_bonds amber
+}	
+write_once("Data Boundary"){
+	-50.0 50.0 xlo xhi
+	-50.0 50.0 ylo yhi
+	-50.0 50.0 zlo zhi
+}
+

@@ -1,0 +1,4 @@
+		$/bond:meohs[0]/SC	@/bond:Glotzer/SC  $/atom:meohs[0]/S  $/atom:meohs[0]/C1
+		$/bond:meohs[0]/CC	@/bond:Glotzer/CC  $/atom:meohs[0]/C1 $/atom:meohs[0]/C2
+		$/bond:meohs[0]/CO	@/bond:Glotzer/CO  $/atom:meohs[0]/C2 $/atom:meohs[0]/O
+		$/bond:meohs[0]/OH	@/bond:Glotzer/OH  $/atom:meohs[0]/O  $/atom:meohs[0]/H

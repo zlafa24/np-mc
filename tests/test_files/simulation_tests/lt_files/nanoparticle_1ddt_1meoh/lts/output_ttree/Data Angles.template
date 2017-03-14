@@ -1,0 +1,14 @@
+$/angle:bytype1 @/angle:Glotzer/SCC $/atom:ddts[0]/S $/atom:ddts[0]/C1 $/atom:ddts[0]/C2
+$/angle:bytype2 @/angle:Glotzer/SCC $/atom:meohs[0]/S $/atom:meohs[0]/C1 $/atom:meohs[0]/C2
+$/angle:bytype3 @/angle:Glotzer/CCC $/atom:ddts[0]/C10 $/atom:ddts[0]/C11 $/atom:ddts[0]/C12
+$/angle:bytype4 @/angle:Glotzer/CCC $/atom:ddts[0]/C1 $/atom:ddts[0]/C2 $/atom:ddts[0]/C3
+$/angle:bytype5 @/angle:Glotzer/CCC $/atom:ddts[0]/C2 $/atom:ddts[0]/C3 $/atom:ddts[0]/C4
+$/angle:bytype6 @/angle:Glotzer/CCC $/atom:ddts[0]/C3 $/atom:ddts[0]/C4 $/atom:ddts[0]/C5
+$/angle:bytype7 @/angle:Glotzer/CCC $/atom:ddts[0]/C4 $/atom:ddts[0]/C5 $/atom:ddts[0]/C6
+$/angle:bytype8 @/angle:Glotzer/CCC $/atom:ddts[0]/C5 $/atom:ddts[0]/C6 $/atom:ddts[0]/C7
+$/angle:bytype9 @/angle:Glotzer/CCC $/atom:ddts[0]/C6 $/atom:ddts[0]/C7 $/atom:ddts[0]/C8
+$/angle:bytype10 @/angle:Glotzer/CCC $/atom:ddts[0]/C7 $/atom:ddts[0]/C8 $/atom:ddts[0]/C9
+$/angle:bytype11 @/angle:Glotzer/CCC $/atom:ddts[0]/C8 $/atom:ddts[0]/C9 $/atom:ddts[0]/C10
+$/angle:bytype12 @/angle:Glotzer/CCC $/atom:ddts[0]/C9 $/atom:ddts[0]/C10 $/atom:ddts[0]/C11
+$/angle:bytype13 @/angle:Glotzer/CCO $/atom:meohs[0]/C1 $/atom:meohs[0]/C2 $/atom:meohs[0]/O
+$/angle:bytype14 @/angle:Glotzer/COH $/atom:meohs[0]/C2 $/atom:meohs[0]/O $/atom:meohs[0]/H
