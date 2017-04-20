@@ -51,6 +51,8 @@ class Simulation(object):
         """
         self.lmp.command("compute pair_pe all pe")
         self.lmp.command("compute mol_pe all pe dihedral")
+        self.lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
+        self.lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
 
     def initializeFixes(self):
         """Initializes the fixes one wishes to use in the simulation.
@@ -91,6 +93,14 @@ class Simulation(object):
         """
         self.lmp.command("write_dump all xyz "+self.dumpfile+" modify append yes")
 
+    def getCoulPE(self):
+        self.lmp.command("run 0 post no")
+        return self.lmp.extract_compute("coul_pe",0,0)
+
+    def getVdwlPE(self):
+        self.lmp.command("run 0 post no")
+        return self.lmp.extract_compute("lj_pe",0,0)
+
     def assignAtomTypes(self):
         """Assign element names to the atom types in the simulation.
         """
@@ -100,3 +110,18 @@ class Simulation(object):
         for atom_type in atomtypes:
             atom_type_dict[atom_type]=raw_input("Enter element name for atom type "+str(atom_type)+": ")
         self.atom_type_dict=atom_type_dict
+
+    def turn_off_atoms(self,atomIDS):
+        """Turns off short range interactions with specified atoms using 'neigh_modify exclude' command in LAMMPS
+
+        Parameters
+        ----------
+        atomIDS : list of type int
+            A list of atom IDs of the atoms that will be turned off in the simulation
+        """
+        stratoms = ' '.join(map(str,map(int,atomIDS)))
+        self.lmp.command("group offatoms id "+stratoms)
+        #self.lmp.command("set group offatoms charge 0.00")
+        self.lmp.command("neigh_modify exclude group offatoms all")
+
+

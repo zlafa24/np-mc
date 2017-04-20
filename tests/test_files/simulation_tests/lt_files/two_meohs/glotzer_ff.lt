@@ -1,8 +1,6 @@
 Glotzer{
 	write_once("Data Masses"){
-		@atom:Ag	107.8682
 		@atom:C2	14.02658
-		@atom:C3	15.03452
 		@atom:S		32.065
 		@atom:O		15.9994
 		@atom:H		1.00794
@@ -20,25 +18,14 @@ Glotzer{
 		@dihedral:CCOH @atom:C* @atom:C* @atom:O @atom:H @bond:CC @bond:CO @bond:OH
 	}
 	write_once("In Settings"){
-		pair_coeff @atom:Ag @atom:Ag lj/cut/coul/debye 0.039  2.935
 		pair_coeff @atom:C2 @atom:C2 lj/cut/coul/debye 0.118  3.905
-		pair_coeff @atom:C3 @atom:C3 lj/cut/coul/debye 0.175  3.905
 		pair_coeff @atom:S  @atom:S	 lj/cut/coul/debye	0.39743	4.25
 		pair_coeff @atom:O	@atom:O	 lj/cut/coul/debye	0.2	2.85
 		pair_coeff @atom:H	@atom:H	 lj/cut/coul/debye	0	1.78
 
-		pair_coeff	@atom:Ag @atom:C2	lj/cut/coul/debye	0.067838042	3.42
-		pair_coeff	@atom:Ag @atom:C3	lj/cut/coul/debye	0.082613558	3.42
-		pair_coeff  @atom:Ag @atom:S    morse   5.58 0.746 2.868
-		pair_coeff	@atom:Ag @atom:O	lj/cut/coul/debye	0.088317609	2.8925
-		pair_coeff	@atom:Ag @atom:H	lj/cut/coul/debye	0	2.3575
-		pair_coeff	@atom:C2 @atom:C3	lj/cut/coul/debye	0.143701079	3.905
 		pair_coeff	@atom:C2 @atom:S	lj/cut/coul/debye	0.216556552	4.0775
 		pair_coeff	@atom:C2 @atom:O	lj/cut/coul/debye	0.153622915	3.3775
 		pair_coeff	@atom:C2 @atom:H	lj/cut/coul/debye	0	2.8425
-		pair_coeff	@atom:C3 @atom:S	lj/cut/coul/debye	0.263723814	4.0775
-		pair_coeff	@atom:C3 @atom:O	lj/cut/coul/debye	0.187082869	3.3775
-		pair_coeff	@atom:C3 @atom:H	lj/cut/coul/debye	0	2.8425
 		pair_coeff	@atom:S	 @atom:O	lj/cut/coul/debye	0.281932616	3.55
 		pair_coeff	@atom:S	 @atom:H	lj/cut/coul/debye	0	3.015
 		pair_coeff	@atom:O	 @atom:H	lj/cut/coul/debye	0	2.315

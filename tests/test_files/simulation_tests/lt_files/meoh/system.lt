@@ -5,7 +5,7 @@ meohs = new MEOH[1]
 write_once("In Init"){
 		units real
 		atom_style full
-		pair_style hybrid/overlay lj/cut 10.0 coul/wolf 0.2 15.0
+		pair_style hybrid/overlay lj/cut/coul/debye 0.2 10.0
 		bond_style hybrid harmonic
 		angle_style hybrid harmonic
 		dihedral_style hybrid opls

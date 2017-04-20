@@ -1,22 +1,11 @@
-		pair_coeff @/atom:Glotzer/Ag @/atom:Glotzer/Ag lj/cut/coul/debye 0.039  2.935
 		pair_coeff @/atom:Glotzer/C2 @/atom:Glotzer/C2 lj/cut/coul/debye 0.118  3.905
-		pair_coeff @/atom:Glotzer/C3 @/atom:Glotzer/C3 lj/cut/coul/debye 0.175  3.905
 		pair_coeff @/atom:Glotzer/S  @/atom:Glotzer/S	 lj/cut/coul/debye	0.39743	4.25
 		pair_coeff @/atom:Glotzer/O	@/atom:Glotzer/O	 lj/cut/coul/debye	0.2	2.85
 		pair_coeff @/atom:Glotzer/H	@/atom:Glotzer/H	 lj/cut/coul/debye	0	1.78
 
-		pair_coeff	@/atom:Glotzer/Ag @/atom:Glotzer/C2	lj/cut/coul/debye	0.067838042	3.42
-		pair_coeff	@/atom:Glotzer/Ag @/atom:Glotzer/C3	lj/cut/coul/debye	0.082613558	3.42
-		pair_coeff  @/atom:Glotzer/Ag @/atom:Glotzer/S    morse   5.58 0.746 2.868
-		pair_coeff	@/atom:Glotzer/Ag @/atom:Glotzer/O	lj/cut/coul/debye	0.088317609	2.8925
-		pair_coeff	@/atom:Glotzer/Ag @/atom:Glotzer/H	lj/cut/coul/debye	0	2.3575
-		pair_coeff	@/atom:Glotzer/C2 @/atom:Glotzer/C3	lj/cut/coul/debye	0.143701079	3.905
 		pair_coeff	@/atom:Glotzer/C2 @/atom:Glotzer/S	lj/cut/coul/debye	0.216556552	4.0775
 		pair_coeff	@/atom:Glotzer/C2 @/atom:Glotzer/O	lj/cut/coul/debye	0.153622915	3.3775
 		pair_coeff	@/atom:Glotzer/C2 @/atom:Glotzer/H	lj/cut/coul/debye	0	2.8425
-		pair_coeff	@/atom:Glotzer/C3 @/atom:Glotzer/S	lj/cut/coul/debye	0.263723814	4.0775
-		pair_coeff	@/atom:Glotzer/C3 @/atom:Glotzer/O	lj/cut/coul/debye	0.187082869	3.3775
-		pair_coeff	@/atom:Glotzer/C3 @/atom:Glotzer/H	lj/cut/coul/debye	0	2.8425
 		pair_coeff	@/atom:Glotzer/S	 @/atom:Glotzer/O	lj/cut/coul/debye	0.281932616	3.55
 		pair_coeff	@/atom:Glotzer/S	 @/atom:Glotzer/H	lj/cut/coul/debye	0	3.015
 		pair_coeff	@/atom:Glotzer/O	 @/atom:Glotzer/H	lj/cut/coul/debye	0	2.315
