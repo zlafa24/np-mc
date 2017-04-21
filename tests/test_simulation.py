@@ -69,3 +69,34 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
 
     def test_getCoulPE_with_two_MeOHs_separated_by_5A(self):
         self.assertAlmostEqual(0.5628225,self.sim.getCoulPE(),places=4,msg="getCoulPE does not return expected value for Coulombic energy of two MeOHs separated by 5A")
+
+class TestSimulationTurningOffAtoms(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        self.current_folder = script_path
+        self.data_folder =  os.path.abspath(script_path+"/test_files/simulation_tests/lt_files/two_meohs/")
+        self.init_file = self.data_folder+"/system.in"
+        self.data_file = self.data_folder+"/system.data"
+        self.dumpfile =  self.data_folder+"/regrow.xyz"
+        self.temp = 298.15
+        self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
+    
+    def test_turn_off_one_hydrogen_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_Energy(self):
+        self.sim.turn_on_all_atoms()
+        self.sim.turn_off_atoms([5])
+        self.assertAlmostEqual(-1.6710847,self.sim.getVdwlPE(),places=4,msg="Turning off a hydrogen atom in 2 MeOH system does not result in correct Vdwl Energy")
+
+    def test_turn_off_one_hydrogen_in_two_MeOHs_separated_by_5A_check_coulombic_energy(self):
+        self.sim.turn_on_all_atoms()
+        self.sim.turn_off_atoms([5])
+        self.assertAlmostEqual(1.1598538,self.sim.getCoulPE(),places=4,msg="Turning off a hydrogen atom in 2 MeOH system does not result in correct coulombic energy")
+
+    def test_turn_off_one_hydrogen_and_oxygen_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_energy(self):
+        self.sim.turn_on_all_atoms()
+        self.sim.turn_off_atoms([4,5])
+        self.assertAlmostEqual(-1.4003423,self.sim.getVdwlPE(),places=4,msg="Turning off oxygen and hydrogen in a 2 MeOH system does not result in a correct Van der waals Energy")
+
+    def test_turn_off_one_hydrogen_and_oxygen_in_two_MeOHs_separated_by_5A_check_coulombic_energy(self):
+        self.sim.turn_on_all_atoms()
+        self.sim.turn_off_atoms([4,5])
+        self.assertAlmostEqual(0.0120187,self.sim.getCoulPE(),places=4,msg="Turning off a oxygen and hydrogen in a 2 MeOH system does not result in a correct coulombic energy")

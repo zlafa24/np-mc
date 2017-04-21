@@ -111,15 +111,20 @@ class Simulation(object):
             atom_type_dict[atom_type]=raw_input("Enter element name for atom type "+str(atom_type)+": ")
         self.atom_type_dict=atom_type_dict
 
-    def turn_off_atoms(self,atomIDS):
+    def turn_on_all_atoms(self):
+        self.lmp.command("neigh_modify exclude none")
+
+    def turn_off_atoms(self,atomIDs):
         """Turns off short range interactions with specified atoms using 'neigh_modify exclude' command in LAMMPS
 
         Parameters
         ----------
-        atomIDS : list of type int
+        atomIDs : list of type int
             A list of atom IDs of the atoms that will be turned off in the simulation
         """
-        stratoms = ' '.join(map(str,map(int,atomIDS)))
+        stratoms = ' '.join(map(str,map(int,atomIDs)))
+        self.lmp.command("group offatoms intersect all all")
+        self.lmp.command("group offatoms clear")
         self.lmp.command("group offatoms id "+stratoms)
         #self.lmp.command("set group offatoms charge 0.00")
         self.lmp.command("neigh_modify exclude group offatoms all")
