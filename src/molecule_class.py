@@ -110,18 +110,39 @@ class Molecule(object):
                 return self.getAtomByID(currentID)
 
         def rotateDihedral(self,index,theta):
+                """Rotates the atoms of the molecule from the atom given by 'index' all the way to the last atom (here the last atom is the one opposite the defined "anchor atom") about a dihedral axis.
+                Here the dihedral axis is defined by the two atoms that come before the 'index' atom as defined by the graph of the molecule.  Due to the way the function is defined the 'index' of the 
+                atom must be greater than 3, but of course less than the total length of the molecule.
+                
+                Parameters
+                ----------
+                index : int
+                    The index of the atom which is the starting atom of the rotation and consequently the last atom of the dihedral of whose axis you wish to rotate the molecule about.
+                theta : float
+                    The angle in radians which specifies the angle of rotation about the dihedral axis which you want to perform.
+                """
                 if(index<3 or index>(len(self.atoms)-1)):
-                    raise ValueError("In order to rotate dihedral you must pass an 3<=index<=len(atoms)-1 you passed %d" % index)
+                    raise ValueError("In order to rotate dihedral you must pass an 3<=index<=len(atoms)-1, you passed %d" % index)
                 atom2 = self.getAtomByMolIndex(index-2)
                 atom3 = self.getAtomByMolIndex(index-1)
                 axis = atom3.position-atom2.position
                 for i in range(index,len(self.atoms)):
                     atom4 = self.getAtomByMolIndex(i)
-                    #import pdb;pdb.set_trace()
                     vector = atom4.position-atom3.position
                     atom4.position = rot_quat(vector,theta,axis)+atom3.position
-                    #import pdb;pdb.set_trace()
 
+        
+        def index2dihedral(self,index):
+                if(index<3 or index>(len(self.atoms)-1)):
+                    raise ValueError("You must pass the index of the fourth atom, which means the index must br greater than 2 and less than the length of the molecule.  The index you passed %d" % index)
+                atom1 = self.getAtomByMolIndex(index-3)
+                atom2 = self.getAtomByMolIndex(index-2)
+                atom3 = self.getAtomByMolIndex(index-1)
+                atom4 = self.getAtomByMolIndex(index)
+                dihedral = [dihedral for dihedral in self.dihedrals if all([dihedral.atom1==atom1.atomID,dihedral.atom2==atom2.atomID,dihedral.atom3==atom3.atomID,dihedral.atom4==atom4.atomID])][0]
+                return(dihedral)
+
+        
         def getDihedralAngle(self,dihedral):
 		"""Calculates the dihedral angle of a given dihedral.
                 

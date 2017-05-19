@@ -200,22 +200,6 @@ Bond object consists of a Bond ID which uniquely defines the bond, a bond type, 
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="molecule_class.Dihedral.getAngle">
-<code class="descname">getAngle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Dihedral.getAngle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Dihedral.getAngle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the dihedral angle of the dihedral object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current dihedral angle of the Dihedral object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -268,6 +252,64 @@ The nodes of the graph are the atom ID&#8217;s of the atoms.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="atom_class.html#atom_class.Atom" title="atom_class.Atom">Atom</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="molecule_class.Molecule.getAtomByMolIndex">
+<code class="descname">getAtomByMolIndex</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Molecule.getAtomByMolIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Molecule.getAtomByMolIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Atom by it&#8217;s index in the molecule where the index is defined as the number of bonds away from the anchor atom
+(i.e. the atom at index 1 is the atom directly connected to the anchor atom)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>int</em>) &#8211; The molecular index of the Atom object one wishes to retrieve where the index is defined as the number of bonds away from the anchor atom.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The Atom Object located at the specified index if the index is greater than the number of atoms in the molecule minus one then
+the function returns None as this is out of the range of the atom list.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Atom Object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="molecule_class.Molecule.getDihedralAngle">
+<code class="descname">getDihedralAngle</code><span class="sig-paren">(</span><em>dihedral</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Molecule.getDihedralAngle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Molecule.getDihedralAngle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the dihedral angle of a given dihedral.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dihedral</strong> (<a class="reference internal" href="#molecule_class.Dihedral" title="molecule_class.Dihedral"><em>Dihedral</em></a>) &#8211; Dihedral Object that one wishes to calculate the dihedral angle of.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The current dihedral angle of the Dihedral object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="molecule_class.Molecule.rotateDihedral">
+<code class="descname">rotateDihedral</code><span class="sig-paren">(</span><em>index</em>, <em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/molecule_class.html#Molecule.rotateDihedral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#molecule_class.Molecule.rotateDihedral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates the atoms of the molecule from the atom given by &#8216;index&#8217; all the way to the last atom (here the last atom is the one opposite the defined &#8220;anchor atom&#8221;) about a dihedral axis.
+Here the dihedral axis is defined by the two atoms that come before the &#8216;index&#8217; atom as defined by the graph of the molecule.  Due to the way the function is defined the &#8216;index&#8217; of the
+atom must be greater than 3, but of course less than the total length of the molecule.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>index</strong> (<em>int</em>) &#8211; The index of the atom which is the starting atom of the rotation and consequently the last atom of the dihedral of whose axis you wish to rotate the molecule about.</li>
+<li><strong>theta</strong> (<em>float</em>) &#8211; The angle in radians which specifies the angle of rotation about the dihedral axis which you want to perform.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -561,7 +603,7 @@ The nodes of the graph are the atom ID&#8217;s of the atoms.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>vector</strong> (<em>float vector</em>) &#8211; A vector of three elements that represents the X, Y, Z coordinates of the vector that one wishes to rotate</li>
-<li><strong>theta</strong> (<em>float</em>) &#8211; The angle by which the vector rotates.</li>
+<li><strong>theta</strong> (<em>float</em>) &#8211; The angle in radians by which the vector rotates.</li>
 <li><strong>rot_axis</strong> (<em>float vector</em>) &#8211; A vector of three elements which represents the X,Y,Z elements of the rotation axis.</li>
 </ul>
 </td>

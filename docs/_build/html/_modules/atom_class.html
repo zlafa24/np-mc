@@ -161,7 +161,14 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">charge</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
 	
-	<span class="k">def</span> <span class="nf">get_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomID</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">atomID</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">def</span> <span class="nf">__neq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+                <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">get_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
 	<span class="k">def</span> <span class="nf">get_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span>
@@ -186,7 +193,14 @@
 <span class="sd">            A list of Atom objects which contains the atom info in the given LAMMPS input file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 	<span class="n">atoms</span> <span class="o">=</span> <span class="n">rdlmp</span><span class="o">.</span><span class="n">readAtoms</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-	<span class="k">return</span> <span class="p">[</span><span class="n">Atom</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span></div>
+        <span class="n">atom_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">Atom</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">atom</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">atom_list</span></div>
+
+
+
+
+
+
 </pre></div>
 
            </div>

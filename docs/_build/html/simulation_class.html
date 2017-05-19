@@ -168,6 +168,31 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="simulation_class.Simulation.dump_group">
+<code class="descname">dump_group</code><span class="sig-paren">(</span><em>group_name</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.dump_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.dump_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps the atoms of the specified group to an XYZ file specified by filename</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>group_name</strong> (<em>str</em>) &#8211; The group ID of the group of atoms that one wishes to dump</li>
+<li><strong>filename</strong> (<em>str</em>) &#8211; The name of the file that the group of atoms will be dumped to.
+As the specified format is XYZ it is a good idea to append .xyz to the end of the filename.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation_class.Simulation.getRandomMolecule">
+<code class="descname">getRandomMolecule</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.getRandomMolecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.getRandomMolecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a randomly selected molecule from the LAMMPS datafile associated with the given instance.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="simulation_class.Simulation.initializeComputes">
 <code class="descname">initializeComputes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeComputes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeComputes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the LAMMPS computes that one  wishes to use in the simulation.</p>
@@ -199,6 +224,20 @@
 <li><strong>max_iter</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; The maximum allowed iterations in the minimization procedure.</li>
 </ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation_class.Simulation.turn_off_atoms">
+<code class="descname">turn_off_atoms</code><span class="sig-paren">(</span><em>atomIDs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.turn_off_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.turn_off_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns off short range interactions with specified atoms using &#8216;neigh_modify exclude&#8217; command in LAMMPS</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atomIDs</strong> (<em>list of type int</em>) &#8211; A list of atom IDs of the atoms that will be turned off in the simulation</td>
 </tr>
 </tbody>
 </table>

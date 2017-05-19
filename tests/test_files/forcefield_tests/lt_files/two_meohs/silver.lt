@@ -1,0 +1,7 @@
+import "glotzer_ff.lt"
+
+SILVER inherits Glotzer{
+	write("Data Atoms"){
+		$atom:Ag $mol:. @atom:Ag 0. 0. 0. 0.
+	}
+}

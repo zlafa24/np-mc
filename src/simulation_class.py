@@ -5,6 +5,9 @@ import molecule_class as mol
 import atom_class as atm
 import os
 import numpy as np
+import random as rnd
+import forcefield_class as ffc
+from math import *
 
 class Simulation(object):
     """This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.
@@ -28,12 +31,14 @@ class Simulation(object):
         os.chdir(dname)
         self.lmp.file(os.path.abspath(init_file))
         self.molecules = mol.constructMolecules(datafile)
+        self.atomlist = self.get_atoms()
+        
         self.lmp.command("thermo 1")
 	self.lmp.command("thermo_style	custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
         self.temp = temp
-        self.dumpfile = dumpfile
-        self.datafile = datafile
-        self.init_file = init_file
+        self.dumpfile = os.path.abspath(dumpfile)
+        self.datafile = os.path.abspath(datafile)
+        self.init_file = os.path.abspath(init_file)
         
         self.initializeGroups()
         self.initializeComputes()
@@ -57,7 +62,7 @@ class Simulation(object):
     def initializeFixes(self):
         """Initializes the fixes one wishes to use in the simulation.
         """
-	self.lmp.command("fix fxfrc silver setforce 0. 0. 0.")
+        self.lmp.command("fix fxfrc silver setforce 0. 0. 0.")
         self.lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
     
     def minimize(self,force_tol=1e-3,e_tol=1e-5,max_iter=200):
@@ -101,6 +106,9 @@ class Simulation(object):
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("lj_pe",0,0)
 
+    def get_pair_PE(self):
+        return(self.getVdwlPE()+self.getCoulPE())
+
     def assignAtomTypes(self):
         """Assign element names to the atom types in the simulation.
         """
@@ -128,5 +136,34 @@ class Simulation(object):
         self.lmp.command("group offatoms id "+stratoms)
         #self.lmp.command("set group offatoms charge 0.00")
         self.lmp.command("neigh_modify exclude group offatoms all")
+
+    def getRandomMolecule(self):
+        """Returns a randomly selected molecule from the LAMMPS datafile associated with the given instance.
+        """
+        return(rnd.choice(self.molecules))
+
+    def get_atoms(self):
+        atomlist = []
+        for key in self.molecules:
+            atomlist.extend(self.molecules[key].atoms)
+        return atomlist
+
+    def get_coords(self):
+        indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
+        coords = self.lmp.gather_atoms("x",1,3)
+        for idx,i in zip(indxs,range(len(self.atomlist))):
+            self.atomlist[idx].position[0]=float(coords[i*3])
+            self.atomlist[idx].position[1]=float(coords[i*3+1])
+            self.atomlist[idx].position[2]=float(coords[i*3+2])
+
+    def update_coords(self):
+        indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
+        coords = self.lmp.gather_atoms("x",1,3)
+        for idx,i in zip(indxs,range(len(self.atomlist))):
+            coords[i*3]=self.atomlist[idx].position[0]
+            coords[i*3+1]=self.atomlist[idx].position[1]
+            coords[i*3+2]=self.atomlist[idx].position[2]
+        self.lmp.scatter_atoms("x",1,3,coords)
+
 
 

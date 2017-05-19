@@ -141,6 +141,7 @@
 <span class="kn">import</span> <span class="nn">atom_class</span> <span class="k">as</span> <span class="nn">atm</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">random</span> <span class="k">as</span> <span class="nn">rnd</span>
 
 <div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.</span>
@@ -158,11 +159,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">init_file</span><span class="p">,</span><span class="n">datafile</span><span class="p">,</span><span class="n">dumpfile</span><span class="p">,</span><span class="n">temp</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span> <span class="o">=</span> <span class="n">lammps</span><span class="p">()</span>
-        <span class="n">dname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">init_file</span><span class="p">)</span>
+        <span class="n">dname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">init_file</span><span class="p">))</span>
         <span class="nb">print</span> <span class="s2">&quot;Configuration file is &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">init_file</span><span class="p">)</span>
         <span class="nb">print</span> <span class="s1">&#39;Directory name is &#39;</span><span class="o">+</span><span class="n">dname</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="n">init_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">init_file</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">constructMolecules</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;thermo 1&quot;</span><span class="p">)</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;thermo_style	custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press&quot;</span><span class="p">)</span>
@@ -174,7 +175,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">initializeGroups</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initializeComputes</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initializeFixes</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assignAtomTypes</span><span class="p">()</span>
+        <span class="c1">#self.assignAtomTypes()</span>
 
 <div class="viewcode-block" id="Simulation.initializeGroups"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.initializeGroups">[docs]</a>    <span class="k">def</span> <span class="nf">initializeGroups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the LAMMPS groups that one wishes to use in the simulation.</span>
@@ -186,7 +187,9 @@
         <span class="sd">&quot;&quot;&quot;Initializes the LAMMPS computes that one  wishes to use in the simulation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute pair_pe all pe&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute mol_pe all pe dihedral&quot;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute mol_pe all pe dihedral&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute coul_pe all pair lj/cut/coul/debye ecoul&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;compute lj_pe all pair lj/cut/coul/debye evdwl&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Simulation.initializeFixes"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.initializeFixes">[docs]</a>    <span class="k">def</span> <span class="nf">initializeFixes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes the fixes one wishes to use in the simulation.</span>
@@ -209,10 +212,31 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;dump xyzdump all xyz 10 &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dumpfile</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;minimize &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">force_tol</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e_tol</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">max_iter</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">max_iter</span><span class="o">*</span><span class="mi">10</span><span class="p">))</span></div>
 
+<div class="viewcode-block" id="Simulation.dump_group"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.dump_group">[docs]</a>    <span class="k">def</span> <span class="nf">dump_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">group_name</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dumps the atoms of the specified group to an XYZ file specified by filename</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        group_name : str</span>
+<span class="sd">            The group ID of the group of atoms that one wishes to dump</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The name of the file that the group of atoms will be dumped to.  </span>
+<span class="sd">            As the specified format is XYZ it is a good idea to append .xyz to the end of the filename.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;write_dump &quot;</span><span class="o">+</span><span class="n">group_name</span><span class="o">+</span><span class="s2">&quot; xyz &quot;</span><span class="o">+</span><span class="n">filename</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Simulation.dump_atoms"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.dump_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">dump_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dump the atom XYZ info to the dumpfile specified in the Simulation&#39;s dumpfile variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;write_dump all xyz &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">dumpfile</span><span class="o">+</span><span class="s2">&quot; modify append yes&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">getCoulPE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;run 0 post no&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="s2">&quot;coul_pe&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getVdwlPE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;run 0 post no&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="s2">&quot;lj_pe&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Simulation.assignAtomTypes"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.assignAtomTypes">[docs]</a>    <span class="k">def</span> <span class="nf">assignAtomTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Assign element names to the atom types in the simulation.</span>
@@ -222,7 +246,30 @@
         <span class="n">atom_type_dict</span><span class="o">=</span><span class="p">{}</span>
         <span class="k">for</span> <span class="n">atom_type</span> <span class="ow">in</span> <span class="n">atomtypes</span><span class="p">:</span>
             <span class="n">atom_type_dict</span><span class="p">[</span><span class="n">atom_type</span><span class="p">]</span><span class="o">=</span><span class="n">raw_input</span><span class="p">(</span><span class="s2">&quot;Enter element name for atom type &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">atom_type</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;: &quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">atom_type_dict</span><span class="o">=</span><span class="n">atom_type_dict</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_type_dict</span><span class="o">=</span><span class="n">atom_type_dict</span></div>
+
+    <span class="k">def</span> <span class="nf">turn_on_all_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;neigh_modify exclude none&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Simulation.turn_off_atoms"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.turn_off_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">turn_off_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">atomIDs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Turns off short range interactions with specified atoms using &#39;neigh_modify exclude&#39; command in LAMMPS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atomIDs : list of type int</span>
+<span class="sd">            A list of atom IDs of the atoms that will be turned off in the simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stratoms</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">atomIDs</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group offatoms intersect all all&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group offatoms clear&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;group offatoms id &quot;</span><span class="o">+</span><span class="n">stratoms</span><span class="p">)</span>
+        <span class="c1">#self.lmp.command(&quot;set group offatoms charge 0.00&quot;)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;neigh_modify exclude group offatoms all&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Simulation.getRandomMolecule"><a class="viewcode-back" href="../simulation_class.html#simulation_class.Simulation.getRandomMolecule">[docs]</a>    <span class="k">def</span> <span class="nf">getRandomMolecule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a randomly selected molecule from the LAMMPS datafile associated with the given instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">rnd</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">molecules</span><span class="p">))</span></div></div>
 </pre></div>
 
            </div>
