@@ -13,8 +13,8 @@ import molecule_class
 script_path = os.path.abspath(".")
 
 class TestCBMCRegrowth(unittest.TestCase):
-    @classmethod
-    def setUpClass(self):
+    def setUp(self):
+        self.longMessage = True
         self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/two_meohs')
         self.dihedral_type4_pdf = pickle.load(open('./test_files/move_tests/dihedral_type4_pdf.pickle','rb'))
         self.init_file = os.path.abspath(self.lt_directory+'/system.in')
@@ -41,9 +41,26 @@ class TestCBMCRegrowth(unittest.TestCase):
         molecule = self.simulation.molecules[1]
         rotations = [0,pi,2*pi,pi/2.,2*pi]
         energies = self.cbmc_move.evaluate_energies(molecule,4,rotations)
-        actual_energies = [-1.1082631065605515,-1.3426028763084936,-1.1082631065605515,-1.5514679832892497,-1.1082631065605515]
+        actual_energies = [-1.1082622,-1.34260189,-1.1082622,-1.55146693,-1.1082622]
         np.testing.assert_array_almost_equal(energies,actual_energies,err_msg="evaluate_energies does not return correct energies for a set of specified rotation angles.")
 
-    @classmethod
-    def tearDownClass(self):
+    def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen(self):
+        self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],3)
+        self.assertAlmostEqual(-1.6710847+1.1598538,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
+    
+    def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen_and_oxygen(self):
+        self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],2)
+        self.assertAlmostEqual(-1.4003423+0.0120187,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
+ 
+    def test_regrow_MeOH_from_index_3_in_2_MeOH_system(self):
+        self.cbmc_move.regrow(self.simulation.molecules[1],3)
+
+
+    def tearDown(self):
         os.chdir(script_path)
+        self.cbmc_move.simulation.turn_on_all_atoms()
+
+
+
+
+

@@ -75,17 +75,34 @@ class CBMCRegrowth(Move):
         for i,rotation in enumerate(rotations):
             molecule.rotateDihedral(index,rotation)
             self.simulation.update_coords()
+            self.simulation.dump_group("all","cbmc_"+str(index)+"_"+str(i)+".xyz")
             energies[i]=self.simulation.get_pair_PE()
             molecule.rotateDihedral(index,-rotation)
         return(energies)
 
+    def turn_off_molecule_atoms(self,molecule,index): 
+        if (index+1>=len(molecule.atoms)):
+            self.simulation.turn_on_all_atoms()
+            return
+        indices_to_turn_off = np.arange(index+1,len(molecule.atoms))
+        atoms = map(molecule.getAtomByMolIndex,indices_to_turn_off)
+        atomIDs = [atom.atomID for atom in atoms]
+        self.simulation.turn_off_atoms(atomIDs)
+
     def regrow(self,molecule,index):
-        for atom in range(index,len(molecule)):
-            thetas = self.select_dih_angles()
+        kb = 0.0019872041
+        beta = 1./(kb*self.temp)
+        for index in range(index,len(molecule.atoms)):             
+            self.turn_off_molecule_atoms(molecule,index)
             dihedral = molecule.index2dihedral(index)
-            theta0 = molecule.getDihedralAngle(self,dihedral)
+            thetas = self.select_dih_angles(dihedral.dihType)
+            theta0 = molecule.getDihedralAngle(dihedral)
             rotations = thetas-theta0
             energies = self.evaluate_energies(molecule,index,rotations)
+            probs = np.exp(-beta*energies)
+            norm_probs = probs/sum(probs)
+            selected_rotation = np.random.choice(rotations,p=norm_probs)
+            molecule.rotateDihedral(index,selected_rotation)
 
     def move(self):
         molecule = self.select_molecule()
