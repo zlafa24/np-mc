@@ -1,1 +1,3 @@
-{}
+{
+  "test_simulation.py::TestUpdatingCoordinates::test_revert_coords_reverts_pair_PE_after_mc_move": true
+}

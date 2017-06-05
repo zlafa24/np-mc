@@ -16,7 +16,9 @@ class TestCBMCRegrowth(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/two_meohs')
+        self.dihedral_type3_pdf =  pickle.load(open('./test_files/move_tests/dihedral_type3_pdf.pickle','rb'))
         self.dihedral_type4_pdf = pickle.load(open('./test_files/move_tests/dihedral_type4_pdf.pickle','rb'))
+        self.SCCO_pair_pdf = pickle.load(open('./test_files/move_tests/pair_pe_pdf_SCCO_dihedral_angle.pickle','rb'))
         self.init_file = os.path.abspath(self.lt_directory+'/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
@@ -52,9 +54,9 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],2)
         self.assertAlmostEqual(-1.4003423+0.0120187,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
  
+
     def test_regrow_MeOH_from_index_3_in_2_MeOH_system(self):
         self.cbmc_move.regrow(self.simulation.molecules[1],3)
-
 
     def tearDown(self):
         os.chdir(script_path)

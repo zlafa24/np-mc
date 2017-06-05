@@ -3,6 +3,7 @@
 from lammps import lammps
 import molecule_class as mol
 import atom_class as atm
+import move_class as mvc
 import os
 import numpy as np
 import random as rnd
@@ -23,12 +24,12 @@ class Simulation(object):
     temp : float
         The temperature which one wishes to run the simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp):
-        self.lmp = lammps()
+    def __init__(self,init_file,datafile,dumpfile,temp,anchortype=2):
         dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
         os.chdir(dname)
+        self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
         self.molecules = mol.constructMolecules(datafile)
         self.atomlist = self.get_atoms()
@@ -39,10 +40,13 @@ class Simulation(object):
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
-        
+        self.step=0
+
         self.initializeGroups()
         self.initializeComputes()
         self.initializeFixes()
+        self.initializeMoves(anchortype)
+        self.initialize_potential_file()
         #self.assignAtomTypes()
 
     def initializeGroups(self):
@@ -65,6 +69,14 @@ class Simulation(object):
         self.lmp.command("fix fxfrc silver setforce 0. 0. 0.")
         self.lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
     
+    def initializeMoves(self,anchortype):
+        cbmc_move = mvc.CBMCRegrowth(self,anchortype)
+        self.moves = [cbmc_move]
+
+    def initialize_potential_file(self):
+        self.potential_file = open('Potential_Energy.txt','a')
+        self.potential_file.write("step\tEnergy\tmove\tAccepted?\n")
+
     def minimize(self,force_tol=1e-3,e_tol=1e-5,max_iter=200):
         """Minimizes the system using LAMMPS minimize function.
 
@@ -79,6 +91,7 @@ class Simulation(object):
         """
         self.lmp.command("dump xyzdump all xyz 10 "+str(self.dumpfile))
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
+        self.get_coords()
 
     def dump_group(self,group_name,filename):
         """Dumps the atoms of the specified group to an XYZ file specified by filename
@@ -106,8 +119,13 @@ class Simulation(object):
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("lj_pe",0,0)
 
-    def get_pair_PE(self):
+    def get_pair_PE(self): 
+        self.lmp.command("run 0 post no")
         return(self.getVdwlPE()+self.getCoulPE())
+
+    def get_total_PE(self):
+        self.lmp.command("run 0 post no")
+        return self.lmp.extract_compute("thermo_pe",0,0)
 
     def assignAtomTypes(self):
         """Assign element names to the atom types in the simulation.
@@ -164,6 +182,32 @@ class Simulation(object):
             coords[i*3+1]=self.atomlist[idx].position[1]
             coords[i*3+2]=self.atomlist[idx].position[2]
         self.lmp.scatter_atoms("x",1,3,coords)
+
+    def revert_coords(self,old_positions):
+        indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
+        coords = self.lmp.gather_atoms("x",1,3)
+        for idx,i in zip(indxs,range(len(old_positions))):
+            coords[i*3]=old_positions[idx][0]
+            coords[i*3+1]=old_positions[idx][1]
+            coords[i*3+2]=old_positions[idx][2]
+        self.lmp.scatter_atoms("x",1,3,coords)
+        self.get_coords()
+
+    def perform_mc_move(self):
+        move = rnd.choice(self.moves)
+        old_positions = np.copy([atom.position for atom in self.atomlist])
+        accepted = move.move()
+        if (not accepted):
+            self.revert_coords(old_positions)
+        self.step+=1
+        self.update_coords()
+        new_energy = self.get_total_PE()
+        self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+'cbmc'+'\t'+str(accepted)+'\n') 
+        self.dump_atoms()
+        return accepted
+            
+
+
 
 
 

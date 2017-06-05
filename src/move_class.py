@@ -1,6 +1,7 @@
 import random as rnd
 import numpy as np
 import forcefield_class as ffc
+import scipy.misc as scm
 
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
@@ -21,6 +22,7 @@ class Move(object):
         self.lmp = simulation.lmp
         self.molecules = simulation.molecules
         self.temp = simulation.temp
+        self.kb = 0.0019872041
 
 class CBMCRegrowth(Move):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the Move class.  
@@ -49,16 +51,20 @@ class CBMCRegrowth(Move):
         super(CBMCRegrowth,self).__init__(simulation)
         self.anchortype = anchortype
         self.set_anchor_atoms()
+        self.rosen_file = open('Rosenbluth_Data.txt','a')
+        self.rosen_file.write('log_Wo\tlog_Wf\tprobability\tNew Energy\taccepted\n')
 
     def select_random_molecule(self):
         """Selects a random molecule from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
         """
-        return(rnd.choice(self.molecules.items())[1])
+        elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchortype in [atom.atomType for atom in molecule.atoms])]
+        return(rnd.choice(elegible_molecules))
 
     def set_anchor_atoms(self):
         for key, molecule in self.simulation.molecules.iteritems():
-            anchorID = [atom.atomID for atom in molecule.atoms if atom.atomType==self.anchortype][0]
-            molecule.setAnchorAtom(anchorID)
+            anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==self.anchortype]
+            if len(anchorIDs)>0:
+                molecule.setAnchorAtom(anchorIDs[0])
 
     def select_index(self,molecule):
         return(rnd.randrange(3,len(molecule.atoms)))
@@ -75,7 +81,6 @@ class CBMCRegrowth(Move):
         for i,rotation in enumerate(rotations):
             molecule.rotateDihedral(index,rotation)
             self.simulation.update_coords()
-            self.simulation.dump_group("all","cbmc_"+str(index)+"_"+str(i)+".xyz")
             energies[i]=self.simulation.get_pair_PE()
             molecule.rotateDihedral(index,-rotation)
         return(energies)
@@ -89,28 +94,47 @@ class CBMCRegrowth(Move):
         atomIDs = [atom.atomID for atom in atoms]
         self.simulation.turn_off_atoms(atomIDs)
 
-    def regrow(self,molecule,index):
-        kb = 0.0019872041
-        beta = 1./(kb*self.temp)
+    def evaluate_trial_rotations(self,molecule,index,keep_original=False):
+        beta = 1./(self.kb*self.temp)
+        dihedral = molecule.index2dihedral(index)
+        thetas = self.select_dih_angles(dihedral.dihType)
+        theta0 = molecule.getDihedralAngle(dihedral)
+        rotations = thetas-theta0
+        if keep_original:
+            rotations[0]=0
+        self.turn_off_molecule_atoms(molecule,index-1)
+        self.simulation.update_coords()
+        initial_energy = self.simulation.get_pair_PE()
+        self.turn_off_molecule_atoms(molecule,index)
+        energies = self.evaluate_energies(molecule,index,rotations)
+        log_rosen_weight = scm.logsumexp(-beta*(energies-initial_energy))
+        log_norm_probs = -beta*(energies-initial_energy)-log_rosen_weight
+        selected_rotation = np.random.choice(rotations,p=np.exp(log_norm_probs))
+        return(log_rosen_weight,selected_rotation)
+
+    def regrow(self,molecule,index,keep_original=False):
+        total_log_rosen_weight = 0
         for index in range(index,len(molecule.atoms)):             
             self.turn_off_molecule_atoms(molecule,index)
-            dihedral = molecule.index2dihedral(index)
-            thetas = self.select_dih_angles(dihedral.dihType)
-            theta0 = molecule.getDihedralAngle(dihedral)
-            rotations = thetas-theta0
-            energies = self.evaluate_energies(molecule,index,rotations)
-            probs = np.exp(-beta*energies)
-            norm_probs = probs/sum(probs)
-            selected_rotation = np.random.choice(rotations,p=norm_probs)
-            molecule.rotateDihedral(index,selected_rotation)
+            (log_step_weight,selected_rotation) = self.evaluate_trial_rotations(molecule,index,keep_original)
+            rotation = 0 if keep_original else selected_rotation
+            molecule.rotateDihedral(index,rotation)
+            total_log_rosen_weight+=log_step_weight
+        return total_log_rosen_weight
 
     def move(self):
-        molecule = self.select_molecule()
-        index = self.select_index()
+        molecule = self.select_random_molecule()
+        index = self.select_index(molecule) 
+        log_Wo = self.regrow(molecule,index,keep_original=True)
+        log_Wf = self.regrow(molecule,index)
+        probability = min(1,np.exp(log_Wf-log_Wo))
+        accepted = probability>rnd.random()
+        self.simulation.update_coords()
+        self.rosen_file.write(str(log_Wo)+'\t'+str(log_Wf)+'\t'+str(probability)+'\t'+str(self.simulation.get_total_PE())+'\t'+str(accepted)+'\n')
+        self.rosen_file.flush()
+        return(accepted)
 
-
-
-
+    
 
 
 

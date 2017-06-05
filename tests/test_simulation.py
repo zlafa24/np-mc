@@ -180,6 +180,51 @@ class TestUpdatingCoordinates(unittest.TestCase):
         new_coords = [atom.position for atom in self.sim.atomlist]
         np.testing.assert_array_almost_equal(backup_coords,new_coords,err_msg="update_coords does not update the coordinates with the positions given by the atomlilst.")
 
+    def test_revert_coords_reverts_the_coordinates_to_original_2_MeOH_coords(self):
+        old_coords = np.copy([atom.position for atom in self.sim.atomlist])
+        self.sim.lmp.command("group test id 6:10") 
+        self.sim.lmp.command("displace_atoms test move 0 5 0")
+        self.sim.get_coords()
+        self.sim.revert_coords(old_coords)
+        np.testing.assert_array_almost_equal([atom.position for atom in self.sim.atomlist],self.two_meoh_init_coords,err_msg="Revert coordinates does not revert to initial coordinates after 5A displacement.",verbose=True)
+
+    def test_revert_coords_doesnt_alter_pair_PE_energy(self):
+        old_energy = self.sim.get_pair_PE()
+        old_coords = np.copy([atom.position for atom in self.sim.atomlist])
+        self.sim.lmp.command("group test id 6:10") 
+        self.sim.lmp.command("displace_atoms test move 0 5 0")
+        self.sim.get_coords()
+        self.sim.revert_coords(old_coords)
+        self.assertAlmostEqual(self.sim.get_pair_PE(),old_energy,msg="Pair potential not the same as it was before translation after revert_coords was used to revert coordinates.")
+
+    def test_revert_coords_reverts_coords_after_mc_move(self):
+        nummoves=10
+        move = self.sim.moves[0]
+        original_coords = self.two_meoh_init_coords
+        orig_coord_array = np.empty((nummoves,10,3))
+        actual_coord_array = np.empty((nummoves,10,3))
+        for i in range(nummoves):
+            old_coords = np.copy([atom.position for atom in self.sim.atomlist])
+            orig_coord_array[i,:,:]=original_coords
+            move.move()
+            self.sim.revert_coords(old_coords)
+            actual_coord_array[i,:,:]=[atom.position for atom in self.sim.atomlist]
+        np.testing.assert_allclose(actual_coord_array,orig_coord_array)
+
+    def test_revert_coords_reverts_pair_PE_after_mc_move(self):
+        nummoves=10
+        move = self.sim.moves[0]
+        original_energy = self.sim.get_pair_PE()
+        orig_energy_array = original_energy*np.ones(nummoves)
+        actual_energy_array = np.empty(nummoves)
+        for i in range(nummoves):
+            old_coords = np.copy([atom.position for atom in self.sim.atomlist])
+            move.move()
+            self.sim.revert_coords(old_coords)
+            actual_energy_array[i]=self.sim.get_pair_PE()
+        import pdb;pdb.set_trace()
+        np.testing.assert_allclose(actual_energy_array,orig_energy_array)
+
 
     def tearDown(self):
         os.chdir(script_path)
