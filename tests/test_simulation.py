@@ -222,7 +222,6 @@ class TestUpdatingCoordinates(unittest.TestCase):
             move.move()
             self.sim.revert_coords(old_coords)
             actual_energy_array[i]=self.sim.get_pair_PE()
-        import pdb;pdb.set_trace()
         np.testing.assert_allclose(actual_energy_array,orig_energy_array)
 
 

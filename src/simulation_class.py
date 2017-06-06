@@ -29,6 +29,7 @@ class Simulation(object):
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
         os.chdir(dname)
+
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
         self.molecules = mol.constructMolecules(datafile)
@@ -41,6 +42,7 @@ class Simulation(object):
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
         self.step=0
+        self.exclude=False
 
         self.initializeGroups()
         self.initializeComputes()
@@ -139,6 +141,8 @@ class Simulation(object):
 
     def turn_on_all_atoms(self):
         self.lmp.command("neigh_modify exclude none")
+        if self.exclude:
+            self.exclude_type(self.excluded_types[0],self.excluded_types[1])
 
     def turn_off_atoms(self,atomIDs):
         """Turns off short range interactions with specified atoms using 'neigh_modify exclude' command in LAMMPS
@@ -152,8 +156,14 @@ class Simulation(object):
         self.lmp.command("group offatoms intersect all all")
         self.lmp.command("group offatoms clear")
         self.lmp.command("group offatoms id "+stratoms)
-        #self.lmp.command("set group offatoms charge 0.00")
         self.lmp.command("neigh_modify exclude group offatoms all")
+        if self.exclude:
+            self.exclude_type(self.excluded_types[0],self.excluded_types[1])
+
+    def exclude_type(self,type1,type2):
+        self.excluded_types = (type1,type2)
+        self.exclude=True
+        self.lmp.command("neigh_modify exclude type %d %d" % (type1,type2))
 
     def getRandomMolecule(self):
         """Returns a randomly selected molecule from the LAMMPS datafile associated with the given instance.
@@ -203,6 +213,7 @@ class Simulation(object):
         self.update_coords()
         new_energy = self.get_total_PE()
         self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+'cbmc'+'\t'+str(accepted)+'\n') 
+        self.potential_file.flush()
         self.dump_atoms()
         return accepted
             

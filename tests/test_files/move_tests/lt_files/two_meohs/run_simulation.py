@@ -3,10 +3,12 @@ import os,sys
 sys.path.insert(0,os.path.expanduser('~/np-mc/src'))
 import simulation_class as simc
 
+
+print("Starting out")
 init_file = os.path.abspath('./system.in')
 datafile = os.path.abspath('./system.data')
 dumpfile = os.path.abspath('./regrow.xyz')
-temp=298.15
+temp=58.15
 
 sim = simc.Simulation(init_file,datafile,dumpfile,temp)
 sim.minimize()
