@@ -64,6 +64,7 @@ class Simulation(object):
         self.lmp.command("compute mol_pe all pe dihedral")
         self.lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
         self.lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
+        self.lmp.command("compute pair_total all pair lj/cut/coul/debye")
 
     def initializeFixes(self):
         """Initializes the fixes one wishes to use in the simulation.
@@ -114,19 +115,19 @@ class Simulation(object):
         self.lmp.command("write_dump all xyz "+self.dumpfile+" modify append yes")
 
     def getCoulPE(self):
-        self.lmp.command("run 0 post no")
+        self.lmp.command("run 1 pre no post no")
         return self.lmp.extract_compute("coul_pe",0,0)
 
     def getVdwlPE(self):
-        self.lmp.command("run 0 post no")
+        self.lmp.command("run 1 pre no post no")
         return self.lmp.extract_compute("lj_pe",0,0)
 
     def get_pair_PE(self): 
-        self.lmp.command("run 0 post no")
-        return(self.getVdwlPE()+self.getCoulPE())
+        self.lmp.command("run 1 pre no post no")
+        return(self.lmp.extract_compute("pair_total",0,0))
 
     def get_total_PE(self):
-        self.lmp.command("run 0 post no")
+        self.lmp.command("run 1 pre no post no")
         return self.lmp.extract_compute("thermo_pe",0,0)
 
     def assignAtomTypes(self):
@@ -139,10 +140,14 @@ class Simulation(object):
             atom_type_dict[atom_type]=raw_input("Enter element name for atom type "+str(atom_type)+": ")
         self.atom_type_dict=atom_type_dict
 
+    def update_neighbor_list(self):
+        self.lmp.command("run 0 post no")
+
     def turn_on_all_atoms(self):
         self.lmp.command("neigh_modify exclude none")
         if self.exclude:
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
+        self.update_neighbor_list()
 
     def turn_off_atoms(self,atomIDs):
         """Turns off short range interactions with specified atoms using 'neigh_modify exclude' command in LAMMPS
@@ -159,6 +164,7 @@ class Simulation(object):
         self.lmp.command("neigh_modify exclude group offatoms all")
         if self.exclude:
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
+        self.update_neighbor_list()
 
     def exclude_type(self,type1,type2):
         self.excluded_types = (type1,type2)
