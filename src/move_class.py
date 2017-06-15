@@ -53,6 +53,7 @@ class CBMCRegrowth(Move):
         self.set_anchor_atoms()
         self.rosen_file = open('Rosenbluth_Data.txt','a')
         self.rosen_file.write('log_Wo\tlog_Wf\tprobability\tNew Energy\taccepted\n')
+        self.lmp_clones = [self.simulation.clone_lammps() for i in range(5)]
 
     def select_random_molecule(self):
         """Selects a random molecule from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
@@ -75,6 +76,11 @@ class CBMCRegrowth(Move):
         dtheta = thetas[1]-thetas[0]
         trial_dih_angles = np.random.choice(thetas,size=self.numtrials,p=ff_pdf*dtheta)
         return(trial_dih_angles)
+
+    def parallel_evaluate_energies(self,molecule,index,rotations):
+        coords = [atom.position for atom in self.simulation.atomlist]
+        for i,rotations in enumerate(rotations):
+            print("placeholder")
 
     def evaluate_energies(self,molecule,index,rotations):
         energies = np.empty(self.numtrials)

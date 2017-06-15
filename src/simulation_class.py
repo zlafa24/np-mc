@@ -44,33 +44,43 @@ class Simulation(object):
         self.step=0
         self.exclude=False
 
-        self.initializeGroups()
-        self.initializeComputes()
-        self.initializeFixes()
+        self.initializeGroups(self.lmp)
+        self.initializeComputes(self.lmp)
+        self.initializeFixes(self.lmp)
         self.initializeMoves(anchortype)
         self.initialize_potential_file()
         #self.assignAtomTypes()
 
-    def initializeGroups(self):
+    def clone_lammps(self):
+        lmp2 = lammps("",["-echo","none","-screen","lammps.out"])
+        lmp2.file(os.path.abspath(self.init_file))
+        lmp2.command("thermo 1")
+        lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
+	self.initializeGroups(lmp2)
+        self.initializeComputes(lmp2)
+        self.initializeFixes(lmp2)
+        return(lmp2)
+
+    def initializeGroups(self,lmp):
         """Initialize the LAMMPS groups that one wishes to use in the simulation.
         """
-        self.lmp.command("group silver type 1")
-        self.lmp.command("group adsorbate type 2 3 4 5 6")
+        lmp.command("group silver type 1")
+        lmp.command("group adsorbate type 2 3 4 5 6")
 
-    def initializeComputes(self):
+    def initializeComputes(self,lmp):
         """Initializes the LAMMPS computes that one  wishes to use in the simulation.
         """
-        self.lmp.command("compute pair_pe all pe")
-        self.lmp.command("compute mol_pe all pe dihedral")
-        self.lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
-        self.lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
-        self.lmp.command("compute pair_total all pair lj/cut/coul/debye")
+        lmp.command("compute pair_pe all pe")
+        lmp.command("compute mol_pe all pe dihedral")
+        lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
+        lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
+        lmp.command("compute pair_total all pair lj/cut/coul/debye")
 
-    def initializeFixes(self):
+    def initializeFixes(self,lmp):
         """Initializes the fixes one wishes to use in the simulation.
         """
-        self.lmp.command("fix fxfrc silver setforce 0. 0. 0.")
-        self.lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
+        lmp.command("fix fxfrc silver setforce 0. 0. 0.")
+        lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
     
     def initializeMoves(self,anchortype):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype)
@@ -125,6 +135,11 @@ class Simulation(object):
     def get_pair_PE(self): 
         self.lmp.command("run 1 pre no post no")
         return(self.lmp.extract_compute("pair_total",0,0))
+
+    def get_clone_pair_PE(self,lmp2,coords):
+        self.update_clone_coords(lmp2,coords)
+        lmp2.command("run 1 pre no post no")
+        return(lmp2.extract_compute("pair_total",0,0))
 
     def get_total_PE(self):
         self.lmp.command("run 1 pre no post no")
@@ -199,6 +214,16 @@ class Simulation(object):
             coords[i*3+2]=self.atomlist[idx].position[2]
         self.lmp.scatter_atoms("x",1,3,coords)
 
+    def update_clone_coords(self,lmp2,atom_coords):
+        indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
+        coords = lmp2.gather_atoms("x",1,3)
+        for idx,i in zip(indxs,range(atom_coords.shape[0])):
+            coords[i*3]=atom_coords[idx][0]
+            coords[i*3+1]=atom_coords[idx][1]
+            coords[i*3+2]=atom_coords[idx][2]
+        lmp2.scatter_atoms("x",1,3,coords)
+
+
     def revert_coords(self,old_positions):
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
         coords = self.lmp.gather_atoms("x",1,3)
@@ -223,8 +248,5 @@ class Simulation(object):
         self.dump_atoms()
         return accepted
             
-
-
-
 
 
