@@ -13,6 +13,7 @@ Welcome to src's documentation!
    inheritance
    coverage
    simulation_class
+   move_class
    molecule_class
    atom_class
 

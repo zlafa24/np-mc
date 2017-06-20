@@ -171,6 +171,10 @@ class Molecule(object):
                 angle=angle%(2*pi)
                 return angle
 
+        def move_atoms(self,move):
+            for atom in self.atoms:
+                atom.position+=move
+
 class Bond(object):
 	"""The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a 
 	Bond object consists of a Bond ID which uniquely defines the bond, a bond type, and the atom ID's of the two atoms involved in the bond.

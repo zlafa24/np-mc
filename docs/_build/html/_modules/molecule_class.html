@@ -87,6 +87,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../simulation_class.html">Simulation Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../move_class.html">Move Class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../molecule_class.html">Molecule Class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../atom_class.html">Atom Class</a></li>
 </ul>
@@ -267,6 +268,18 @@
                     <span class="n">vector</span> <span class="o">=</span> <span class="n">atom4</span><span class="o">.</span><span class="n">position</span><span class="o">-</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span>
                     <span class="n">atom4</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">rot_quat</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">axis</span><span class="p">)</span><span class="o">+</span><span class="n">atom3</span><span class="o">.</span><span class="n">position</span></div>
 
+        
+        <span class="k">def</span> <span class="nf">index2dihedral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">index</span><span class="o">&lt;</span><span class="mi">3</span> <span class="ow">or</span> <span class="n">index</span><span class="o">&gt;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must pass the index of the fourth atom, which means the index must br greater than 2 and less than the length of the molecule.  The index you passed </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">index</span><span class="p">)</span>
+                <span class="n">atom1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAtomByMolIndex</span><span class="p">(</span><span class="n">index</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+                <span class="n">atom2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAtomByMolIndex</span><span class="p">(</span><span class="n">index</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">atom3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAtomByMolIndex</span><span class="p">(</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">atom4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAtomByMolIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="n">dihedral</span> <span class="o">=</span> <span class="p">[</span><span class="n">dihedral</span> <span class="k">for</span> <span class="n">dihedral</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dihedrals</span> <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom1</span><span class="o">==</span><span class="n">atom1</span><span class="o">.</span><span class="n">atomID</span><span class="p">,</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom2</span><span class="o">==</span><span class="n">atom2</span><span class="o">.</span><span class="n">atomID</span><span class="p">,</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom3</span><span class="o">==</span><span class="n">atom3</span><span class="o">.</span><span class="n">atomID</span><span class="p">,</span><span class="n">dihedral</span><span class="o">.</span><span class="n">atom4</span><span class="o">==</span><span class="n">atom4</span><span class="o">.</span><span class="n">atomID</span><span class="p">])][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span><span class="p">(</span><span class="n">dihedral</span><span class="p">)</span>
+
+        
 <div class="viewcode-block" id="Molecule.getDihedralAngle"><a class="viewcode-back" href="../molecule_class.html#molecule_class.Molecule.getDihedralAngle">[docs]</a>        <span class="k">def</span> <span class="nf">getDihedralAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dihedral</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Calculates the dihedral angle of a given dihedral.</span>
 <span class="sd">                </span>

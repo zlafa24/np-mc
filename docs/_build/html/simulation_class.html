@@ -139,7 +139,7 @@
 <p>This module contains the simulation class and associated functions which are meant to encapsulate a LAMMPS simulation.</p>
 <dl class="class">
 <dt id="simulation_class.Simulation">
-<em class="property">class </em><code class="descclassname">simulation_class.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>init_file</em>, <em>datafile</em>, <em>dumpfile</em>, <em>temp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">simulation_class.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>init_file</em>, <em>datafile</em>, <em>dumpfile</em>, <em>temp</em>, <em>anchortype=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -194,19 +194,19 @@ As the specified format is XYZ it is a good idea to append .xyz to the end of th
 
 <dl class="method">
 <dt id="simulation_class.Simulation.initializeComputes">
-<code class="descname">initializeComputes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeComputes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeComputes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">initializeComputes</code><span class="sig-paren">(</span><em>lmp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeComputes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeComputes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the LAMMPS computes that one  wishes to use in the simulation.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="simulation_class.Simulation.initializeFixes">
-<code class="descname">initializeFixes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeFixes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeFixes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">initializeFixes</code><span class="sig-paren">(</span><em>lmp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeFixes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeFixes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the fixes one wishes to use in the simulation.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="simulation_class.Simulation.initializeGroups">
-<code class="descname">initializeGroups</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeGroups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeGroups" title="Permalink to this definition">¶</a></dt>
+<code class="descname">initializeGroups</code><span class="sig-paren">(</span><em>lmp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation_class.html#Simulation.initializeGroups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation_class.Simulation.initializeGroups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the LAMMPS groups that one wishes to use in the simulation.</p>
 </dd></dl>
 

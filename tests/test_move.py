@@ -64,5 +64,27 @@ class TestCBMCRegrowth(unittest.TestCase):
 
 
 
+class TestTranslationMove(unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/two_meohs')
+        self.init_file = os.path.abspath(self.lt_directory+'/system.in')
+        self.data_file = os.path.abspath(self.lt_directory+'/system.data')
+        self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
+        self.temp = 298.15
+        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
+        self.translate_move = mvc.TranslationMove(self.simulation,0.5)
 
+    def test_translate_translates_molecule_by_specified_move(self):
+        molecule = self.simulation.molecules[1]
+        old_positions = np.copy([atom.position for atom in molecule.atoms])
+        move = np.array([1,1,1])
+        self.translate_move.translate(molecule,move)
+        self.simulation.get_coords()
+        molecule = self.simulation.molecules[1]
+        new_positions = [atom.position for atom in molecule.atoms]
+        np.testing.assert_allclose(new_positions,old_positions+move,err_msg="translate method of Translate class does not translate molecule as specified by passed in move.")
+
+    def tearDown(self):
+        os.chdir(script_path)
 

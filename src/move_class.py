@@ -2,6 +2,7 @@ import random as rnd
 import numpy as np
 import forcefield_class as ffc
 import scipy.misc as scm
+from math import pi,acos,sin,cos
 
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
@@ -56,21 +57,53 @@ class CBMCRegrowth(Move):
         self.lmp_clones = [self.simulation.clone_lammps() for i in range(5)]
 
     def select_random_molecule(self):
-        """Selects a random molecule from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
+        """Selects a random elegible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
+
+        Returns
+        -------
+        Random Elegible Molecule : Molecule
+            A randomly chosen molecule from the list of elegible ones.
         """
         elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchortype in [atom.atomType for atom in molecule.atoms])]
         return(rnd.choice(elegible_molecules))
 
     def set_anchor_atoms(self):
+        """For every molecule in the Move's associated simulation the anchor atom is set to the anchortype associated with the CBMCRegrowth instance.  
+        Any molecule that does not have an atom of type anchortype is skipped.
+        """
         for key, molecule in self.simulation.molecules.iteritems():
             anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==self.anchortype]
             if len(anchorIDs)>0:
                 molecule.setAnchorAtom(anchorIDs[0])
 
     def select_index(self,molecule):
+        """Selects a random index of a molecule ranging from 3 to the final index.  The index selection starts at 3 as no dihedral rotation does not move any atoms with index less than 3.
+
+        Parameters
+        ----------
+        molecule : Molecule
+            The Molecule objectone wishes to select a ranomd index from.
+
+        Returns
+        -------
+        index : int
+            A random index from 3 to length of molecule.      
+        """
         return(rnd.randrange(3,len(molecule.atoms)))
 
     def select_dih_angles(self,dih_type):
+        """Returns numtrials number of dihedral angles with probability given by the PDF given by the boltzmann distribution determined by the temperature and the dihedral forcefield.
+
+        Parameters
+        ----------
+        dih_type : int
+            An integer which corresponds to the type of Dihedral one wishes to samples.
+
+        Returns
+        -------
+        trial_dih_angles : Numpy array of floats
+            An array of floats which correspond to the selected dihedral angles in radians.
+        """
         force_field = [ff for ff in self.dihedral_ffs if ff.dihedral_type==dih_type][0]
         (thetas,ff_pdf) = force_field.get_pdf(self.temp)
         dtheta = thetas[1]-thetas[0]
@@ -83,6 +116,22 @@ class CBMCRegrowth(Move):
             print("placeholder")
 
     def evaluate_energies(self,molecule,index,rotations):
+        """Evluates the pair energy of the system for each of the given dihedral rotations at the specified index.  For these enegies to be consistent with CBMC all atoms past the index should be turned off with turn_off_molecule_atoms.
+        
+        Parameters
+        ----------
+        molecule : Molecule
+            The molecule on which the dihedral rotations will be carried out
+        index : int
+            The index of the atom that is in the last position of the dihedral to be rotated.
+        rotations : list of floats
+            A list of floats which represent the desired rotation from the current dihedral angle in Radians.
+
+        Returns
+        -------
+        energies : Numpy array of floats
+            An array of the pair energy for each of the specified rotations.
+        """
         energies = np.empty(self.numtrials)
         for i,rotation in enumerate(rotations):
             molecule.rotateDihedral(index,rotation)
@@ -141,6 +190,51 @@ class CBMCRegrowth(Move):
         return(accepted)
 
     
+class TranslationMove(Move):
+    def __init__(self,simulation,max_disp):
+        super(TranslationMove,self).__init__(simulation)
+        self.max_disp = max_disp
+
+    def translate(self,molecule,move):
+        #positions = [atom.position for atom in molecule.atoms]
+        #positions = positions+move
+        molecule.move_atoms(move)
+        self.simulation.update_coords()
+
+    def select_random_molecule(self):
+        """Selects a random elegible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
+
+        Returns
+        -------
+        Random Elegible Molecule : Molecule
+            A randomly chosen molecule from the list of elegible ones.
+        """
+        elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchortype in [atom.atomType for atom in molecule.atoms])]
+        return(rnd.choice(elegible_molecules))
+
+    def get_random_move(self):
+        theta = 2*pi*rnd.random()
+        phi = acos(2*rnd.random()-1)
+        r = self.max_disp*rnd.random()
+        return(np.array([r*sin(phi)*cos(theta),r*sin(phi)*cos(theta),r*cos(phi)]))
+
+    def move(self):
+        beta = 1./(self.kb*self.temp)
+        old_energy = self.simulation.get_total_PE()
+        molecule = self.select_random_molecule()
+        self.translate(molecule,move)
+        move = self.get_random_move()
+        self.translate(molecule,move)
+        new_energy = self.simulation.get_total_PE()
+        probability = np.exp(-beta*(new_energy-old_energy))
+        return(probability>rnd.random())
+
+
+
+
+
+
+
 
 
 
