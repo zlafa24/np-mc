@@ -73,7 +73,7 @@ class TestTranslationMove(unittest.TestCase):
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
         self.temp = 298.15
         self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
-        self.translate_move = mvc.TranslationMove(self.simulation,0.5)
+        self.translate_move = mvc.TranslationMove(self.simulation,0.5,[])
 
     def test_translate_translates_molecule_by_specified_move(self):
         molecule = self.simulation.molecules[1]
@@ -87,4 +87,36 @@ class TestTranslationMove(unittest.TestCase):
 
     def tearDown(self):
         os.chdir(script_path)
+
+class TestSwapMove(unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/two_meohs')
+        self.init_file = os.path.abspath(self.lt_directory+'/system.in')
+        self.data_file = os.path.abspath(self.lt_directory+'/system.data')
+        self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
+        self.temp = 298.15
+        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
+        self.swap_move = mvc.SwapMove(self.simulation,anchortype=2)
+        
+    def test_swap_positions_correctly_swaps_location_of_molecules(self):
+        molecule1 = self.simulation.molecules[1]
+        molecule2 = self.simulation.molecules[2]
+        position1_old = np.copy([atom.position for atom in molecule1.atoms])
+        self.swap_move.swap_positions(molecule1,molecule2)
+        self.simulation.get_coords()
+        position2_new = np.copy([atom.position for atom in molecule2.atoms])
+        np.testing.assert_allclose(position1_old,position2_new)
+
+    def tearDown(self):
+        os.chdir(script_path)
+
+
+
+
+
+
+
+
+
 

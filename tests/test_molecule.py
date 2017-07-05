@@ -165,6 +165,36 @@ class TestMoleculeClassMethods(unittest.TestCase):
         np.set_printoptions(threshold=np.inf)
         np.testing.assert_almost_equal(actual_coords,correct_coords,decimal=3,err_msg="rotateDihedral does not return correct coords after rotating MeOH by first dihedral pi/2 radians",verbose=True)
                                 
+    def test_align_to_vector_returns_correct_coords_when_aligning_MeOH_to_z_unit_vector(self):
+        molecule = self.mol_dict[1]
+        molecule.setAnchorAtom(1)
+        old_vector = np.copy(molecule.get_com()-molecule.anchorAtom.position)
+        vector = np.array([0,-1,0])
+        molecule.align_to_vector(vector)
+        new_vector = np.copy(molecule.get_com()-molecule.anchorAtom.position)
+        new_unit_vector = new_vector/np.linalg.norm(new_vector)
+        np.testing.assert_allclose(new_unit_vector,vector,atol=1e-10,err_msg="align_to_vector does not properly align molecule to a given vector")
+        
+
+    def test_get_com_returns_expected_center_of_mass(self):
+        expected_com = np.array([0.0928,0.0,0.9508])
+        molecule = self.mol_dict[1]
+        actual_com = molecule.get_com()
+        np.testing.assert_allclose(actual_com,expected_com,atol=1e-10,err_msg="get_com doesnt return expected center of mass for a MeOH molecule.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

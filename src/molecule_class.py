@@ -43,6 +43,18 @@ class Molecule(object):
         def __neq__(self,other):
                 return not self.__eq__(other)
 
+        def get_com(self):
+                """Calculates the center of mass of the molecule.
+
+                Returns
+                -------
+                com : array of floats
+                    The center of mass of the molecule.
+                """
+                positions = np.array([atom.position for atom in self.atoms])
+                com = np.mean(positions,axis=0)
+                return(com)
+
         def setAnchorAtom(self,atomID):
 		"""Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.
 		
@@ -170,6 +182,18 @@ class Molecule(object):
 		angle = atan2(np.dot(m1,b2norm),np.dot(n1,n2))	
                 angle=angle%(2*pi)
                 return angle
+
+        def align_to_vector(self,vector):
+            molecule_vector = self.get_com()-self.anchorAtom.position
+            if np.linalg.norm(vector)<1e-16 or np.linalg.norm(molecule_vector)<1e-16:
+                import pdb;pdb.set_trace()
+            anchor_position = self.anchorAtom.position
+            axis_rotation = np.cross(molecule_vector,vector)
+            angle = acos(np.dot(molecule_vector/np.linalg.norm(molecule_vector),vector/np.linalg.norm(vector)))
+            rotate_atoms = [atom for atom in self.atoms if not (atom.atomID==self.anchorAtom.atomID)]
+            for atom in rotate_atoms:
+                atom.position = rot_quat((atom.position-anchor_position),angle,axis_rotation)+anchor_position
+                
 
         def move_atoms(self,move):
             for atom in self.atoms:
@@ -569,5 +593,35 @@ def quat_mult(q1,q2):
         y = w1*y2 + y1*w2 + z1*x2 - x1*z2
         z = w1*z2 + z1*w2 + x1*y2 - y1*x2
         return np.array([w,x,y,z])
+
+"""
+def align_vector(vector,align):
+        normed_vector = vector/np.linalg.norm(vector)   
+        normed_align = align/np.linalg.norm(align)
+        axis_rotation = np.cross(vector,align)
+        angle = acos(np.dot(normed_vector,normed_align))
+        #w = cos(angle/2.)
+        #x,y,z = unit_axis_rotation*sin(angle/2.)
+        #quaternion = np.array([w,x,y,z])
+        rot_quat(vector,angle,axis_rotation) 
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

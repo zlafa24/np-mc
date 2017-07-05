@@ -3,6 +3,7 @@ import numpy as np
 import forcefield_class as ffc
 import scipy.misc as scm
 from math import pi,acos,sin,cos
+import molecule_class as molc
 
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
@@ -24,6 +25,8 @@ class Move(object):
         self.molecules = simulation.molecules
         self.temp = simulation.temp
         self.kb = 0.0019872041
+        self.num_moves = 0
+        self.num_accepted = 0
 
 class CBMCRegrowth(Move):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the Move class.  
@@ -187,29 +190,31 @@ class CBMCRegrowth(Move):
         self.simulation.update_coords()
         self.rosen_file.write(str(log_Wo)+'\t'+str(log_Wf)+'\t'+str(probability)+'\t'+str(self.simulation.get_total_PE())+'\t'+str(accepted)+'\n')
         self.rosen_file.flush()
+        self.num_moves+=1
+        if(accepted):
+            self.num_accepted+=1
         return(accepted)
 
     
 class TranslationMove(Move):
-    def __init__(self,simulation,max_disp):
+    def __init__(self,simulation,max_disp,stationary_types):
         super(TranslationMove,self).__init__(simulation)
         self.max_disp = max_disp
+        self.stationary_types = set(stationary_types)
 
-    def translate(self,molecule,move):
-        #positions = [atom.position for atom in molecule.atoms]
-        #positions = positions+move
-        molecule.move_atoms(move)
+    def translate(self,molecule,displacement):
+        molecule.move_atoms(displacement)
         self.simulation.update_coords()
 
     def select_random_molecule(self):
-        """Selects a random elegible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
+        """Selects a random elegible molecule (one with no atoms of the type specified by stationary_types) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
 
         Returns
         -------
         Random Elegible Molecule : Molecule
             A randomly chosen molecule from the list of elegible ones.
         """
-        elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchortype in [atom.atomType for atom in molecule.atoms])]
+        elegible_molecules = [molecule for key,molecule in self.molecules.items() if not (self.stationary_types.intersection([atom.atomType for atom in molecule.atoms]))]
         return(rnd.choice(elegible_molecules))
 
     def get_random_move(self):
@@ -222,12 +227,99 @@ class TranslationMove(Move):
         beta = 1./(self.kb*self.temp)
         old_energy = self.simulation.get_total_PE()
         molecule = self.select_random_molecule()
-        self.translate(molecule,move)
-        move = self.get_random_move()
-        self.translate(molecule,move)
+        displacement = self.get_random_move()
+        self.translate(molecule,displacement)
+        self.simulation.update_neighbor_list()
         new_energy = self.simulation.get_total_PE()
-        probability = np.exp(-beta*(new_energy-old_energy))
-        return(probability>rnd.random())
+        probability = min(1,np.exp(-beta*(new_energy-old_energy)))
+        accepted = probability>rnd.random()
+        self.num_moves+=1
+        if(accepted):
+            self.num_accepted+=1
+        return(accepted)
+
+
+class SwapMove(Move):
+    def __init__(self,simulation,anchortype):
+        super(SwapMove,self).__init__(simulation)
+        self.anchorType = anchortype
+
+    def get_random_molecules(self):
+        elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchorType in [atom.atomType for atom in molecule.atoms])]
+        return(np.random.choice(elegible_molecules,size=2))
+
+    def swap_positions(self,molecule1,molecule2):
+        anchor_atom1 = [atom for atom in molecule1.atoms if atom.atomType == self.anchorType][0]
+        anchor_atom2 = [atom for atom in molecule2.atoms if atom.atomType == self.anchorType][0]
+        move1 = anchor_atom2.position - anchor_atom1.position
+        move2 = anchor_atom1.position - anchor_atom2.position
+        molecule1.move_atoms(move1)
+        molecule2.move_atoms(move2)
+        self.simulation.update_coords()
+
+    def align_molecules(self,molecule1,molecule2):
+        molecule1_vector = molecule1.get_com()-molecule1.anchorAtom.position
+        molecule2_vector = molecule2.get_com()-molecule2.anchorAtom.position
+        molecule1.align_to_vector(molecule2_vector)
+        molecule2.align_to_vector(molecule1_vector)
+
+    def move(self):
+        beta = 1./(self.kb*self.temp)
+        old_energy = self.simulation.get_total_PE()
+        molecule1,molecule2 = self.get_random_molecules()
+        self.align_molecules(molecule1,molecule2)
+        self.swap_positions(molecule1,molecule2)
+        self.simulation.update_neighbor_list()
+        new_energy = self.simulation.get_total_PE()
+        probability = min(1.,np.exp(-beta*(new_energy-old_energy)))
+        accepted = rnd.uniform(0,1)<probability
+        self.num_moves+=1
+        if accepted:
+            self.num_accepted+=1
+        return(accepted)
+        
+
+class RotationMove(Move):
+    def __init__(self,simulation,anchortype,max_angle):
+        super(RotationMove,self).__init__(simulation)
+        self.anchorType = anchortype
+        self.max_angle = max_angle
+
+    def get_random_molecule(self):
+        elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchorType in [atom.atomType for atom in molecule.atoms])]
+        return(np.random.choice(elegible_molecules,size=2))
+
+    def get_molecule_vector(self,molecule):
+        return(molecule.get_com()-molecule.anchorAtom.position)
+
+    def get_random_axis(self):
+        x_axis,y_axis,z_axis = np.array([1,0,0]),np.array([0,1,0]),np.array([0,0,1])
+        random_axis = rnd.choice([x_axis,y_axis,z_axis])
+        return(random_axis)
+
+    def rotate_molecule(self,molecule):
+        molecule_vector = self.get_molecule_vector(molecule)
+        random_axis = self.get_random_axis()
+        random_angle = rnd.uniform(-self.max_angle,self.max_angle)
+        new_vector = molc.rot_quat(molecule_vector,random_angle,random_axis)
+        molecule.align_to_vector(new_vector)
+        self.simulation.update_coords()
+
+    def move(self):
+        beta = 1./(self.kb*self.temp)
+        old_energy = self.simulation.get_total_PE()
+        molecule = self.get_random_molecule()
+        self.rotate_molecule(molecule)
+        self.simulation.update_neighbor_list()
+        new_energy = self.simulation.get_total_PE()
+        probability = min(1.,np.exp(-beta*(new_energy-old_energy)))
+        accepted = rnd.uniform(0,1)<probability
+        self.num_moves+=1
+        if accepted:
+            self.num_accepted+=1
+        return(accepted)
+
+
 
 
 

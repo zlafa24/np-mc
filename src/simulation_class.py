@@ -24,7 +24,7 @@ class Simulation(object):
     temp : float
         The temperature which one wishes to run the simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,anchortype=2):
+    def __init__(self,init_file,datafile,dumpfile,temp,anchortype=2,max_disp=1.0):
         dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
@@ -47,9 +47,8 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(anchortype)
+        self.initializeMoves(anchortype,max_disp)
         self.initialize_potential_file()
-        #self.assignAtomTypes()
 
     def clone_lammps(self):
         lmp2 = lammps("",["-echo","none","-screen","lammps.out"])
@@ -80,11 +79,14 @@ class Simulation(object):
         """Initializes the fixes one wishes to use in the simulation.
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
-        lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
+        #lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
     
-    def initializeMoves(self,anchortype):
+    def initializeMoves(self,anchortype,max_disp):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype)
-        self.moves = [cbmc_move]
+        translate_move = mvc.TranslationMove(self,max_disp,[1])
+        swap_move = mvc.SwapMove(self,anchortype)
+        rotation_move = mvc.RotationMove(self,anchortype,0.1745)
+        self.moves = [cbmc_move,translate_move,swap_move]
 
     def initialize_potential_file(self):
         self.potential_file = open('Potential_Energy.txt','a')
@@ -102,7 +104,7 @@ class Simulation(object):
         max_iter : int, optional
             The maximum allowed iterations in the minimization procedure.
         """
-        self.lmp.command("dump xyzdump all xyz 10 "+str(self.dumpfile))
+        #self.lmp.command("dump xyzdump all xyz 10 "+str(self.dumpfile))
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
         self.get_coords()
 
