@@ -185,8 +185,8 @@ class Molecule(object):
 
         def align_to_vector(self,vector):
             molecule_vector = self.get_com()-self.anchorAtom.position
-            if np.linalg.norm(vector)<1e-16 or np.linalg.norm(molecule_vector)<1e-16:
-                import pdb;pdb.set_trace()
+            if np.linalg.norm(vector)==0. or np.linalg.norm(molecule_vector)==0.:
+                raise ValueError("Alignment vector passed in must have a non-zero magnitude.")
             anchor_position = self.anchorAtom.position
             axis_rotation = np.cross(molecule_vector,vector)
             angle = acos(np.dot(molecule_vector/np.linalg.norm(molecule_vector),vector/np.linalg.norm(vector)))
@@ -576,7 +576,9 @@ def rot_quat(vector,theta,rot_axis):
 	new_vector : float vector
 		A vector of three elements representing the X,Y,Z coordinates of the old vector after rotation
 	"""
-	rot_axis = rot_axis/np.linalg.norm(rot_axis)
+        if np.linalg.norm(rot_axis)==0.:
+            raise ValueError("The rotation axis must have a non-zero magnitude in order for rotation about the axis to make sense.")
+        rot_axis = rot_axis/np.linalg.norm(rot_axis)
 	vector_mag = np.linalg.norm(vector)
 	quat = np.array([cos(theta/2),sin(theta/2)*rot_axis[0],sin(theta/2)*rot_axis[1],sin(theta/2)*rot_axis[2]])
 	quat_inverse = np.array([cos(theta/2),-sin(theta/2)*rot_axis[0],-sin(theta/2)*rot_axis[1],-sin(theta/2)*rot_axis[2]])

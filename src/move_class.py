@@ -246,7 +246,7 @@ class SwapMove(Move):
 
     def get_random_molecules(self):
         elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchorType in [atom.atomType for atom in molecule.atoms])]
-        return(np.random.choice(elegible_molecules,size=2))
+        return(np.random.choice(elegible_molecules,size=2,replace=False))
 
     def swap_positions(self,molecule1,molecule2):
         anchor_atom1 = [atom for atom in molecule1.atoms if atom.atomType == self.anchorType][0]
@@ -287,7 +287,7 @@ class RotationMove(Move):
 
     def get_random_molecule(self):
         elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchorType in [atom.atomType for atom in molecule.atoms])]
-        return(np.random.choice(elegible_molecules,size=2))
+        return(np.random.choice(elegible_molecules))
 
     def get_molecule_vector(self,molecule):
         return(molecule.get_com()-molecule.anchorAtom.position)
@@ -297,10 +297,15 @@ class RotationMove(Move):
         random_axis = rnd.choice([x_axis,y_axis,z_axis])
         return(random_axis)
 
+    def get_random_angle(self):
+        magnitude = rnd.uniform(1e-8,self.max_angle)
+        sign = rnd.choice([-1,1])
+        return(magnitude*sign)
+
     def rotate_molecule(self,molecule):
         molecule_vector = self.get_molecule_vector(molecule)
         random_axis = self.get_random_axis()
-        random_angle = rnd.uniform(-self.max_angle,self.max_angle)
+        random_angle = self.get_random_angle()
         new_vector = molc.rot_quat(molecule_vector,random_angle,random_axis)
         molecule.align_to_vector(new_vector)
         self.simulation.update_coords()
