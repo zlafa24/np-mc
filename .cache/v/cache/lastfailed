@@ -1,0 +1,9 @@
+{
+  "cbmc_ensemble_test.py": true, 
+  "tests/test_atom.py": true, 
+  "tests/test_class.py": true, 
+  "tests/test_forcefield.py": true, 
+  "tests/test_molecule.py": true, 
+  "tests/test_move.py": true, 
+  "tests/test_simulation.py": true
+}

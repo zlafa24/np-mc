@@ -229,7 +229,6 @@ class TranslationMove(Move):
         molecule = self.select_random_molecule()
         displacement = self.get_random_move()
         self.translate(molecule,displacement)
-        self.simulation.update_neighbor_list()
         new_energy = self.simulation.get_total_PE()
         probability = min(1,np.exp(-beta*(new_energy-old_energy)))
         accepted = probability>rnd.random()
@@ -269,7 +268,6 @@ class SwapMove(Move):
         molecule1,molecule2 = self.get_random_molecules()
         self.align_molecules(molecule1,molecule2)
         self.swap_positions(molecule1,molecule2)
-        self.simulation.update_neighbor_list()
         new_energy = self.simulation.get_total_PE()
         probability = min(1.,np.exp(-beta*(new_energy-old_energy)))
         accepted = rnd.uniform(0,1)<probability
@@ -315,7 +313,6 @@ class RotationMove(Move):
         old_energy = self.simulation.get_total_PE()
         molecule = self.get_random_molecule()
         self.rotate_molecule(molecule)
-        self.simulation.update_neighbor_list()
         new_energy = self.simulation.get_total_PE()
         probability = min(1.,np.exp(-beta*(new_energy-old_energy)))
         accepted = rnd.uniform(0,1)<probability

@@ -127,24 +127,24 @@ class Simulation(object):
         self.lmp.command("write_dump all xyz "+self.dumpfile+" modify append yes")
 
     def getCoulPE(self):
-        self.lmp.command("run 1 pre no post no")
+        self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("coul_pe",0,0)
 
     def getVdwlPE(self):
-        self.lmp.command("run 1 pre no post no")
+        self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("lj_pe",0,0)
 
     def get_pair_PE(self): 
-        self.lmp.command("run 1 pre no post no")
+        self.lmp.command("run 0 post no")
         return(self.lmp.extract_compute("pair_total",0,0))
 
     def get_clone_pair_PE(self,lmp2,coords):
         self.update_clone_coords(lmp2,coords)
-        lmp2.command("run 1 pre no post no")
+        lmp2.command("run 0 post no")
         return(lmp2.extract_compute("pair_total",0,0))
 
     def get_total_PE(self):
-        self.lmp.command("run 1 pre no post no")
+        self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("thermo_pe",0,0)
 
     def assignAtomTypes(self):
