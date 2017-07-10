@@ -28,6 +28,10 @@ class Move(object):
         self.num_moves = 0
         self.num_accepted = 0
 
+    def get_acceptance_rate(self):
+        acceptance_rate = float(self.num_accepted)/float(self.num_moves) if self.num_moves>0 else 0.0
+        return acceptance_rate
+
 class CBMCRegrowth(Move):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the Move class.  
     Here the dihedral force fields of the simulation are also passed in to ais in choosing trial positions.
@@ -58,6 +62,7 @@ class CBMCRegrowth(Move):
         self.rosen_file = open('Rosenbluth_Data.txt','a')
         self.rosen_file.write('log_Wo\tlog_Wf\tprobability\tNew Energy\taccepted\n')
         self.lmp_clones = [self.simulation.clone_lammps() for i in range(5)]
+        self.move_name = "Regrowth"
 
     def select_random_molecule(self):
         """Selects a random elegible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
@@ -201,6 +206,7 @@ class TranslationMove(Move):
         super(TranslationMove,self).__init__(simulation)
         self.max_disp = max_disp
         self.stationary_types = set(stationary_types)
+        self.move_name = "Translation"
 
     def translate(self,molecule,displacement):
         molecule.move_atoms(displacement)
@@ -242,6 +248,7 @@ class SwapMove(Move):
     def __init__(self,simulation,anchortype):
         super(SwapMove,self).__init__(simulation)
         self.anchorType = anchortype
+        self.move_name = "Swap"
 
     def get_random_molecules(self):
         elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchorType in [atom.atomType for atom in molecule.atoms])]
@@ -282,6 +289,7 @@ class RotationMove(Move):
         super(RotationMove,self).__init__(simulation)
         self.anchorType = anchortype
         self.max_angle = max_angle
+        self.move_name = "Rotation"
 
     def get_random_molecule(self):
         elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchorType in [atom.atomType for atom in molecule.atoms])]

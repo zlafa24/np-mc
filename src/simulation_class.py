@@ -86,7 +86,9 @@ class Simulation(object):
         translate_move = mvc.TranslationMove(self,max_disp,[1])
         swap_move = mvc.SwapMove(self,anchortype)
         rotation_move = mvc.RotationMove(self,anchortype,0.1745)
-        self.moves = [cbmc_move,translate_move,swap_move]
+        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
+        self.acceptance_file = open("Acceptance_Rate.txt",'a')
+        self.acceptance_file.write("step\t"+"\t".join([move.move_name+"\tRate" for move in self.moves])+"\n")
 
     def initialize_potential_file(self):
         self.potential_file = open('Potential_Energy.txt','a')
@@ -246,6 +248,8 @@ class Simulation(object):
         self.update_coords()
         new_energy = self.get_total_PE()
         self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+'cbmc'+'\t'+str(accepted)+'\n') 
+        self.acceptance_file.write(str(self.step)+"\t"+"\t".join([mc_move.move_name+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
+        self.acceptance_file.flush()
         self.potential_file.flush()
         self.dump_atoms()
         return accepted
