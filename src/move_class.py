@@ -172,14 +172,20 @@ class CBMCRegrowth(Move):
         energies = self.evaluate_energies(molecule,index,rotations)
         log_rosen_weight = scm.logsumexp(-beta*(energies-initial_energy))
         log_norm_probs = -beta*(energies-initial_energy)-log_rosen_weight
-        selected_rotation = np.random.choice(rotations,p=np.exp(log_norm_probs))
+        try:
+            selected_rotation = np.random.choice(rotations,p=np.exp(log_norm_probs))
+        except ValueError as e:
+            raise ValueError("Probabilities of trial rotations do not sum to 1")
         return(log_rosen_weight,selected_rotation)
 
     def regrow(self,molecule,index,keep_original=False):
         total_log_rosen_weight = 0
         for index in range(index,len(molecule.atoms)):             
             self.turn_off_molecule_atoms(molecule,index)
-            (log_step_weight,selected_rotation) = self.evaluate_trial_rotations(molecule,index,keep_original)
+            try:
+                (log_step_weight,selected_rotation) = self.evaluate_trial_rotations(molecule,index,keep_original)
+            except ValueError as e:
+                return False
             rotation = 0 if keep_original else selected_rotation
             molecule.rotateDihedral(index,rotation)
             total_log_rosen_weight+=log_step_weight
@@ -192,6 +198,8 @@ class CBMCRegrowth(Move):
         log_Wf = self.regrow(molecule,index)
         probability = min(1,np.exp(log_Wf-log_Wo))
         accepted = probability>rnd.random()
+        if log_Wo==False or log_Wf==False:
+            accepted=False
         self.simulation.update_coords()
         self.rosen_file.write(str(log_Wo)+'\t'+str(log_Wf)+'\t'+str(probability)+'\t'+str(self.simulation.get_total_PE())+'\t'+str(accepted)+'\n')
         self.rosen_file.flush()
