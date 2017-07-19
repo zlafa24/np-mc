@@ -4,6 +4,7 @@ sys.path.insert(0,os.path.abspath('../src'))
 import simulation_class as sim
 import numpy as np
 import unittest
+import mock
 import pickle
 from math import *
 import sys
@@ -53,7 +54,21 @@ class TestCBMCRegrowth(unittest.TestCase):
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen_and_oxygen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],2)
         self.assertAlmostEqual(-1.4003423+0.0120187,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
- 
+
+    @mock.patch.object(mvc.CBMCRegrowth,'evaluate_energies')
+    def test_evaluate_trial_rotations_raises_exception_when_probs_do_not_sum_to_1(self,mock_method):
+        mock_method.return_value = np.array([1e20,1e20,1e20,1e20,1e20])
+        self.assertRaises(ValueError,self.cbmc_move.evaluate_trial_rotations,self.simulation.molecules[1],4,5)
+
+    @mock.patch.object(mvc.CBMCRegrowth,'evaluate_trial_rotations')
+    def test_regrow_returns_False_when_evaluate_trial_rotations_raises_ValueError(self,mock_method):
+        mock_method.side_effect = ValueError('Probabilities do not sum to 1')
+        self.assertFalse(self.cbmc_move.regrow(self.simulation.molecules[1],4),msg="regrow doesn't return False when evaluate_trial_rotations raises a ValueError exception")
+
+    @mock.patch.object(mvc.CBMCRegrowth,'regrow')
+    def test_move_returns_False_when_regrow_returns_False(self,mock_method):
+        mock_method.return_value = False
+        self.assertFalse(self.cbmc_move.move(),msg="CBMCRegrowth move method does not return False when regrow method returns False")
 
     def test_regrow_MeOH_from_index_3_in_2_MeOH_system(self):
         self.cbmc_move.regrow(self.simulation.molecules[1],3)
