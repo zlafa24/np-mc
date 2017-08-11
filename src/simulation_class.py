@@ -9,6 +9,7 @@ import numpy as np
 import random as rnd
 import forcefield_class as ffc
 from math import *
+from subprocess import check_output
 
 class Simulation(object):
     """This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.
@@ -23,8 +24,12 @@ class Simulation(object):
         The filename of the file which one wishes to dump the XYZ information of the simulation.
     temp : float
         The temperature which one wishes to run the simulation.
+    exclude : binary
+        A binary value that determines whether any interactions are excluded in the simulation.
+    restart : binary
+        A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,anchortype=2,max_disp=1.0):
+    def __init__(self,init_file,datafile,dumpfile,temp,anchortype=2,max_disp=1.0,restart=False):
         dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
@@ -41,14 +46,14 @@ class Simulation(object):
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
-        self.step=0
         self.exclude=False
 
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
         self.initializeMoves(anchortype,max_disp)
-        self.initialize_potential_file()
+        self.initialize_data_files(restart) 
+        self.step=0 if not restart else self.get_last_step_number()
 
     def clone_lammps(self):
         lmp2 = lammps("",["-echo","none","-screen","lammps.out"])
@@ -79,7 +84,6 @@ class Simulation(object):
         """Initializes the fixes one wishes to use in the simulation.
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
-        #lmp.command("fix pe_out all ave/time 1 1 1 c_thermo_pe c_pair_pe file pe.out") 
     
     def initializeMoves(self,anchortype,max_disp):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype)
@@ -87,12 +91,20 @@ class Simulation(object):
         swap_move = mvc.SwapMove(self,anchortype)
         rotation_move = mvc.RotationMove(self,anchortype,0.1745)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
+    
+    def initialize_data_files(self,restart=False):
+        if not restart:
+            with open('Potential_Energy.txt','w') as potential_file, open('Acceptance_Rate.txt','w') as acceptance_file:
+                potential_file.write("step\tEnergy\tmove\tAccepted?\n")
+                acceptance_file.write("step\t"+"\t".join(["#"+move.move_name+"\tRate" for move in self.moves])+"\n")
+        self.potential_file = open('Potential_Energy.txt','a') 
         self.acceptance_file = open("Acceptance_Rate.txt",'a')
-        self.acceptance_file.write("step\t"+"\t".join([move.move_name+"\tRate" for move in self.moves])+"\n")
 
-    def initialize_potential_file(self):
-        self.potential_file = open('Potential_Energy.txt','a')
-        self.potential_file.write("step\tEnergy\tmove\tAccepted?\n")
+
+    def get_last_step_number(self):
+        last_line = check_output(["tail","-1",self.potential_file.name])
+        return(int(last_line.split('\t')[0]))
+        
 
     def minimize(self,force_tol=1e-3,e_tol=1e-5,max_iter=200):
         """Minimizes the system using LAMMPS minimize function.
@@ -248,7 +260,7 @@ class Simulation(object):
         self.update_coords()
         new_energy = self.get_total_PE()
         self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+'cbmc'+'\t'+str(accepted)+'\n') 
-        self.acceptance_file.write(str(self.step)+"\t"+"\t".join([mc_move.move_name+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
+        self.acceptance_file.write(str(self.step)+"\t"+"\t".join([mc_move.num_moves+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
         self.potential_file.flush()
         self.dump_atoms()

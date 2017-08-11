@@ -8,6 +8,8 @@ import pickle
 from math import *
 import sys
 import concurrent.futures as conc
+from subprocess import check_output
+import mock
 
 script_path = os.path.abspath(".")
 
@@ -18,7 +20,8 @@ class TestSimulationInitializations(unittest.TestCase):
         self.data_folder =  os.path.abspath("./test_files/simulation_tests/lt_files/nanoparticle_1ddt_1meoh/")
         self.init_file = self.data_folder+"/system.in"
         self.data_file = self.data_folder+"/system.data"
-        self.dumpfile =  self.data_folder+"/regrow.xyz"
+        self.dumpfile =  self.data_folder+"/regrow.xyz" 
+        self.test_potential_file = os.path.abspath("./test_files/simulation_tests/Potential_Energy.txt")
         self.silver_expected_coords = np.loadtxt(self.current_folder+"/test_files/simulation_tests/expected_silver.xyz",skiprows=2)
         self.adsorbate_expected_coords =  np.loadtxt(self.current_folder+"/test_files/simulation_tests/expected_adsorbate.xyz",skiprows=2)
         self.temp = 298.15
@@ -35,12 +38,15 @@ class TestSimulationInitializations(unittest.TestCase):
         np.testing.assert_almost_equal(actual_coords,self.adsorbate_expected_coords,decimal=4,err_msg="Coords do not match")
 
     def test_clone_lammps_returns_LAMMPS_object_that_gives_the_same_PE(self):
-        #import pdb;pdb.set_trace()
         self.sim.lmp.command("run 0 post no")
         original_energy = self.sim.lmp.extract_compute("thermo_pe",0,0)
         lmp2 = self.sim.clone_lammps()
         lmp2.command("run 0 post no")
         self.assertEqual(original_energy,lmp2.extract_compute("thermo_pe",0,0))
+    
+    def test_get_last_step_number_returns_correct_step(self):
+        self.sim.potential_file = open(self.test_potential_file,'a')
+        self.assertEqual(10000,self.sim.get_last_step_number(),msg="get_last_step_number does not return the expected step number from an example potential energy file.")
 
     def tearDown(self):
         os.chdir(script_path)
