@@ -504,6 +504,21 @@ def groupDihedralsByMol(mol_dict,bond_dict,dihedrals):
 		dihedral_dict[molID]=getDihedralsFromAtoms(mol_dict[molID],bond_dict[molID],dihedrals)
 	return dihedral_dict
 
+def set_anchor_atoms(molecules,anchortype):
+    """For every molecule in molecules set the anchot atom to the atom with atom type anchortype.
+
+    Parameters
+    ----------
+    molecules : list of Molecule
+        A list of Molecule objects that will have their anchor atoms set to the atom with type anchortype.
+    anchortype : int
+        The atom type of the atom to set as the anchor for each Molecule in molecules.
+    """
+    for key, molecule in molecules.iteritems():
+        anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==anchortype]
+        if len(anchorIDs)>0:
+            molecule.setAnchorAtom(anchorIDs[0])
+
 def molecule2graph(atomlist,bondlist):
 	"""Converts the Atom list and Bond list of a molecule to a graph data object
 
