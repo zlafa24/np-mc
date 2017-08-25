@@ -25,7 +25,8 @@ class MALDISpectrum(object):
         self.anchor_type = anchor_type
         mlc.set_anchor_atoms(self.molecules,self.anchor_type)
         self.elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchor_type in [atom.atomType for atom in molecule.atoms])] 
-        
+
+        self.dist_dict = self.make_distance_dict()
         self.type1_numatoms, self.type2_numatoms = type_lengths
         self.numsamples = numsamples
         self.nn_distance = nn_distance
@@ -50,9 +51,16 @@ class MALDISpectrum(object):
         nns : list of Molecule
             A list of the N-1 nearest neighbors where N is defined as ligands_per_fragment.
         """
-        distances = self.get_relative_distances(molecule)
+        #distances = self.get_relative_distances(molecule)
+        distances = self.dist_dict[molecule.molID]
         elegible_neighbors = distances[np.where(distances[:,1]<self.nn_distance)]
         return(elegible_neighbors)
+
+    def make_distance_dict(self):
+        dist_dict = {}
+        for molecule in self.elegible_molecules:
+            dist_dict[molecule.molID]=self.get_relative_distances(molecule)
+        return(dist_dict)
 
     def get_relative_distances(self,molecule):
         """Returns the relative distance of every molecule from the given molecule sorted by distance.
