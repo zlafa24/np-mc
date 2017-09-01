@@ -1,6 +1,7 @@
 import molecule_class as mlc
 import numpy as np
 import random as rnd
+import scipy.stats as ss
 
 class MALDISpectrum(object):
     """A class that encapsulates a simulated MALDI spectrum along with it's associated helper functions.
@@ -111,7 +112,21 @@ class MALDISpectrum(object):
         fragments = map(lambda x: self.get_sample_fragment(),range(self.numsamples))
         fragment_types = np.array(map(lambda x : self.get_fragment_category(x),fragments))
         hist, bins = np.histogram(fragment_types,bins=range(0,self.ligands_per_fragment+2),density=True)
+        self.hist = hist
+        self.bins = bins
         return((hist,bins))
+
+    def get_binomial(self,fraction):
+        numtries = self.ligands_per_fragment
+        numsuccesses = np.arange(self.ligands_per_fragment+1)
+        return(ss.binom.pmf(numsuccesses,numtries,fraction))
+
+    def get_SSR(self):
+		numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
+		numtype2 = len(self.elegible_molecules)-numtype1
+		type1_fraction = float(numtype1)/float(numtype2+numtype1)
+		binomial = self.get_binomial(type1_fraction)
+		return(sum([(self.hist[i]-binomial[i])**2 for i in range(self.ligands_per_fragment+1)]))
 
 
 
