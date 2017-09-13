@@ -29,7 +29,7 @@ class Simulation(object):
     restart : binary
         A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,anchortype=2,max_disp=1.0,restart=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),anchortype=2,max_disp=1.0,restart=False):
         dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
@@ -51,7 +51,7 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(anchortype,max_disp)
+        self.initializeMoves(anchortype,max_disp,type_lengths)
         self.initialize_data_files(restart) 
         self.step=0 if not restart else self.get_last_step_number()
 
@@ -85,10 +85,10 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,anchortype,max_disp):
+    def initializeMoves(self,anchortype,max_disp,type_lengths):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype)
         translate_move = mvc.TranslationMove(self,max_disp,[1])
-        swap_move = mvc.SwapMove(self,anchortype)
+        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths)
         rotation_move = mvc.RotationMove(self,anchortype,0.1745)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
     

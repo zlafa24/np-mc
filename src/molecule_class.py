@@ -145,6 +145,18 @@ class Molecule(object):
 
         
         def index2dihedral(self,index):
+                """Returns the dihedral associated with the given atom index of the molecule.
+
+                Parameters
+                -----------
+                index : int
+                    The index of the molecule that one wants the associated dihedral.  Here the associated dihedral is the dihedral where the atom is the fourth atom of the dihedral.
+
+                Returns
+                -------
+                dihedral : Dihedral
+                    The dihedral associated with the given index.
+                """
                 if(index<3 or index>(len(self.atoms)-1)):
                     raise ValueError("You must pass the index of the fourth atom, which means the index must br greater than 2 and less than the length of the molecule.  The index you passed %d" % index)
                 atom1 = self.getAtomByMolIndex(index-3)
@@ -198,6 +210,10 @@ class Molecule(object):
         def move_atoms(self,move):
             for atom in self.atoms:
                 atom.position+=move
+
+        def move_atoms_by_index(self,move,index):
+            for i in range(index,len(self.atoms)):
+                self.getAtomByMolIndex(i).position+=move
 
 class Bond(object):
 	"""The Bond object represents a bond between two atoms. The format is similar to a LAMMPS bond, therefore a 

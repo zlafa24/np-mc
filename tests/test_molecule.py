@@ -183,6 +183,21 @@ class TestMoleculeClassMethods(unittest.TestCase):
         np.testing.assert_allclose(actual_com,expected_com,atol=1e-10,err_msg="get_com doesnt return expected center of mass for a MeOH molecule.")
 
 
+    def test_move_atoms_correctly_shifts_molecule(self):
+        molecule = self.mol_dict[1]
+        old_positions = np.copy(np.array([atom.position for atom in molecule.atoms]))
+        molecule.move_atoms(np.array([5,5,5]))
+        new_positions = np.array([atom.position for atom in molecule.atoms])
+        np.testing.assert_allclose(old_positions+np.array([5,5,5]),new_positions,err_msg="move_atoms does not correctly shift atoms by specified amount/direction.")
+
+    def test_move_atoms_by_index_correctly_shifts_molecule(self):
+        molecule = self.mol_dict[1]
+        molecule.setAnchorAtom(1)
+        old_positions = np.copy(np.array([molecule.getAtomByMolIndex(i).position for i in range(len(molecule.atoms))]))
+        molecule.move_atoms_by_index(np.array([5,5,5]),2)
+        new_positions = np.array([molecule.getAtomByMolIndex(i).position for i in range(len(molecule.atoms))])
+        old_positions[2:,:]+=np.array([5,5,5])
+        np.testing.assert_allclose(old_positions,new_positions,err_msg="move_atoms does not correctly shift atoms by specified amount/direction.")
 
 
 

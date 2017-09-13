@@ -53,7 +53,7 @@ class CBMCRegrowth(Move):
     anchortype : int
         The type number in the LAMMPS file used for the atom type used for the anchor atom in each molecule.
     """
-    def __init__(self,simulation,anchortype,numtrials=5):
+    def __init__(self,simulation,anchortype,numtrials=5,parallel=False):
         self.dihedral_ffs = ffc.initialize_dihedral_ffs(simulation.init_file+'.settings')
         self.numtrials = numtrials
         super(CBMCRegrowth,self).__init__(simulation)
@@ -61,7 +61,8 @@ class CBMCRegrowth(Move):
         self.set_anchor_atoms()
         self.rosen_file = open('Rosenbluth_Data.txt','a')
         self.rosen_file.write('log_Wo\tlog_Wf\tprobability\tNew Energy\taccepted\n')
-        self.lmp_clones = [self.simulation.clone_lammps() for i in range(5)]
+        if parallel:
+            self.lmp_clones = [self.simulation.clone_lammps() for i in range(numtrials)]
         self.move_name = "Regrowth"
 
     def select_random_molecule(self):
@@ -208,7 +209,61 @@ class CBMCRegrowth(Move):
             self.num_accepted+=1
         return(accepted)
 
-    
+
+class CBMCSwap(CBMCRegrowth):
+    def __init__(self,simulation,anchortype,type_lengths,starting_index=2,numtrials=5,parallel=False):
+        super(CBMCSwap,self).__init__(simulation,anchortype,numtrials,parallel)
+        self.starting_index=starting_index
+        self.type1_numatoms, self.type2_numatoms = type_lengths
+
+    def align_swapped_mols_by_index(self,mol1,mol2,index):
+        swap_atom1_positions = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(0,index+1)]))
+        swap_atom2_positions = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(0,index+1)]))
+        anchor_distance = np.copy(mol1.getAtomByMolIndex(0).position - mol2.getAtomByMolIndex(0).position)
+
+        for i in range(index+1):
+            move1 = swap_atom2_positions[i]-mol1.getAtomByMolIndex(i).position
+            move2 = swap_atom1_positions[i]-mol2.getAtomByMolIndex(i).position
+            mol1.move_atoms_by_index(move1,i)
+            mol2.move_atoms_by_index(move2,i)
+
+    def swap_molecule_positions(self,mol1,mol2):
+        self.align_swapped_mols_by_index(mol1,mol2,self.starting_index) 
+        self.simulation.update_coords()
+         
+
+    def select_random_molecules(self):
+        """Selects a random elegible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
+
+        Returns
+        -------
+        Random Elegible Molecule : Molecule
+            A randomly chosen molecule from the list of elegible ones.
+        """
+        type1_molecules = [molecule for key,molecule in self.molecules.items() if len(molecule.atoms)==self.type1_numatoms]
+        type2_molecules = [molecule for key,molecule in self.molecules.items() if len(molecule.atoms)==self.type2_numatoms]
+        random_mol_type1 = rnd.choice(type1_molecules)
+        random_mol_type2 = rnd.choice(type2_molecules)
+        return((random_mol_type1,random_mol_type2))
+
+    def move(self):
+        mol1,mol2 = self.select_random_molecules()
+        log_Wo_chain1 = self.regrow(mol1,self.starting_index,keep_original=True)
+        log_Wo_chain2 = self.regrow(mol2,self.starting_index,keep_original=True)
+        self.swap_molecule_positions(mol1,mol2)
+        log_Wf_chain1 = self.regrow(mol1,self.starting_index,keep_original=False)
+        log_Wf_chain2 = self.regrow(mol2,self.starting_index,keep_original=False)
+        probability = min(1,np.exp(log_Wf_chain1+log_Wf_chain2-(log_Wo_chain1+log_Wo_chain2)))
+        accepted = probability>rnd.random()
+        if not all([log_Wo_chain1,log_Wo_chain2,log_Wf_chain2,log_Wf_chain1]):
+            accepted=False
+        self.simulation.update_coords()
+        self.num_moves+=1
+        if(accepted):
+            self.num_accepted+=1
+        return(accepted)
+
+
 class TranslationMove(Move):
     def __init__(self,simulation,max_disp,stationary_types):
         super(TranslationMove,self).__init__(simulation)

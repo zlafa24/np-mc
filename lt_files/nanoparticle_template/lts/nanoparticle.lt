@@ -1,0 +1,13 @@
+import "FccCell.lt"
+
+write_once("Data Boundary"){
+	-42 42 xlo xhi
+	-42 42 ylo yhi
+	-42 42 zlo zhi
+}
+
+AgCell = FccCell.scale(4.085)
+
+unitcells = new AgCell.move(-40.85,-40.85,-40.85) [20].move(0.00,0.00,4.085)
+					   							[20].move(0.00,4.085,0.00)
+					   							[20].move(4.085,0.00,0.00)

@@ -1,0 +1,10 @@
+import "glotzer_ff.lt"
+
+FccCell inherits Glotzer{
+	write("Data Atoms"){
+		$atom:AgC $mol:. @atom:Ag 0. 0. 0. 0.
+		$atom:AgX $mol:. @atom:Ag 0. 0. 0.5 0.5
+		$atom:AgY $mol:. @atom:Ag 0. 0.5 0. 0.5
+		$atom:AgZ $mol:. @atom:Ag 0. 0.5 0.5 0.
+	}
+}

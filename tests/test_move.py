@@ -126,6 +126,40 @@ class TestSwapMove(unittest.TestCase):
     def tearDown(self):
         os.chdir(script_path)
 
+class TestCBMCSwap(unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/nanoparticle_1ddt_1meoh')
+        self.init_file = os.path.abspath(self.lt_directory+'/system.in')
+        self.data_file = os.path.abspath(self.lt_directory+'/system.data')
+        self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
+        self.temp = 298.15
+        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
+        self.swap_move = mvc.CBMCSwap(self.simulation,anchortype=4,type_lengths=(5,13))
+
+    def test_cbmcswap_is_child_of_cbmcregrowth(self):
+        self.assertTrue(issubclass(mvc.CBMCSwap,mvc.CBMCRegrowth))
+
+    def test_select_random_molecules_returns_molecules_of_correct_types(self):
+        molecule1,molecule2=self.swap_move.select_random_molecules()
+        self.assertEqual(len(molecule1.atoms),self.swap_move.type1_numatoms)
+
+    def test_swap_molecule_positions_correctly_swaps_atom_positions(self):
+        molecule1,molecule2=self.swap_move.select_random_molecules()
+        position1_old = np.copy(np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))]))
+        position2_old =  np.copy(np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))]))
+        self.swap_move.swap_molecule_positions(molecule1,molecule2)
+        position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
+        position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
+        np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms.")
+
+    @mock.patch.object(mvc.CBMCSwap,'regrow')
+    def test_move_returns_False_when_regrow_returns_False(self,mock_method):
+        mock_method.return_value = False
+        self.assertFalse(self.swap_move.move(),msg="CBMCSwap move method does not return False when regrow method returns False")
+
+    def tearDown(self):
+        os.chdir(script_path)
 
 
 
