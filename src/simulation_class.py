@@ -29,7 +29,7 @@ class Simulation(object):
     restart : binary
         A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),anchortype=2,max_disp=1.0,restart=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),anchortype=2,restart=False):
         dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname

@@ -144,11 +144,11 @@ class TestCBMCSwap(unittest.TestCase):
         molecule1,molecule2=self.swap_move.select_random_molecules()
         self.assertEqual(len(molecule1.atoms),self.swap_move.type1_numatoms)
 
-    def test_swap_molecule_positions_correctly_swaps_atom_positions(self):
+    def test_align_mol_to_positions_correctly_aligns_atom_positions(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()
         position1_old = np.copy(np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))]))
         position2_old =  np.copy(np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))]))
-        self.swap_move.swap_molecule_positions(molecule1,molecule2)
+        self.swap_move.align_mol_to_positions(molecule1,position2_old[0:(self.swap_move.starting_index+1)])
         position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
         position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
         np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms.")
@@ -157,6 +157,20 @@ class TestCBMCSwap(unittest.TestCase):
     def test_move_returns_False_when_regrow_returns_False(self,mock_method):
         mock_method.return_value = False
         self.assertFalse(self.swap_move.move(),msg="CBMCSwap move method does not return False when regrow method returns False")
+
+    @mock.patch.object(mvc.CBMCSwap,'regrow')
+    def test_move_returns_False_when_regrow_returns_False(self,mock_method):
+        mock_method.return_value = 1
+        self.assertTrue(self.swap_move.move(),msg="CBMCSwap move method does not return True when ratio of regrow weights is 1")
+
+    def test_all_regrowths_succesful_for_1ddt_1meoh_on_a_nanoparticle(self):
+        molecule1,molecule2 = self.swap_move.select_random_molecules()
+        log_Wo_chain1 = self.swap_move.regrow(molecule1,self.swap_move.starting_index,keep_original=True)
+        log_Wo_chain2 = self.swap_move.regrow(molecule2,self.swap_move.starting_index,keep_original=True)
+        self.swap_move.swap_molecule_positions(molecule1,molecule2)
+        log_Wf_chain1 = self.swap_move.regrow(molecule1,self.swap_move.starting_index,keep_original=False)
+        log_Wf_chain2 = self.swap_move.regrow(molecule2,self.swap_move.starting_index,keep_original=False)
+        self.assertTrue(all([log_Wf_chain1,log_Wf_chain2,log_Wo_chain1,log_Wo_chain2]),msg="On a bare surface not all regrowths return valid Rosenbluth weights.")
 
     def tearDown(self):
         os.chdir(script_path)

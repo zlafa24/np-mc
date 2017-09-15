@@ -202,8 +202,6 @@ class CBMCRegrowth(Move):
         if log_Wo==False or log_Wf==False:
             accepted=False
         self.simulation.update_coords()
-        self.rosen_file.write(str(log_Wo)+'\t'+str(log_Wf)+'\t'+str(probability)+'\t'+str(self.simulation.get_total_PE())+'\t'+str(accepted)+'\n')
-        self.rosen_file.flush()
         self.num_moves+=1
         if(accepted):
             self.num_accepted+=1
@@ -211,13 +209,29 @@ class CBMCRegrowth(Move):
 
 
 class CBMCSwap(CBMCRegrowth):
-    def __init__(self,simulation,anchortype,type_lengths,starting_index=2,numtrials=5,parallel=False):
+    def __init__(self,simulation,anchortype,type_lengths,starting_index=3,numtrials=5,parallel=False):
         super(CBMCSwap,self).__init__(simulation,anchortype,numtrials,parallel)
         self.starting_index=starting_index
         self.type1_numatoms, self.type2_numatoms = type_lengths
+        self.move_name="CBMCSwap"
+    
+    def align_molecules(self,molecule1,molecule2):
+        molecule1_vector = molecule1.get_com()-molecule1.anchorAtom.position
+        molecule2_vector = molecule2.get_com()-molecule2.anchorAtom.position
+        molecule1.align_to_vector(molecule2_vector)
+        molecule2.align_to_vector(molecule1_vector)
 
-    def align_swapped_mols_by_index(self,mol1,mol2,index):
-        swap_atom1_positions = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(0,index+1)]))
+    def swap_anchor_positions(self,molecule1,molecule2):
+        anchor_atom1 = [atom for atom in molecule1.atoms if atom.atomType == self.anchortype][0]
+        anchor_atom2 = [atom for atom in molecule2.atoms if atom.atomType == self.anchortype][0]
+        move1 = anchor_atom2.position - anchor_atom1.position
+        move2 = anchor_atom1.position - anchor_atom2.position
+        molecule1.move_atoms(move1)
+        molecule2.move_atoms(move2)
+        self.simulation.update_coords()
+
+    def align_mol_to_positions(self,mol,positions):
+        """swap_atom1_positions = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(0,index+1)]))
         swap_atom2_positions = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(0,index+1)]))
         anchor_distance = np.copy(mol1.getAtomByMolIndex(0).position - mol2.getAtomByMolIndex(0).position)
 
@@ -226,9 +240,18 @@ class CBMCSwap(CBMCRegrowth):
             move2 = swap_atom1_positions[i]-mol2.getAtomByMolIndex(i).position
             mol1.move_atoms_by_index(move1,i)
             mol2.move_atoms_by_index(move2,i)
+        """
+        for i,position in enumerate(positions):
+            move = position-mol.getAtomByMolIndex(i).position
+            mol.move_atoms_by_index(move,i)
 
     def swap_molecule_positions(self,mol1,mol2):
-        self.align_swapped_mols_by_index(mol1,mol2,self.starting_index) 
+        positions_mol1 = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
+        positions_mol2 = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
+        self.swap_anchor_positions(mol1,mol2)
+        self.align_molecules(mol1,mol2)
+        self.align_mol_to_positions(mol1,positions_mol2)
+        self.align_mol_to_positions(mol2,positions_mol1)
         self.simulation.update_coords()
          
 
