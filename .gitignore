@@ -6,4 +6,5 @@
 *.lmi
 *.out
 *.txt
+!requirements.txt
 trial*/
