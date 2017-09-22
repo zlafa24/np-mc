@@ -11,15 +11,15 @@ import sys
 import npmc.move_class as mvc
 import npmc.molecule_class as mlc
 
-script_path = os.path.abspath(".")
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 class TestCBMCRegrowth(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/two_meohs')
-        self.dihedral_type3_pdf =  pickle.load(open('./test_files/move_tests/dihedral_type3_pdf.pickle','rb'))
-        self.dihedral_type4_pdf = pickle.load(open('./test_files/move_tests/dihedral_type4_pdf.pickle','rb'))
-        self.SCCO_pair_pdf = pickle.load(open('./test_files/move_tests/pair_pe_pdf_SCCO_dihedral_angle.pickle','rb'))
+        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/two_meohs')
+        self.dihedral_type3_pdf =  pickle.load(open(script_path+'/test_files/move_tests/dihedral_type3_pdf.pickle','rb'))
+        self.dihedral_type4_pdf = pickle.load(open(script_path+'/test_files/move_tests/dihedral_type4_pdf.pickle','rb'))
+        self.SCCO_pair_pdf = pickle.load(open(script_path+'/test_files/move_tests/pair_pe_pdf_SCCO_dihedral_angle.pickle','rb'))
         self.init_file = os.path.abspath(self.lt_directory+'/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
@@ -82,7 +82,7 @@ class TestCBMCRegrowth(unittest.TestCase):
 class TestTranslationMove(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/two_meohs')
+        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/two_meohs')
         self.init_file = os.path.abspath(self.lt_directory+'/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
@@ -106,7 +106,7 @@ class TestTranslationMove(unittest.TestCase):
 class TestSwapMove(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/two_meohs')
+        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/two_meohs')
         self.init_file = os.path.abspath(self.lt_directory+'/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
@@ -129,7 +129,7 @@ class TestSwapMove(unittest.TestCase):
 class TestCBMCSwap(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        self.lt_directory = os.path.abspath('./test_files/move_tests/lt_files/nanoparticle_1ddt_1meoh')
+        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/nanoparticle_1ddt_1meoh')
         self.init_file = os.path.abspath(self.lt_directory+'/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')

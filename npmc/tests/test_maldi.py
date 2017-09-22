@@ -9,12 +9,12 @@ import sys
 import npmc.maldi_class as mldi
 import npmc.molecule_class as mlc
 
-script_path = os.path.abspath(".")
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 class TestMALDI(unittest.TestCase):
 
     def setUp(self):
-        self.data_file = os.path.abspath("./test_files/maldi_tests/lt_files/nanoparticle/system.data")
+        self.data_file = os.path.abspath(script_path+"/test_files/maldi_tests/lt_files/nanoparticle/system.data")
         self.anchor_type = 4
         self.numsamples = 1000
         self.nn_distance = 8.0

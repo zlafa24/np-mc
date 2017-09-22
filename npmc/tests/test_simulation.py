@@ -11,17 +11,17 @@ import concurrent.futures as conc
 from subprocess import check_output
 import mock
 
-script_path = os.path.abspath(".")
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 class TestSimulationInitializations(unittest.TestCase):
 
     def setUp(self):
-        self.current_folder = os.path.abspath(".")
-        self.data_folder =  os.path.abspath("./test_files/simulation_tests/lt_files/nanoparticle_1ddt_1meoh/")
+        self.current_folder = script_path
+        self.data_folder =  os.path.abspath(script_path+"/test_files/simulation_tests/lt_files/nanoparticle_1ddt_1meoh/")
         self.init_file = self.data_folder+"/system.in"
         self.data_file = self.data_folder+"/system.data"
         self.dumpfile =  self.data_folder+"/regrow.xyz" 
-        self.test_potential_file = os.path.abspath("./test_files/simulation_tests/Potential_Energy.txt")
+        self.test_potential_file = os.path.abspath(script_path+"/test_files/simulation_tests/Potential_Energy.txt")
         self.silver_expected_coords = np.loadtxt(self.current_folder+"/test_files/simulation_tests/expected_silver.xyz",skiprows=2)
         self.adsorbate_expected_coords =  np.loadtxt(self.current_folder+"/test_files/simulation_tests/expected_adsorbate.xyz",skiprows=2)
         self.temp = 298.15
@@ -79,9 +79,9 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
     def setUpClass(self):
         self.current_folder = script_path
         self.data_folder =  os.path.abspath(script_path+"/test_files/simulation_tests/lt_files/two_meohs/")
-        self.two_meoh_init_coords = pickle.load(open('./test_files/simulation_tests/two_meoh_coords.pickle','rb'))
-        self.two_meoh_final_coords =  pickle.load(open('./test_files/simulation_tests/two_meoh_coords_after_displacement.pickle','rb'))
-        self.two_meoh_1A_coords = pickle.load(open('./test_files/simulation_tests/two_meoh_displaced_1A.pickle','rb'))
+        self.two_meoh_init_coords = pickle.load(open(script_path+'/test_files/simulation_tests/two_meoh_coords.pickle','rb'))
+        self.two_meoh_final_coords =  pickle.load(open(script_path+'/test_files/simulation_tests/two_meoh_coords_after_displacement.pickle','rb'))
+        self.two_meoh_1A_coords = pickle.load(open(script_path+'/test_files/simulation_tests/two_meoh_displaced_1A.pickle','rb'))
         self.init_file = self.data_folder+"/system.in"
         self.data_file = self.data_folder+"/system.data"
         self.dumpfile =  self.data_folder+"/regrow.xyz"
@@ -185,9 +185,9 @@ class TestUpdatingCoordinates(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.current_folder = script_path
-        self.two_meoh_init_coords = pickle.load(open('./test_files/simulation_tests/two_meoh_coords.pickle','rb'))
-        self.two_meoh_final_coords =  pickle.load(open('./test_files/simulation_tests/two_meoh_coords_after_displacement.pickle','rb'))
-        self.two_meoh_1A_coords = pickle.load(open('./test_files/simulation_tests/two_meoh_displaced_1A.pickle','rb'))
+        self.two_meoh_init_coords = pickle.load(open(script_path+'/test_files/simulation_tests/two_meoh_coords.pickle','rb'))
+        self.two_meoh_final_coords =  pickle.load(open(script_path+'/test_files/simulation_tests/two_meoh_coords_after_displacement.pickle','rb'))
+        self.two_meoh_1A_coords = pickle.load(open(script_path+'/test_files/simulation_tests/two_meoh_displaced_1A.pickle','rb'))
         self.data_folder =  os.path.abspath(script_path+"/test_files/simulation_tests/lt_files/two_meohs/")
         self.init_file = self.data_folder+"/system.in"
         self.data_file = self.data_folder+"/system.data"

@@ -4,9 +4,12 @@ import unittest
 
 from npmc.atom_class import Atom, loadAtoms
 
+script_path = os.path.dirname(os.path.realpath(__file__))
+
 class TestAtomMethods(unittest.TestCase):
     def setUp(self):
-        self.test_file = os.path.abspath('./test_files/meoh.data') 
+        script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+        self.test_file = os.path.abspath(script_path+'/test_files/meoh.data') 
         self.atom = Atom(1,2,3,1.1,[4,6,7])
         self.atom_list = [Atom(1,1,1,1.1,[0.474,0.000,1.059]),
                 Atom(2,1,1,0.000,[-0.621, 0.0, -0.007]),
@@ -25,7 +28,7 @@ class TestAtomMethods(unittest.TestCase):
     def test_get_type(self):
         self.assertEqual(self.atom.get_type(),3,msg="get_type method does not return correct atom type")
     def test_get_charge(self):
-        self.assertEqual(self.atom.get_charge(),1.1,msg="get_charge method does not return correct atom type")
+        self.assertEqual(self.atom.get_charge(),1.1,msg="get_charge method does not return correct atom charge")
     def test_get_position(self):
         self.assertEquals(self.atom.get_pos(),[4,6,7],msg="get_pos returns wrong position")
     def test_loadAtoms(self):

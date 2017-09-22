@@ -7,6 +7,8 @@ from math import *
 
 from npmc.molecule_class import *
 
+script_dir = os.path.dirname(os.path.realpath(__file__))
+
 def plotDihedral(molecule,dihedral):
         positions = [molecule.getAtomByID(atomID).position for atomID in (dihedral.atom1,dihedral.atom2,dihedral.atom3,dihedral.atom4)]
         print positions
@@ -14,7 +16,7 @@ def plotDihedral(molecule,dihedral):
 class TestMoleculeLoadFunctions(unittest.TestCase):
     def setUp(self):
         self.bond = Bond(1,1,1,4)
-        self.meoh_file = os.path.abspath("./test_files/meoh.data")
+        self.meoh_file = os.path.abspath(script_dir+"/test_files/meoh.data")
         self.bond_list = [Bond(1,1,1,4),
                         Bond(2,2,1,2),
                         Bond(3,3,2,3),
@@ -37,16 +39,16 @@ class TestMoleculeLoadFunctions(unittest.TestCase):
 
 class TestMoleculeGroupByFunctions(unittest.TestCase):
     def setUp(self): 
-        self.three_meoh_file = os.path.abspath("./test_files/molecule_tests/three_meoh.data")
-        self.atoms = pickle.load(open('./test_files/molecule_tests/atoms.pickle','rb'))
-        self.bonds = pickle.load(open('./test_files/molecule_tests/bonds.pickle','rb'))
-        self.angles = pickle.load(open('./test_files/molecule_tests/angles.pickle','rb'))
-        self.dihedrals = pickle.load(open('./test_files/molecule_tests/dihedrals.pickle','rb'))
-        self.atom_dict = pickle.load(open('./test_files/molecule_tests/atom_dict.pickle','rb'))
-        self.bond_dict = pickle.load(open('./test_files/molecule_tests/bond_dict.pickle','rb'))
-        self.angle_dict = pickle.load(open('./test_files/molecule_tests/angle_dict.pickle','rb'))
-        self.dih_dict = pickle.load(open('./test_files/molecule_tests/dih_dict.pickle','rb'))
-        self.mol_dict = pickle.load(open('./test_files/molecule_tests/molecule_dict.pickle','rb'))
+        self.three_meoh_file = os.path.abspath(script_dir+'/test_files/molecule_tests/three_meoh.data')
+        self.atoms = pickle.load(open(script_dir+'/test_files/molecule_tests/atoms.pickle','rb'))
+        self.bonds = pickle.load(open(script_dir+'/test_files/molecule_tests/bonds.pickle','rb'))
+        self.angles = pickle.load(open(script_dir+'/test_files/molecule_tests/angles.pickle','rb'))
+        self.dihedrals = pickle.load(open(script_dir+'/test_files/molecule_tests/dihedrals.pickle','rb'))
+        self.atom_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/atom_dict.pickle','rb'))
+        self.bond_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/bond_dict.pickle','rb'))
+        self.angle_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/angle_dict.pickle','rb'))
+        self.dih_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/dih_dict.pickle','rb'))
+        self.mol_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/molecule_dict.pickle','rb'))
 
     def test_getBondsFromAtoms_returns_expected_output(self):
         self.assertSequenceEqual(getBondsFromAtoms(self.atom_dict[2],self.bonds),self.bond_dict[2],msg="Bond List obtained by getBondsFromAtoms does not correspond with the expected output")
@@ -103,7 +105,7 @@ class TestMoleculeClassMethods(unittest.TestCase):
 
     def setUp(self):
         self.longMessage = True
-        self.mol_dict = pickle.load(open('./test_files/molecule_tests/molecule_dict.pickle','rb'))
+        self.mol_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/molecule_dict.pickle','rb'))
         self.anchorAtom = self.mol_dict[1].atoms[0]
         self.atom1 = self.mol_dict[1].getAtomByID(self.mol_dict[1].dihedrals[0].atom1)
         self.atom2 = self.mol_dict[1].getAtomByID(self.mol_dict[1].dihedrals[0].atom2)

@@ -8,17 +8,17 @@ import pickle
 from math import *
 import sys
 
-script_path = os.path.abspath(".")
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 class TestDihedralForceField(unittest.TestCase):
     def setUp(self):
         self.longMessage=True
-        self.dih4_params = pickle.load(open("./test_files/forcefield_tests/dihedral_type4_params.pickle",'rb'))
-        self.dih4_ff_output = pickle.load(open('./test_files/forcefield_tests/dihedral_type4_ff_function_output.pickle','rb'))
-        self.dih_coeffs = pickle.load(open('./test_files/forcefield_tests/dihedral_coefficients.pickle','rb'))
-        self.two_meoh_params = pickle.load(open('./test_files/forcefield_tests/dihedral_forcefields_parameters.pickle','rb'))
-        self.dihedral_4_pdf = pickle.load(open('./test_files/forcefield_tests/dihedral_type4_pdf.pickle','rb'))
-        self.two_meoh_settings_file = './test_files/forcefield_tests/lt_files/two_meohs/system.in.settings'
+        self.dih4_params = pickle.load(open(script_path+"/test_files/forcefield_tests/dihedral_type4_params.pickle",'rb'))
+        self.dih4_ff_output = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_type4_ff_function_output.pickle','rb'))
+        self.dih_coeffs = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_coefficients.pickle','rb'))
+        self.two_meoh_params = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_forcefields_parameters.pickle','rb'))
+        self.dihedral_4_pdf = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_type4_pdf.pickle','rb'))
+        self.two_meoh_settings_file = script_path+'/test_files/forcefield_tests/lt_files/two_meohs/system.in.settings'
         
 
     def test_get_ff_params_returns_correct_dihedral_forcefield_type(self):
