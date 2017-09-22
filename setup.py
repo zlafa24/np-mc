@@ -1,5 +1,9 @@
 from setuptools import setup
 
+def readme():
+    with open('README.rst','r') as read_file:
+        return(read_file.read())
+
 setup(name='npmc',
         version='2.0',
         description='Python Wrapper for LAMMPS Monte Carlo simmulations of nanoparticle monolayers',
@@ -7,6 +11,12 @@ setup(name='npmc',
         author='Steven Merz',
         license='MIT',
         packages=['npmc'],
+        setup_requires=[
+            'pytest-runner',
+            ],
+        tests_require=[
+            'pytest',
+            ],
         install_requires=[
             'matplotlib',
             'futures',
@@ -16,4 +26,5 @@ setup(name='npmc',
             'numpy',
             'scipy',
             ],
+        include_package_data=True,
         zip_safe=False)
