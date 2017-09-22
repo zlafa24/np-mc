@@ -1,8 +1,8 @@
 import sys, os
 import unittest
-sys.path.insert(0,os.path.abspath('../src'))
+#sys.path.insert(0,os.path.abspath('../src'))
 
-from atom_class import Atom, loadAtoms
+from npmc.atom_class import Atom, loadAtoms
 
 class TestAtomMethods(unittest.TestCase):
     def setUp(self):

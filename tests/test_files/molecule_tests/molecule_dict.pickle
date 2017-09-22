@@ -3,7 +3,7 @@ I1
 ccopy_reg
 _reconstructor
 p1
-(cmolecule_class
+(cnpmc.molecule_class
 Molecule
 p2
 c__builtin__
@@ -16,7 +16,7 @@ S'bonds'
 p7
 (lp8
 g1
-(cmolecule_class
+(cnpmc.molecule_class
 Bond
 p9
 g3
@@ -149,7 +149,7 @@ sbsS'atoms'
 p55
 (lp56
 g1
-(catom_class
+(cnpmc.atom_class
 Atom
 p57
 g3
@@ -329,7 +329,7 @@ sbasS'angles'
 p117
 (lp118
 g1
-(cmolecule_class
+(cnpmc.molecule_class
 Angle
 p119
 g3
@@ -385,7 +385,7 @@ sbasS'dihedrals'
 p132
 (lp133
 g1
-(cmolecule_class
+(cnpmc.molecule_class
 Dihedral
 p134
 g3

@@ -1,7 +1,7 @@
 import os,sys
-sys.path.insert(0,os.path.abspath('../src'))
+#sys.path.insert(0,os.path.abspath('../src'))
 
-from simulation_class import *
+from npmc.simulation_class import *
 import numpy as np
 import unittest
 import pickle

@@ -1,15 +1,15 @@
 import os,sys
-sys.path.insert(0,os.path.abspath('../src'))
+#sys.path.insert(0,os.path.abspath('../src'))
 
-import simulation_class as sim
+import npmc.simulation_class as sim
 import numpy as np
 import unittest
 import mock
 import pickle
 from math import *
 import sys
-import move_class as mvc
-import molecule_class
+import npmc.move_class as mvc
+import npmc.molecule_class as mlc
 
 script_path = os.path.abspath(".")
 
@@ -28,7 +28,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2)
 
     def test_select_random_molecule_returns_molecule(self):
-        self.assertIsInstance(self.cbmc_move.select_random_molecule(),molecule_class.Molecule,msg="select_random_molecule does not return an object of type Molecule.")
+        self.assertIsInstance(self.cbmc_move.select_random_molecule(),mlc.Molecule,msg="select_random_molecule does not return an object of type Molecule.")
 
     def test_select_index_returns_value_within_correct_range(self):
         test_molecule = self.cbmc_move.select_random_molecule()

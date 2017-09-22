@@ -1,13 +1,13 @@
 import os,sys
-sys.path.insert(0,os.path.abspath('../src'))
+#sys.path.insert(0,os.path.abspath('../src'))
 
 import numpy as np
 import unittest
 import pickle
 from math import *
 import sys
-import maldi_class as mldi
-import molecule_class as mlc
+import npmc.maldi_class as mldi
+import npmc.molecule_class as mlc
 
 script_path = os.path.abspath(".")
 

@@ -3,7 +3,7 @@ related to molecules.  This includes Bond, Angle, and Dihedral classes as well a
 
 """
 import read_lmp_rev6 as rdlmp
-import atom_class as atm
+import npmc.atom_class as atm
 from itertools import groupby, permutations
 import networkx as ntwkx
 import numpy as np

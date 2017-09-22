@@ -2,7 +2,7 @@
 ccopy_reg
 _reconstructor
 p1
-(cmolecule_class
+(cnpmc.molecule_class
 Bond
 p2
 c__builtin__

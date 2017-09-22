@@ -6,5 +6,8 @@
 *.lmi
 *.out
 *.txt
+/dist/
+/*.egg-info
+
 !requirements.txt
 trial*/

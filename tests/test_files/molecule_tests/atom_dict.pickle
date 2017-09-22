@@ -4,7 +4,7 @@ I1
 ccopy_reg
 _reconstructor
 p2
-(catom_class
+(cnpmc.atom_class
 Atom
 p3
 c__builtin__

@@ -3,9 +3,9 @@ import unittest
 import pickle
 import matplotlib.pyplot as plt
 from math import *
-sys.path.insert(0,os.path.abspath('../src'))
+#sys.path.insert(0,os.path.abspath('../src'))
 
-from molecule_class import *
+from npmc.molecule_class import *
 
 def plotDihedral(molecule,dihedral):
         positions = [molecule.getAtomByID(atomID).position for atomID in (dihedral.atom1,dihedral.atom2,dihedral.atom3,dihedral.atom4)]
