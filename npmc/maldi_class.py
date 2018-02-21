@@ -122,11 +122,44 @@ class MALDISpectrum(object):
         return(ss.binom.pmf(numsuccesses,numtries,fraction))
 
     def get_SSR(self):
-		numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
-		numtype2 = len(self.elegible_molecules)-numtype1
-		type1_fraction = float(numtype1)/float(numtype2+numtype1)
-		binomial = self.get_binomial(type1_fraction)
-		return(sum([(self.hist[i]-binomial[i])**2 for i in range(self.ligands_per_fragment+1)]))
+        numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
+        numtype2 = len(self.elegible_molecules)-numtype1
+        type1_fraction = float(numtype1)/float(numtype2+numtype1)
+        binomial = self.get_binomial(type1_fraction)
+        return(sum([(self.hist[i]-binomial[i])**2 for i in range(self.ligands_per_fragment+1)]))
 
+    def get_abs_deviation(self):
+        numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
+        numtype2 = len(self.elegible_molecules)-numtype1
+        type1_fraction = float(numtype1)/float(numtype2+numtype1)
+        binomial = self.get_binomial(type1_fraction)
+        return(sum([abs(self.hist[i]-binomial[i]) for i in range(self.ligands_per_fragment+1)]))
 
+    def swap_molecules(self,mol1,mol2):
+        swap_vector = mol1.anchorAtom.position - mol2.anchorAtom.position
+        mol1.move_atoms(-swap_vector)
+        mol2.move_atoms(swap_vector)
 
+    def get_sensitivity(self,numtrials=200,numligand_swapped=1,dev_function='SSR'):
+        type1_mols = [molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms]
+        type2_mols = [molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type2_numatoms]
+        original_SSR = self.get_SSR()
+        ssrs = np.empty(numtrials)
+        mols_type1 = np.empty(numligand_swapped,dtype=object)
+        mols_type2 = np.empty(numligand_swapped,dtype=object)
+        for i in range(numtrials):
+            if((i+1)%10==0):
+                print('On step '+str(i+1))
+            for j in range(numligand_swapped):
+                mols_type1[j] = rnd.choice(type1_mols)
+                mols_type2[j] = rnd.choice(type2_mols)
+                self.swap_molecules(mols_type1[j],mols_type2[j])
+            self.dist_dict = self.make_distance_dict()
+            self.get_maldi_spectrum()
+            if(dev_function=='SSR'):
+                ssrs[i]=self.get_SSR()
+            elif(dev_function=='abs_deviation'):
+                ssrs[i]=self.get_abs_deviation()
+            for j in range(numligand_swapped):
+                self.swap_molecules(mols_type1[j],mols_type2[j])
+        return original_SSR,ssrs

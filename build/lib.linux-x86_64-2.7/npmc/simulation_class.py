@@ -259,7 +259,7 @@ class Simulation(object):
         self.step+=1
         self.update_coords()
         new_energy = self.get_total_PE()
-        self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+'cbmc'+'\t'+str(accepted)+'\n') 
+        self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+str(move.move_name)+'\t'+str(accepted)+'\n') 
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
         self.potential_file.flush()

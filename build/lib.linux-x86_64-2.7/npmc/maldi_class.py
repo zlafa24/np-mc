@@ -122,11 +122,27 @@ class MALDISpectrum(object):
         return(ss.binom.pmf(numsuccesses,numtries,fraction))
 
     def get_SSR(self):
-		numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
-		numtype2 = len(self.elegible_molecules)-numtype1
-		type1_fraction = float(numtype1)/float(numtype2+numtype1)
-		binomial = self.get_binomial(type1_fraction)
-		return(sum([(self.hist[i]-binomial[i])**2 for i in range(self.ligands_per_fragment+1)]))
+        numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
+        numtype2 = len(self.elegible_molecules)-numtype1
+        type1_fraction = float(numtype1)/float(numtype2+numtype1)
+        binomial = self.get_binomial(type1_fraction)
+        return(sum([(self.hist[i]-binomial[i])**2 for i in range(self.ligands_per_fragment+1)]))
 
 
+    def swap_molecules(self,mol1,mol2):
+        swap_vector = mol1.anchorAtom.position - mol2.anchorAtom.position
+        mol1.move_atoms(-swap_vector)
+        mol2.move_atoms(swap_vector)
 
+    def get_sensitivity(self,numtrials=200):
+        type1_mols = [molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms]
+        type2_mols = [molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type2_numatoms]
+        original_SSR = self.get_SSR()
+        ssrs = np.empty(numtrials)
+        for i in range(numtrials):
+            mol1 = rnd.choice(type1_mols)
+            mol2 = rnd.choice(type2_mols)
+            self.swap_molecules(mol1,mol2)
+            ssrs[i]=self.get_SSR()
+            self.swap_molecules(mol1,mol2)
+        return original_SSR,np.average(ssrs),np.std(ssrs)
