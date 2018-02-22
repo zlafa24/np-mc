@@ -26,10 +26,12 @@ class Simulation(object):
         The temperature which one wishes to run the simulation.
     exclude : binary
         A binary value that determines whether any interactions are excluded in the simulation.
+    numtrials : int
+        The number of trial rotations for each regrowth step in the configurationally biased moves
     restart : binary
         A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),anchortype=2,restart=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False):
         dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
@@ -51,7 +53,7 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(anchortype,max_disp,type_lengths)
+        self.initializeMoves(anchortype,max_disp,type_lengths,numtrials)
         self.initialize_data_files(restart) 
         self.step=0 if not restart else self.get_last_step_number()
 
@@ -85,8 +87,8 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,anchortype,max_disp,type_lengths):
-        cbmc_move = mvc.CBMCRegrowth(self,anchortype)
+    def initializeMoves(self,anchortype,max_disp,type_lengths,numtrials):
+        cbmc_move = mvc.CBMCRegrowth(self,anchortype,numtrials)
         translate_move = mvc.TranslationMove(self,max_disp,[1])
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths)
         rotation_move = mvc.RotationMove(self,anchortype,0.1745)
@@ -178,7 +180,7 @@ class Simulation(object):
         self.lmp.command("neigh_modify exclude none")
         if self.exclude:
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
-        self.update_neighbor_list()
+        #self.update_neighbor_list()
 
     def turn_off_atoms(self,atomIDs):
         """Turns off short range interactions with specified atoms using 'neigh_modify exclude' command in LAMMPS
@@ -195,7 +197,7 @@ class Simulation(object):
         self.lmp.command("neigh_modify exclude group offatoms all")
         if self.exclude:
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
-        self.update_neighbor_list()
+        #self.update_neighbor_list()
 
     def exclude_type(self,type1,type2):
         self.excluded_types = (type1,type2)
