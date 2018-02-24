@@ -400,7 +400,7 @@ def getAnglesFromAtoms(atomlist,bondlist,angles):
 	mol_graph = molecule2graph(atomlist,bondlist)
 	angle_combos=[]
 	#Get possible angles by getting subgraphs with only 2 steps
-	for atom1,atom2 in permutations(mol_graph.nodes_iter(),r=2):
+	for atom1,atom2 in permutations(mol_graph.__iter__(),r=2):
 		if(ntwkx.shortest_path_length(mol_graph,source=atom1,target=atom2)==2):
 				angle_combos.append(ntwkx.shortest_path(mol_graph,source=atom1,target=atom2))	  
 	anglelist=[]
@@ -429,7 +429,7 @@ def getDihedralsFromAtoms(atomlist,bondlist,dihedrals):
 	mol_graph = molecule2graph(atomlist,bondlist)
 	dihedral_combos=[]
 	#Get possible angles by getting subgraphs with only 2 steps
-	for atom1,atom2 in permutations(mol_graph.nodes_iter(),r=2):
+	for atom1,atom2 in permutations(mol_graph.__iter__(),r=2):
 		if(ntwkx.shortest_path_length(mol_graph,source=atom1,target=atom2)==3):
 				dihedral_combos.append(ntwkx.shortest_path(mol_graph,source=atom1,target=atom2))	  
 	dihedral_list=[]

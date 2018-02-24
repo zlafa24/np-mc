@@ -114,6 +114,20 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
         energies = [result for result in results]
         np.testing.assert_allclose(actual_energies,energies,rtol=1e-05,err_msg="Parallel execution of get_clone_pair_PE does not return the expected PE.")
 
+    def test_parallel_energy_evaluation_using_parallel_pair_PE_function(self):
+        numthreads=5
+        initial_energy = -1.6710847+0.5628225
+        displaced_energy = -0.6194387
+        actual_energies = [initial_energy for i in range(numthreads)]
+        actual_energies[1]=displaced_energy
+        actual_energies[2]=displaced_energy
+        lmp2 = [self.sim.clone_lammps() for i in range(numthreads)]
+        coords = [np.array(self.two_meoh_init_coords) for i in range(numthreads)]
+        coords[1]=self.two_meoh_1A_coords
+        coords[2]=self.two_meoh_1A_coords
+        energies = self.sim.parallel_pair_PE(lmp2,coords)
+        np.testing.assert_allclose([energy for energy in energies],actual_energies,rtol=1e-05,err_msg="parallel_pair_PE does not return the expected energies")
+
 class TestSimulationTurningOffAtoms(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -194,6 +208,10 @@ class TestUpdatingCoordinates(unittest.TestCase):
         self.dumpfile =  self.data_folder+"/regrow.xyz"
         self.temp = 298.15
         self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
+
+    def test_get_atom_coords_returns_correct_atom_coordinates(self):
+        atom_coords = self.sim.get_atom_coords()
+        np.testing.assert_array_almost_equal(atom_coords,self.two_meoh_init_coords,err_msg = "get_atom_coords does not return coordinates that match the expected atom positions")
 
     def test_get_atoms_returns_correct_coordinates(self):
         atomlist = self.sim.get_atoms()

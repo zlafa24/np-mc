@@ -8,6 +8,10 @@ import os
 import numpy as np
 import random as rnd
 import forcefield_class as ffc
+import multiprocessing as mpc
+#import dill
+#from pathos.multiprocessing import ProcessPool
+import concurrent.futures as cncf
 from math import *
 from subprocess import check_output
 
@@ -31,7 +35,7 @@ class Simulation(object):
     restart : binary
         A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False,parallel=False):
         dname = os.path.dirname(os.path.abspath(init_file))
         print "Configuration file is "+str(init_file)
         print 'Directory name is '+dname
@@ -39,11 +43,16 @@ class Simulation(object):
 
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
+        
+        #if parrallel:
+        #    pool = mpc.Pool()
+        #    self.lmp_clones = pool.map(self.clone_lammps,range(numtrials)) 
+        #    pool.close()
         self.molecules = mol.constructMolecules(datafile)
         self.atomlist = self.get_atoms()
         
         self.lmp.command("thermo 1")
-	self.lmp.command("thermo_style	custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
+        self.lmp.command("thermo_style    custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
         self.temp = temp
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
@@ -53,16 +62,17 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(anchortype,max_disp,type_lengths,numtrials)
+        self.initializeMoves(anchortype,max_disp,type_lengths,numtrials,parallel)
         self.initialize_data_files(restart) 
         self.step=0 if not restart else self.get_last_step_number()
+        self.update_neighbor_list()
 
     def clone_lammps(self):
         lmp2 = lammps("",["-echo","none","-screen","lammps.out"])
         lmp2.file(os.path.abspath(self.init_file))
         lmp2.command("thermo 1")
         lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
-	self.initializeGroups(lmp2)
+        self.initializeGroups(lmp2)
         self.initializeComputes(lmp2)
         self.initializeFixes(lmp2)
         return(lmp2)
@@ -87,10 +97,10 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,anchortype,max_disp,type_lengths,numtrials):
+    def initializeMoves(self,anchortype,max_disp,type_lengths,numtrials,parallel=False):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,numtrials)
         translate_move = mvc.TranslationMove(self,max_disp,[1])
-        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths)
+        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel)
         rotation_move = mvc.RotationMove(self,anchortype,0.1745)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
     
@@ -151,8 +161,15 @@ class Simulation(object):
         return self.lmp.extract_compute("lj_pe",0,0)
 
     def get_pair_PE(self): 
-        self.lmp.command("run 0 post no")
+        self.lmp.command("run 1 pre no post no")
         return(self.lmp.extract_compute("pair_total",0,0))
+
+    def parallel_pair_PE(self,lmps,coords):
+        #import pdb;pdb.set_trace()
+        n = mpc.cpu_count()
+        with cncf.ThreadPoolExecutor(n) as executor:
+            energies = executor.map(self.get_clone_pair_PE,lmps,coords)
+        return energies
 
     def get_clone_pair_PE(self,lmp2,coords):
         self.update_clone_coords(lmp2,coords)
@@ -180,7 +197,7 @@ class Simulation(object):
         self.lmp.command("neigh_modify exclude none")
         if self.exclude:
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
-        #self.update_neighbor_list()
+        self.update_neighbor_list()
 
     def turn_off_atoms(self,atomIDs):
         """Turns off short range interactions with specified atoms using 'neigh_modify exclude' command in LAMMPS
@@ -197,7 +214,7 @@ class Simulation(object):
         self.lmp.command("neigh_modify exclude group offatoms all")
         if self.exclude:
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
-        #self.update_neighbor_list()
+        self.update_neighbor_list()
 
     def exclude_type(self,type1,type2):
         self.excluded_types = (type1,type2)
@@ -206,6 +223,7 @@ class Simulation(object):
 
     def getRandomMolecule(self):
         """Returns a randomly selected molecule from the LAMMPS datafile associated with the given instance.
+
         """
         return(rnd.choice(self.molecules))
 
@@ -222,6 +240,17 @@ class Simulation(object):
             self.atomlist[idx].position[0]=float(coords[i*3])
             self.atomlist[idx].position[1]=float(coords[i*3+1])
             self.atomlist[idx].position[2]=float(coords[i*3+2])
+
+    def get_atom_coords(self):
+        """Returns positions of each atom in a Nx3 array
+
+        Returns
+        --------
+        atom_coords : float array
+            A Nx3 array with each row representing an atom and the columns containing the x, ym and z coordinates in that order.
+        """
+        atom_coords = np.array([atom.position for atom in self.atomlist])
+        return atom_coords
 
     def update_coords(self):
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)

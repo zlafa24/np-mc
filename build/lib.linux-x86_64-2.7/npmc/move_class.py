@@ -61,6 +61,7 @@ class CBMCRegrowth(Move):
         self.set_anchor_atoms()
         self.rosen_file = open('Rosenbluth_Data.txt','a')
         self.rosen_file.write('log_Wo\tlog_Wf\tprobability\tNew Energy\taccepted\n')
+        self.parallel = parallel
         if parallel:
             self.lmp_clones = [self.simulation.clone_lammps() for i in range(numtrials)]
         self.move_name = "Regrowth"
@@ -120,9 +121,36 @@ class CBMCRegrowth(Move):
         return(trial_dih_angles)
 
     def parallel_evaluate_energies(self,molecule,index,rotations):
-        coords = [atom.position for atom in self.simulation.atomlist]
-        for i,rotations in enumerate(rotations):
-            print("placeholder")
+        """Evaluates the pair potential energy of numtrials number of rotations about a the dihedral at the given molecule index and returns the result.
+
+        Parameters
+        ----------
+        molecule : Molecule
+            The molecule that is currently being regrown
+        index : int
+            The index of the monomer in the molecular chain that is being rotated.
+        rotations : float
+            The degree of rotation of the dihedral in radians needed to reach each sample point for evaluation
+
+        Returns
+        -------
+        energies : float list
+            A list of the pair potential energy for each rotation.
+        """
+        #coords = [atom.position for atom in self.simulation.atomlist]
+        #num_atoms = self.simulation.atoms.shape[0]
+        #eval_coords = np.empty((self.numtrials,num_atoms,3))
+        coords=[]
+        for i,rotation in enumerate(rotations):
+            molecule.rotateDihedral(index,rotation)
+            coords.append(self.simulation.get_atom_coords())
+            #self.simulation.update_clone_coord(self.lmp_clones[i],atom_coords)
+            molecule.rotateDihedral(index,-rotation)
+        energies = self.simulation.parallel_pair_PE(self.lmp_clones,coords)
+        return(np.array([energy for energy in energies]))
+        
+
+
 
     def evaluate_energies(self,molecule,index,rotations):
         """Evluates the pair energy of the system for each of the given dihedral rotations at the specified index.  For these enegies to be consistent with CBMC all atoms past the index should be turned off with turn_off_molecule_atoms.
@@ -170,7 +198,7 @@ class CBMCRegrowth(Move):
         self.simulation.update_coords()
         initial_energy = self.simulation.get_pair_PE()
         self.turn_off_molecule_atoms(molecule,index)
-        energies = self.evaluate_energies(molecule,index,rotations)
+        energies = self.parallel_evaluate_energies(molecule,index,rotations) if self.parallel else self.evaluate_energies(molecule,index,rotations)
         log_rosen_weight = scm.logsumexp(-beta*(energies-initial_energy))
         log_norm_probs = -beta*(energies-initial_energy)-log_rosen_weight
         try:
