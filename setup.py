@@ -20,7 +20,6 @@ setup(name='npmc',
         install_requires=[
             'matplotlib',
             'futures',
-            'lammps',
             'mock',
             'networkx',
             'numpy',
