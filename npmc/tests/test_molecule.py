@@ -1,7 +1,6 @@
 import sys, os
 import unittest
 import pickle
-import matplotlib.pyplot as plt
 from math import *
 #sys.path.insert(0,os.path.abspath('../src'))
 
