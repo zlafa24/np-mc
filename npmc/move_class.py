@@ -1,7 +1,7 @@
 import random as rnd
 import numpy as np
 import forcefield_class as ffc
-import scipy.misc as scm
+import scipy.special as scm
 from math import pi,acos,sin,cos
 import molecule_class as molc
 

@@ -4,7 +4,6 @@
 *.c
 *.lmi
 *.out
-*.txt
 /dist/
 /*.egg-info
 
