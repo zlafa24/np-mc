@@ -1,5 +1,4 @@
-=====
-np-mc
+NP-MC
 =====
 
 LAMMPS Monte Carlo for Nanoparticle Monolayer
