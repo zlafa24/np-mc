@@ -19,8 +19,7 @@ The np-mc package depends on the LAMMPS Python wrapper which needs to be install
 
 Once LAMMPS has finished cloning the repository to your local directory make a `build` directory in the `lammps` directory to use to store the build files for LAMMPS:
 
-```bash
-cd lammps
+```cd lammps
 mkdir build
 ```
 
