@@ -45,11 +45,18 @@ Once compiled the LAMMPS library can be installed with make using:
 sudo make install
 ```
 
+In order to ensure that the LAMMPS shared library is in your systems library path add the following environment to your `~/.bashrc` file:
+
+```Shell
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+```
+
 
 ### Installing NP-MC
 
 
-np-mc can be installed using:
+Once LAMMPS has been compiled and installed np-mc can be installed using:
 
 ```
 python setup.py
