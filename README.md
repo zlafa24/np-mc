@@ -33,7 +33,7 @@ cmake -D CMAKE_INSTALL_PREFIX=/usr/local -D PKG_PYTHON=on -D PKG_MOLECULE=on -D 
 
 ```
 
-If any additional LAMMPS packages are desired they can be added using the cmake option `-D PACKAGE_${PACKAGE_NAME}` where `${PACKAGE_NAME}` is the name of the desired package.  Once cmake completes compile the LAMMPS using the make command:
+If any additional LAMMPS packages are desired they can be added using the cmake option `-D PACKAGE_${PACKAGE_NAME}` where `${PACKAGE_NAME}` is the name of the desired package.  Once cmake completes compile LAMMPS using the make command:
 
 ```
 make -j 4
