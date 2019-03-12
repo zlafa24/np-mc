@@ -26,6 +26,26 @@ cd lammps
 mkdir build
 ```
 
+Once in the build directory the LAMMPS Python wrapper can be built by compiling LAMMPS as a shared library with the PYTHON package `-D PACKAGE_PYTHON=on`.  NP-MC also takes advantage of the MOLECULE package `-D PACKAGE_MOLECULE=on`.  To create the configuration file run:
+
+```
+cmake -D CMAKE_INSTALL_PREFIX=/usr/local -D PKG_PYTHON=on -D PKG_MOLECULE=on -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on ../cmake
+
+```
+
+If any additional LAMMPS packages are desired they can be added using the cmake option `-D PACKAGE_${PACKAGE_NAME}` where `${PACKAGE_NAME}` is the name of the desired package.  Once cmake completes compile the LAMMPS using the make command:
+
+```
+make -j 4
+```
+
+Once compiled the LAMMPS library can be installed with make using:
+
+```
+sudo make install
+```
+
+
 ### Installing NP-MC
 
 
