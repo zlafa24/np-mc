@@ -1,0 +1,33 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%post
+	apt-get -y update
+	apt-get -y install git\
+			 cmake\
+			build-essential\
+			python-dev\
+			libpython-dev\
+			python\
+			python-pip
+	git clone -b stable_12Dec2018 https://github.com/lammps/lammps.git
+	git clone https://github.com/smerz1989/np-mc.git
+	cd lammps
+	mkdir build
+	cd build
+	cmake -D CMAKE_INSTALL_PREFIX=/usr/local -D PKG_PYTHON=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on  -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on ../cmake
+	make
+	make install
+	cd ../../np-mc/
+	pip install .
+
+
+%environment
+	
+	export PATH=/usr/local/bin:$PATH
+	export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+	
+
+%runscript
+
+	lmp "$@"
