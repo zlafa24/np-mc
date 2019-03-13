@@ -1,4 +1,4 @@
-import molecule_class as mlc
+import npmc.molecule_class as mlc
 import numpy as np
 import random as rnd
 import scipy.stats as ss

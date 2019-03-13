@@ -1,4 +1,4 @@
-import dihedral_ff_functions
+import npmc.dihedral_ff_functions as dihedral_ff_functions
 import numpy as np
 from math import *
 

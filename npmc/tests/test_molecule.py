@@ -10,7 +10,7 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 def plotDihedral(molecule,dihedral):
         positions = [molecule.getAtomByID(atomID).position for atomID in (dihedral.atom1,dihedral.atom2,dihedral.atom3,dihedral.atom4)]
-        print positions
+        print(positions)
 
 class TestMoleculeLoadFunctions(unittest.TestCase):
     def setUp(self):
