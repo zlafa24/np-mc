@@ -41,7 +41,7 @@ class DihedralForceField(ForceField):
         kb = 0.0019872041
         beta = 1./(kb*temp)
         (thetas,dtheta) = np.linspace(0,2*pi,num=500,retstep=True)
-        energies = np.array(map(self.ff_function,thetas))
+        energies = np.array([self.ff_function(theta) for theta in thetas])
         unnorm_probs = np.exp(-beta*energies)
         norm_probs = unnorm_probs/(sum(unnorm_probs)*dtheta)
         return((thetas,norm_probs))

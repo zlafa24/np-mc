@@ -530,10 +530,10 @@ def set_anchor_atoms(molecules,anchortype):
     anchortype : int
     The atom type of the atom to set as the anchor for each Molecule in molecules.
     """
-    for key, molecule in molecules.iteritems():
+    for key, molecule in molecules.items():
         anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==anchortype]
-    if len(anchorIDs)>0:
-        molecule.setAnchorAtom(anchorIDs[0])
+        if len(anchorIDs)>0:
+            molecule.setAnchorAtom(anchorIDs[0])
 
 def molecule2graph(atomlist,bondlist):
     """Converts the Atom list and Bond list of a molecule to a graph data object
