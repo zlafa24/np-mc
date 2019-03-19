@@ -1,9 +1,9 @@
 import random as rnd
 import numpy as np
-import forcefield_class as ffc
+import npmc.forcefield_class as ffc
 import scipy.special as scm
 from math import pi,acos,sin,cos
-import molecule_class as molc
+import npmc.molecule_class as molc
 
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
@@ -81,7 +81,7 @@ class CBMCRegrowth(Move):
         """For every molecule in the Move's associated simulation the anchor atom is set to the anchortype associated with the CBMCRegrowth instance.  
         Any molecule that does not have an atom of type anchortype is skipped.
         """
-        for key, molecule in self.simulation.molecules.iteritems():
+        for key, molecule in self.simulation.molecules.items():
             anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==self.anchortype]
             if len(anchorIDs)>0:
                 molecule.setAnchorAtom(anchorIDs[0])

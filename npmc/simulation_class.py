@@ -1,13 +1,13 @@
 """This module contains the simulation class and associated functions which are meant to encapsulate a LAMMPS simulation.
 """
 from lammps import lammps
-import molecule_class as mol
-import atom_class as atm
-import move_class as mvc
+import npmc.molecule_class as mol
+import npmc.atom_class as atm
+import npmc.move_class as mvc
 import os
 import numpy as np
 import random as rnd
-import forcefield_class as ffc
+import npmc.forcefield_class as ffc
 import multiprocessing as mpc
 #import dill
 #from pathos.multiprocessing import ProcessPool

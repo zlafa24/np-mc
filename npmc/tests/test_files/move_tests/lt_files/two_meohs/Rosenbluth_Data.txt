@@ -635,3 +635,9 @@ log_Wo	log_Wf	probability	New Energy	accepted
 log_Wo	log_Wf	probability	New Energy	accepted
 log_Wo	log_Wf	probability	New Energy	accepted
 log_Wo	log_Wf	probability	New Energy	accepted
+log_Wo	log_Wf	probability	New Energy	accepted
+log_Wo	log_Wf	probability	New Energy	accepted
+log_Wo	log_Wf	probability	New Energy	accepted
+log_Wo	log_Wf	probability	New Energy	accepted
+log_Wo	log_Wf	probability	New Energy	accepted
+log_Wo	log_Wf	probability	New Energy	accepted
