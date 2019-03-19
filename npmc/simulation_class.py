@@ -115,7 +115,7 @@ class Simulation(object):
 
     def get_last_step_number(self):
         last_line = check_output(["tail","-1",self.potential_file.name])
-        return(int(last_line.split('\t')[0]))
+        return(int(last_line.decode().split('\t')[0]))
         
 
     def minimize(self,force_tol=1e-3,e_tol=1e-5,max_iter=200):
