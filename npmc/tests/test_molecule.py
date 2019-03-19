@@ -112,7 +112,7 @@ class TestMoleculeClassMethods(unittest.TestCase):
         self.atom4 = self.mol_dict[1].getAtomByID(self.mol_dict[1].dihedrals[0].atom4)
 
     def test_setAnchorAtom_returns_false_when_given_incorrect_atomID(self):
-        self.assertEquals(self.mol_dict[1].setAnchorAtom(20),False,msg="setAnchorAtom didn't return False when given atomID not in molecule")
+        self.assertEqual(self.mol_dict[1].setAnchorAtom(20),False,msg="setAnchorAtom didn't return False when given atomID not in molecule")
 
     def test_setAnchorAtom_sets_anchor_atom_when_given_correct_atomID(self):
         self.assertEqual(self.mol_dict[1].setAnchorAtom(1),True,msg = "setAnchorAtom didn't return True when given correct atomID")
@@ -137,7 +137,7 @@ class TestMoleculeClassMethods(unittest.TestCase):
     
     def test_getAtomByMolIndex_returns_correct_atom_when_passed_valid_index(self):
         self.mol_dict[1].setAnchorAtom(1)
-        self.assertEquals(self.mol_dict[1].getAtomByMolIndex(3),self.atom4,msg="getAtomByMolIndex does not return correct atom when given a valid index")
+        self.assertEqual(self.mol_dict[1].getAtomByMolIndex(3),self.atom4,msg="getAtomByMolIndex does not return correct atom when given a valid index")
 
     def test_getAtomsByMolIndex_returns_None_when_passed_index_out_of_bounds(self):
         self.assertIsNone(self.mol_dict[1].getAtomByMolIndex(5),msg="getAtomsByMolIndex allowed an out of range index to be used without returning None")
