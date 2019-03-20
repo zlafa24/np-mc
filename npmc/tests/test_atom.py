@@ -18,18 +18,18 @@ class TestAtomMethods(unittest.TestCase):
                 Atom(5,1,4,0.435,[0.598, 0.0, 2.999])]
 
     def test_atom_equality_operator(self):
-        self.assertEquals(self.atom == Atom(1,2,3,1.1,[4,6,7]),True,msg="Atom.__eq__ does not return True when two atoms with the same atom ID are compared")
+        self.assertEqual(self.atom == Atom(1,2,3,1.1,[4,6,7]),True,msg="Atom.__eq__ does not return True when two atoms with the same atom ID are compared")
     def test_atom_equality_operator_when_not_the_same(self):
-        self.assertEquals(self.atom == Atom(3,2,3,1.1,[4,6,7]),False,msg="Atom.__eq__ does not return False when two atoms with the different atom ID are compared")
+        self.assertEqual(self.atom == Atom(3,2,3,1.1,[4,6,7]),False,msg="Atom.__eq__ does not return False when two atoms with the different atom ID are compared")
     def test_get_atom_ID(self):
-        self.assertEquals(self.atom.get_atom_ID(),1,msg="get_atom_ID method does not return correct ID")
+        self.assertEqual(self.atom.get_atom_ID(),1,msg="get_atom_ID method does not return correct ID")
     def test_get_mol_ID(self):
-        self.assertEquals(self.atom.get_mol_ID(),2,msg="get_mol_ID method does not return correct ID")
+        self.assertEqual(self.atom.get_mol_ID(),2,msg="get_mol_ID method does not return correct ID")
     def test_get_type(self):
         self.assertEqual(self.atom.get_type(),3,msg="get_type method does not return correct atom type")
     def test_get_charge(self):
         self.assertEqual(self.atom.get_charge(),1.1,msg="get_charge method does not return correct atom charge")
     def test_get_position(self):
-        self.assertEquals(self.atom.get_pos(),[4,6,7],msg="get_pos returns wrong position")
+        self.assertEqual(self.atom.get_pos(),[4,6,7],msg="get_pos returns wrong position")
     def test_loadAtoms(self):
         self.assertSequenceEqual(loadAtoms(self.test_file),self.atom_list,msg="loadAtoms return doesn't match expected Atom objects")

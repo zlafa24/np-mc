@@ -1,6 +1,7 @@
-import dihedral_ff_functions
+import npmc.dihedral_ff_functions as dihedral_ff_functions
 import numpy as np
 from math import *
+from functools import partial
 
 class ForceField(object):
     """This class holds the key values of a Pair, Bond, Angle, or Dihedral Forcefield.
@@ -40,7 +41,7 @@ class DihedralForceField(ForceField):
         kb = 0.0019872041
         beta = 1./(kb*temp)
         (thetas,dtheta) = np.linspace(0,2*pi,num=500,retstep=True)
-        energies = np.array(map(self.ff_function,thetas))
+        energies = np.array([self.ff_function(theta) for theta in thetas])
         unnorm_probs = np.exp(-beta*energies)
         norm_probs = unnorm_probs/(sum(unnorm_probs)*dtheta)
         return((thetas,norm_probs))
@@ -55,14 +56,14 @@ class DihedralForceField(ForceField):
 def get_ff_params(settings_filename,dihedral_type):
     dihedral_coeffs=read_ff_coeffs(settings_filename,coeff_style='dihedral')
     coeff = [coeff for coeff in dihedral_coeffs if int(coeff[1])==dihedral_type][0]
-    params = map(float,coeff[3:])
+    params = [float(param) for param in coeff[3:]]
     ff_type = coeff[2]
     return (ff_type,params)
 
 def get_ff_function(settings_filename,dihedral_type):
     (dih_ff_type,params)=get_ff_params(settings_filename,dihedral_type)
     dih_function = getattr(dihedral_ff_functions,dih_ff_type)
-    dih_function_w_parameters = lambda phi: dih_function(phi,parameters=params)
+    dih_function_w_parameters = partial(dih_function,parameters=params)
     return dih_function_w_parameters
 
 def read_ff_coeffs(settings_filename,coeff_style):

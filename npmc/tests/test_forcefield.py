@@ -30,7 +30,8 @@ class TestDihedralForceField(unittest.TestCase):
     def test_get_ff_function_returns_correct_forcefield_function(self):
         ff_function = ffc.get_ff_function(self.two_meoh_settings_file,4)
         thetas = np.linspace(0,2*pi,num=100)
-        np.testing.assert_array_almost_equal(map(ff_function,thetas),self.dih4_ff_output,decimal=6,err_msg="The output of the returned function of get_ff_function does not correspond to the expected results.")
+        test_result = np.array([ff_function(theta) for theta in thetas])
+        np.testing.assert_array_almost_equal(test_result,self.dih4_ff_output,decimal=6,err_msg="The output of the returned function of get_ff_function does not correspond to the expected results.")
 
     def test_read_ff_coeffs_return_correct_coeffs_from_settings_file(self):
         self.assertListEqual(ffc.read_ff_coeffs(self.two_meoh_settings_file,'dihedral'),self.dih_coeffs,msg="The list of coefficients returned by read_ff_coeffs does not return the expected coefficients from the given settings file.")
