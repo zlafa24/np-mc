@@ -5,7 +5,7 @@ from scipy.spatial import Delaunay
 import os
 import numpy as np
 from scipy.constants import golden_ratio
-
+from itertools import product
 
 class Nanoparticle(object):
 
@@ -59,6 +59,23 @@ class Nanoparticle(object):
         atoms = [atom for atom in atoms1 if atom.atomID in list(ids)]
         return(cls(atoms))
 
+    @staticmethod
+    def create_fcc_lattice(lattice_units,lattice_const,atom_type=1):
+        ls = range(1,lattice_units+1)
+        ms = range(1,lattice_units+1)
+        ns = range(1,lattice_units+1)
+        
+        numatoms = 4*len(list(product(ls,ms,ns)))
+        basis_atoms = lattice_const*np.array([[0.,0.,0.],[0,0.5,0.5],[0.5,0,0.5],[0.5,0.5,0.]])
+        positions=np.empty((numatoms,4))
+        atoms = np.empty((numatoms),dtype=object)
+        for lattice_pos,(l,m,n) in enumerate(product(ls,ms,ns)):
+            current_position=np.array([l,m,n])*lattice_const-10*lattice_const*np.array([1,1,1])
+            for i,atom in enumerate(basis_atoms):
+                #position[i]=np.array((atom_type,atom+current_position))
+                atoms[lattice_pos*4+i]=atmc.Atom(lattice_pos*4+i,1,atomType=atom_type,position=atom+current_position)
+        return(atoms)
+
 
     @staticmethod
     def is_point_inside(hull,point):
@@ -66,7 +83,8 @@ class Nanoparticle(object):
     
     @staticmethod
     def get_atoms_outside(hull):
-        template_atoms = atmc.loadAtoms(os.path.abspath("../lt_files/nanoparticle_template/lts/nanoparticle.data"))
+        #template_atoms = atmc.loadAtoms(os.path.abspath("../lt_files/nanoparticle_template/lts/nanoparticle.data"))
+        template_atoms = Nanoparticle.create_fcc_lattice(20,4.08)
         atoms=[]
         for atom in template_atoms:
             if not Nanoparticle.is_point_inside(hull,atom.position):
@@ -75,7 +93,8 @@ class Nanoparticle(object):
 
     @staticmethod
     def get_atoms_inside(hull):  
-        template_atoms = atmc.loadAtoms(os.path.abspath("../lt_files/nanoparticle_template/lts/nanoparticle.data"))
+        template_atoms = Nanoparticle.create_fcc_lattice(20,4.08)
+        #template_atoms = atmc.loadAtoms(os.path.abspath("../lt_files/nanoparticle_template/lts/nanoparticle.data"))
         atoms = []
         for atom in template_atoms:
             if Nanoparticle.is_point_inside(hull,atom.position):
