@@ -6,6 +6,8 @@
 *.out
 /dist/
 /*.egg-info
+*.eggs/
+
 
 Rosenbluth_Data.txt
 !requirements.txt
