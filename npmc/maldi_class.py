@@ -56,6 +56,13 @@ class MALDISpectrum(object):
         distances = self.dist_dict[molecule.molID]
         elegible_neighbors = distances[np.where(distances[:,1]<self.nn_distance)]
         return(elegible_neighbors)
+		
+	def get_nns_2(self, molecule):
+		"""
+		Test Function
+		"""
+		eligible_neighbors = np.zeros(1)
+		return(eligible_neighbors)
 
     def make_distance_dict(self):
         dist_dict = {}
