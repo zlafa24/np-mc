@@ -50,6 +50,10 @@ class TemplateMolecule(object):
              self.write_atoms_to_lt(lt_file)
              self.write_bonds_to_lt(lt_file)
              lt_file.write("}")
+
+    def create_alkanethiol(self,chainlength):
+        print("Create alkanethiol molecule here")
+
  
     def write_atoms_to_lt(self,lt_file):
         lt_file.write("\twrite(\"Data Atoms\"){\n")
