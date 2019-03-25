@@ -15,14 +15,20 @@ class TestMALDI(unittest.TestCase):
 
     def setUp(self):
         self.data_file = os.path.abspath(script_path+"/test_files/maldi_tests/lt_files/nanoparticle/system.data")
+        self.Jacob_file = os.path.abspath(script_path+"/test_files/simulation_tests/lt_files/nanoparticle_1ddt_1meoh/system.data")
         self.anchor_type = 4
         self.numsamples = 1000
         self.nn_distance = 8.0
+        self.graph_index = 0
         self.ligands_per_fragment = 5
-        self.maldi = mldi.MALDISpectrum(self.data_file,self.anchor_type,self.numsamples,self.nn_distance,self.ligands_per_fragment,(13,5))
+        self.maldi = mldi.MALDISpectrum(self.data_file,self.anchor_type,self.numsamples,self.nn_distance,self.graph_index,self.ligands_per_fragment,(13,5))
+        self.maldiJ = mldi.MALDISpectrum(self.Jacob_file,self.anchor_type,self.numsamples,self.nn_distance,self.graph_index,self.ligands_per_fragment,(13,5))
 
     def test_get_random_molecule_returns_molecule(self):
         self.assertIsInstance(self.maldi.get_random_molecule(),mlc.Molecule,msg="get_random_molecule does not return an object of type Molecule")
 
     def test_get_maldi_spectrum_returns_histogram_with_correct_size(self):
         self.assertEqual(len(self.maldi.get_maldi_spectrum()[0]),self.maldi.ligands_per_fragment+1,msg = "Histogram returned by get_maldi_spectrum is not the expected size.")
+    
+    def test_print_molecules_graph(self):
+        print(self.maldiJ.molecules_graph)
