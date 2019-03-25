@@ -40,9 +40,14 @@ class TemplateMolecule(object):
         self.molecule = molecule
 
     def write_to_lt(self):
+        print("Template function")
 
 
-    def write_atom(self):
+    def atom_to_string(self,atom):
+        return("\t\t$atom:{}\t$mol:.\t@atom:{}\t{}\t{}\t{}\t{}".format(atom.atomID,
+                                                                       atom.atomType,
+                                                                       atom.charge,
+                                                                       atom.position[0],atom.position[1],atom.position[2]))
         
 
 def atoms_to_xyz(atoms):
