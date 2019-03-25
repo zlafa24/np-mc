@@ -33,7 +33,7 @@ class Molecule(object):
         self.bonds = bonds
         self.angles = angles
         self.dihedrals = dihedrals
-        self.graph = self.atomsAsGraph()
+        self.graph = self.atomsAsGraph() if self.bonds is not None else None
 
     def __eq__(self,other):
         if isinstance(other,self.__class__):

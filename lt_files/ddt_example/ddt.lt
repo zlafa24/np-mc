@@ -1,33 +1,33 @@
 import "glotzer_ff.lt"
 
 DDT inherits Glotzer{
-	write("Data Atoms"){
-		$atom:S $mol:. @atom:S 0.  -6.135   0.259   0.000
-		$atom:C1 $mol:. @atom:C2 0. -5.117  -0.303   0.000
-		$atom:C2 $mol:. @atom:C2 0. -4.093   0.259   0.000
-		$atom:C3 $mol:. @atom:C2 0. -3.069  -0.303   0.000
-		$atom:C4 $mol:. @atom:C2 0. -2.041   0.259   0.000
-		$atom:C5 $mol:. @atom:C2 0. -1.017  -0.303   0.000
-		$atom:C6 $mol:. @atom:C2 0. 0.003   0.259   0.000
-		$atom:C7 $mol:. @atom:C2 0. 1.021  -0.303   0.000
-		$atom:C8 $mol:. @atom:C2 0. 2.041   0.259   0.000
-		$atom:C9 $mol:. @atom:C2 0. 3.066  -0.303   0.000
-		$atom:C10 $mol:. @atom:C2 0. 4.090   0.259   0.000
-		$atom:C11 $mol:. @atom:C2 0. 5.114  -0.303   0.000
-		$atom:C12 $mol:. @atom:C3 0. 6.141   0.259   0.000
-	}
-	write("Data Bonds"){
-		$bond:SC @bond:SC $atom:S $atom:C1
-		$bond:CC1 @bond:CC $atom:C1 $atom:C2
-		$bond:CC2 @bond:CC $atom:C2 $atom:C3
+    write("Data Atoms"){
+        $atom:S $mol:. @atom:S 0.  -6.135   0.259   0.000
+        $atom:C1 $mol:. @atom:C2 0. -5.117  -0.303   0.000
+        $atom:C2 $mol:. @atom:C2 0. -4.093   0.259   0.000
+        $atom:C3 $mol:. @atom:C2 0. -3.069  -0.303   0.000
+        $atom:C4 $mol:. @atom:C2 0. -2.041   0.259   0.000
+        $atom:C5 $mol:. @atom:C2 0. -1.017  -0.303   0.000
+        $atom:C6 $mol:. @atom:C2 0. 0.003   0.259   0.000
+        $atom:C7 $mol:. @atom:C2 0. 1.021  -0.303   0.000
+        $atom:C8 $mol:. @atom:C2 0. 2.041   0.259   0.000
+        $atom:C9 $mol:. @atom:C2 0. 3.066  -0.303   0.000
+        $atom:C10 $mol:. @atom:C2 0. 4.090   0.259   0.000
+        $atom:C11 $mol:. @atom:C2 0. 5.114  -0.303   0.000
+        $atom:C12 $mol:. @atom:C3 0. 6.141   0.259   0.000
+    }
+    write("Data Bonds"){
+        $bond:SC @bond:SC $atom:S $atom:C1
+        $bond:CC1 @bond:CC $atom:C1 $atom:C2
+        $bond:CC2 @bond:CC $atom:C2 $atom:C3
         $bond:CC3 @bond:CC $atom:C3 $atom:C4      
         $bond:CC4 @bond:CC $atom:C4 $atom:C5      
         $bond:CC5 @bond:CC $atom:C5 $atom:C6
         $bond:CC6 @bond:CC $atom:C6 $atom:C7
-		$bond:CC7 @bond:CC $atom:C7 $atom:C8 
-		$bond:CC8 @bond:CC $atom:C8 $atom:C9
+        $bond:CC7 @bond:CC $atom:C7 $atom:C8 
+        $bond:CC8 @bond:CC $atom:C8 $atom:C9
         $bond:CC9 @bond:CC $atom:C9 $atom:C10
         $bond:CC10 @bond:CC $atom:C10 $atom:C11
-		$bond:CC11 @bond:CC $atom:C11 $atom:C12 
-	}
+        $bond:CC11 @bond:CC $atom:C11 $atom:C12 
+    }
 }

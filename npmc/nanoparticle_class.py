@@ -1,6 +1,6 @@
 """This module contains classes and functions used to create nanoparticles of arbitrary shapes
 """
-import atom_class as atmc
+import npmc.atom_class as atmc
 from scipy.spatial import Delaunay
 import os
 import numpy as np
