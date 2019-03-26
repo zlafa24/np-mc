@@ -39,10 +39,24 @@ class XYZFile(object):
 
 class TemplateMolecule(object):
 
-    def __init__(self,molecule,filename):
-        self.molecule = molecule
+    def __init__(self,filename : str,molecule : mlc.Molecule):
         self.file = filename
         self.mol_name = filename.split(".")[0]
+        self.molecule = molecule
+
+    @classmethod
+    def from_molecule(cls, mol,filename):
+        self.molecule = mol
+        self.file = filename
+        self.mol_name = filename.split(".")[0]
+
+    @classmethod
+    def from_alkanethiol(cls,chainlength,filename):
+        return(cls(molecule=cls.create_alkanethiol(chainlength),
+            filename=filename))
+        #self.molecule = self.create_alkanethiol(5)
+        #self.file = filename
+        #self.mol_name = filename.split(".")[0]
 
     def write_to_lt(self):
         with open(self.file,'w') as lt_file:
@@ -50,10 +64,20 @@ class TemplateMolecule(object):
              self.write_atoms_to_lt(lt_file)
              self.write_bonds_to_lt(lt_file)
              lt_file.write("}")
-
-    def create_alkanethiol(self,chainlength):
-        print("Create alkanethiol molecule here")
-
+    
+    @classmethod
+    def create_alkanethiol(cls,chainlength):
+        atoms = np.empty(chainlength+1,dtype=object)
+        bonds = np.empty(chainlength,dtype=object)
+        atoms[0]= atm.Atom(0,1,32)
+        current_pos = np.array([0.,0.,0.])
+        bonds[:] = [mlc.Bond(i,1,i,i+1) for i in range(chainlength)]
+        bonds[0].bondType=0
+        for i in range(1,chainlength+1):
+            current_pos+=np.array([1.018,0.,0.])
+            current_pos[1]=0.5602 if i%2==0 else 0.
+            atoms[i]=atm.Atom(i,1,12,position=current_pos)
+        return(mlc.Molecule(1,atoms,bonds,angles=None,dihedrals=None))
  
     def write_atoms_to_lt(self,lt_file):
         lt_file.write("\twrite(\"Data Atoms\"){\n")
