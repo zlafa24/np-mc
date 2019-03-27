@@ -1,61 +1,61 @@
 Glotzer{
-	write_once("Data Masses"){
-		@atom:Ag	107.8682
-		@atom:C2	14.02658
-		@atom:C3	15.03452
-		@atom:S		32.065
-		@atom:O		15.9994
-		@atom:H		1.00794
-	}
-	write_once("Data Angles By Type"){
-		@angle:SCC @atom:S  @atom:C* @atom:C* @bond:SC @bond:CC
-		@angle:CCC @atom:C* @atom:C* @atom:C* @bond:CC @bond:CC
-		@angle:CCO @atom:C* @atom:C* @atom:O  @bond:CC @bond:CO
-		@angle:COH @atom:C* @atom:O  @atom:H  @bond:CO @bond:OH
-	}
-	write_once("Data Dihedrals By Type"){
-		@dihedral:SCCC @atom:S @atom:C* @atom:C* @atom:C* @bond:SC @bond:CC @bond:CC
-		@dihedral:CCCC @atom:C* @atom:C* @atom:C* @atom:C* @bond:CC @bond:CC @bond:CC
-		@dihedral:SCCO @atom:S @atom:C* @atom:C* @atom:O* @bond:SC @bond:CC @bond:CO
-		@dihedral:CCOH @atom:C* @atom:C* @atom:O @atom:H @bond:CC @bond:CO @bond:OH
-	}
-	write_once("In Settings"){
-		pair_coeff @atom:Ag @atom:Ag lj/cut/coul/debye 0.039  2.935
-		pair_coeff @atom:C2 @atom:C2 lj/cut/coul/debye 0.118  3.905
-		pair_coeff @atom:C3 @atom:C3 lj/cut/coul/debye 0.175  3.905
-		pair_coeff @atom:S  @atom:S	 lj/cut/coul/debye	0.39743	4.25
-		pair_coeff @atom:O	@atom:O	 lj/cut/coul/debye	0.2	2.85
-		pair_coeff @atom:H	@atom:H	 lj/cut/coul/debye	0	1.78
+    write_once("Data Masses"){
+        @atom:Ag    107.8682
+        @atom:C2    14.02658
+        @atom:C3    15.03452
+        @atom:S        32.065
+        @atom:O        15.9994
+        @atom:H        1.00794
+    }
+    write_once("Data Angles By Type"){
+        @angle:SCC @atom:S  @atom:C* @atom:C* @bond:SC @bond:CC
+        @angle:CCC @atom:C* @atom:C* @atom:C* @bond:CC @bond:CC
+        @angle:CCO @atom:C* @atom:C* @atom:O  @bond:CC @bond:CO
+        @angle:COH @atom:C* @atom:O  @atom:H  @bond:CO @bond:OH
+    }
+    write_once("Data Dihedrals By Type"){
+        @dihedral:SCCC @atom:S @atom:C* @atom:C* @atom:C* @bond:SC @bond:CC @bond:CC
+        @dihedral:CCCC @atom:C* @atom:C* @atom:C* @atom:C* @bond:CC @bond:CC @bond:CC
+        @dihedral:SCCO @atom:S @atom:C* @atom:C* @atom:O* @bond:SC @bond:CC @bond:CO
+        @dihedral:CCOH @atom:C* @atom:C* @atom:O @atom:H @bond:CC @bond:CO @bond:OH
+    }
+    write_once("In Settings"){
+        pair_coeff @atom:Ag   @atom:Ag lj/cut/coul/debye 0.039  2.935
+        pair_coeff @atom:C2   @atom:C2 lj/cut/coul/debye 0.118  3.905
+        pair_coeff @atom:C3   @atom:C3 lj/cut/coul/debye 0.175  3.905
+        pair_coeff @atom:S    @atom:S     lj/cut/coul/debye    0.39743    4.25
+        pair_coeff @atom:O    @atom:O     lj/cut/coul/debye    0.2    2.85
+        pair_coeff @atom:H    @atom:H     lj/cut/coul/debye    0    1.78
 
-		pair_coeff	@atom:Ag @atom:C2	lj/cut/coul/debye	0.067838042	3.42
-		pair_coeff	@atom:Ag @atom:C3	lj/cut/coul/debye	0.082613558	3.42
-		pair_coeff  @atom:Ag @atom:S    morse   5.58 0.746 2.868
-		pair_coeff	@atom:Ag @atom:O	lj/cut/coul/debye	0.088317609	2.8925
-		pair_coeff	@atom:Ag @atom:H	lj/cut/coul/debye	0	2.3575
-		pair_coeff	@atom:C2 @atom:C3	lj/cut/coul/debye	0.143701079	3.905
-		pair_coeff	@atom:C2 @atom:S	lj/cut/coul/debye	0.216556552	4.0775
-		pair_coeff	@atom:C2 @atom:O	lj/cut/coul/debye	0.153622915	3.3775
-		pair_coeff	@atom:C2 @atom:H	lj/cut/coul/debye	0	2.8425
-		pair_coeff	@atom:C3 @atom:S	lj/cut/coul/debye	0.263723814	4.0775
-		pair_coeff	@atom:C3 @atom:O	lj/cut/coul/debye	0.187082869	3.3775
-		pair_coeff	@atom:C3 @atom:H	lj/cut/coul/debye	0	2.8425
-		pair_coeff	@atom:S	 @atom:O	lj/cut/coul/debye	0.281932616	3.55
-		pair_coeff	@atom:S	 @atom:H	lj/cut/coul/debye	0	3.015
-		pair_coeff	@atom:O	 @atom:H	lj/cut/coul/debye	0	2.315
+        pair_coeff    @atom:Ag   @atom:C2   lj/cut/coul/debye    0.067838042    3.42
+        pair_coeff    @atom:Ag   @atom:C3   lj/cut/coul/debye    0.082613558    3.42
+        pair_coeff    @atom:Ag   @atom:S    morse    5.58 0.746 2.868
+        pair_coeff    @atom:Ag   @atom:O    lj/cut/coul/debye    0.088317609    2.8925
+        pair_coeff    @atom:Ag   @atom:H    lj/cut/coul/debye    0    2.3575
+        pair_coeff    @atom:C2   @atom:C3   lj/cut/coul/debye    0.143701079    3.905
+        pair_coeff    @atom:C2   @atom:S    lj/cut/coul/debye    0.216556552    4.0775
+        pair_coeff    @atom:C2   @atom:O    lj/cut/coul/debye    0.153622915    3.3775
+        pair_coeff    @atom:C2   @atom:H    lj/cut/coul/debye    0    2.8425
+        pair_coeff    @atom:C3   @atom:S    lj/cut/coul/debye    0.263723814    4.0775
+        pair_coeff    @atom:C3   @atom:O    lj/cut/coul/debye    0.187082869    3.3775
+        pair_coeff    @atom:C3   @atom:H    lj/cut/coul/debye    0    2.8425
+        pair_coeff    @atom:S    @atom:O    lj/cut/coul/debye    0.281932616    3.55
+        pair_coeff    @atom:S    @atom:H    lj/cut/coul/debye    0    3.015
+        pair_coeff    @atom:O    @atom:H    lj/cut/coul/debye    0    2.315
 
-		bond_coeff	@bond:CC harmonic 260 1.54
-		bond_coeff  @bond:SC harmonic 222 1.81
-		bond_coeff  @bond:CO harmonic 386 1.425
-		bond_coeff  @bond:OH harmonic 553 0.945	
+        bond_coeff    @bond:CC harmonic 260 1.54
+        bond_coeff  @bond:SC harmonic 222 1.81
+        bond_coeff  @bond:CO harmonic 386 1.425
+        bond_coeff  @bond:OH harmonic 553 0.945    
 
-		angle_coeff @angle:SCC harmonic 62.5 114.4
-		angle_coeff @angle:CCC harmonic 63.0 109.47
-		angle_coeff @angle:CCO harmonic 80.0 120.4
-		angle_coeff @angle:COH harmonic 55.0 108.5
-		
-		dihedral_coeff @dihedral:SCCC opls 2.8238 -0.54374 6.294058 0.
-		dihedral_coeff @dihedral:CCCC opls 2.8238 -0.54374 6.294058 0.
-		dihedral_coeff @dihedral:SCCO opls  1.876 0. 0. 0.
-		dihedral_coeff @dihedral:CCOH opls -0.356 -0.174 0.492 0.
-	}
+        angle_coeff @angle:SCC harmonic 62.5 114.4
+        angle_coeff @angle:CCC harmonic 63.0 109.47
+        angle_coeff @angle:CCO harmonic 80.0 120.4
+        angle_coeff @angle:COH harmonic 55.0 108.5
+        
+        dihedral_coeff @dihedral:SCCC opls 2.8238 -0.54374 6.294058 0.
+        dihedral_coeff @dihedral:CCCC opls 2.8238 -0.54374 6.294058 0.
+        dihedral_coeff @dihedral:SCCO opls  1.876 0. 0. 0.
+        dihedral_coeff @dihedral:CCOH opls -0.356 -0.174 0.492 0.
+    }
 }

@@ -45,18 +45,9 @@ class TemplateMolecule(object):
         self.molecule = molecule
 
     @classmethod
-    def from_molecule(cls, mol,filename):
-        self.molecule = mol
-        self.file = filename
-        self.mol_name = filename.split(".")[0]
-
-    @classmethod
     def from_alkanethiol(cls,chainlength,filename):
         return(cls(molecule=cls.create_alkanethiol(chainlength),
             filename=filename))
-        #self.molecule = self.create_alkanethiol(5)
-        #self.file = filename
-        #self.mol_name = filename.split(".")[0]
 
     def write_to_lt(self):
         with open(self.file,'w') as lt_file:
@@ -73,10 +64,11 @@ class TemplateMolecule(object):
         current_pos = np.array([0.,0.,0.])
         bonds[:] = [mlc.Bond(i,1,i,i+1) for i in range(chainlength)]
         bonds[0].bondType=0
-        for i in range(1,chainlength+1):
+        for i in range(1,chainlength):
             current_pos+=np.array([1.018,0.,0.])
             current_pos[1]=0.5602 if i%2==0 else 0.
-            atoms[i]=atm.Atom(i,1,12,position=current_pos)
+            atoms[i]=atm.Atom(i,1,14,position=current_pos)
+        atoms[-1]=atm.Atom(i,1,15,position=current_pos)
         return(mlc.Molecule(1,atoms,bonds,angles=None,dihedrals=None))
  
     def write_atoms_to_lt(self,lt_file):
@@ -93,12 +85,14 @@ class TemplateMolecule(object):
 
 
     def atom_to_string(self,atom):
-        return("\t\t$atom:{0:d}\t$mol:.\t@atom:{1:d}\t{2:4.3f}\t{3:5.3f}\t{4:5.3f}\t{5:5.3f}\n".format(atom.atomID,
-                                                                       atom.atomType,
+        atomtype_dict = {32:'S',14:'C2',15:'C3'}
+        return("\t\t$atom:{0:d}\t$mol:.\t@atom:{1}\t{2:4.3f}\t{3:5.3f}\t{4:5.3f}\t{5:5.3f}\n".format(atom.atomID,
+                                                                       atomtype_dict[atom.atomType],
                                                                        atom.charge,
                                                                        atom.position[0],atom.position[1],atom.position[2]))
     def bond_to_string(self,bond):
-        return("\t\t$bond:{0:d}\t@bond:{1:d}\t$atom:{2:d}\t$atom:{3:d}\n".format(bond.bondID,bond.bondType,bond.atom1,bond.atom2))
+        bondtype_dict = {0:'SC',1:'CC'}
+        return("\t\t$bond:{0:d}\t@bond:{1}\t$atom:{2:d}\t$atom:{3:d}\n".format(bond.bondID,bondtype_dict[bond.bondType],bond.atom1,bond.atom2))
         
 
 def atoms_to_xyz(atoms):
