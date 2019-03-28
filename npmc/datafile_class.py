@@ -37,6 +37,19 @@ class XYZFile(object):
 
 
 
+class TemplateSystem(object):
+    
+    def __init__(self,tmols,quantities):
+        self.lt_mols = tmols
+        self.nmol1, self.nmol2 = quantities
+
+    def write_system_to_lt(self):
+        with open('system.lt','w') as sysfile:
+            for lt_mol in self.lt_mols:
+                sysfile.write(lt_mole.file)
+            
+
+
 class TemplateMolecule(object):
 
     def __init__(self,filename : str,molecule : mlc.Molecule):
