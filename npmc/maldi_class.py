@@ -33,17 +33,18 @@ class MALDISpectrum(object):
         self.type1_numatoms, self.type2_numatoms = type_lengths
         self.numsamples = numsamples
         self.nn_distance = nn_distance
+        self.graph_index = graph_index
         self.ligands_per_fragment = ligands_per_fragment
-        self.molecules_graph = create_graph(graph_index)
+        self.molecules_graph = self.create_graph()
     
-    def create_graph(self, graph_index):
+    def create_graph(self):
         """Creates a graph stucture containing all eligible molecules.
         """
         molecules_graph = ntwkx.Graph()
         for molecule in self.eligible_molecules:
             molecules_graph.add_node(molecule.molID)
         for mol1, mol2 in itr.combinations(self.eligible_molecules, 2):
-            if np.linalg.norm(mol1.getAtomByMolIndex(graph_index).position-mol2.getAtomByMolIndex(graph_index).position)<self.nn_distance:
+            if np.linalg.norm(mol1.getAtomByMolIndex(self.graph_index).position-mol2.getAtomByMolIndex(self.graph_index).position)<self.nn_distance:
                 molecules_graph.add_edge(mol1.molID, mol2.molID)
         return molecules_graph
 
@@ -73,9 +74,15 @@ class MALDISpectrum(object):
         
     def get_nns_2(self, molecule):
         """
-        Test Function
+        Get nearest neighbors from the graph structure, two degrees of separation
         """
-        eligible_neighbors = np.zeros(1)
+        distances = self.dist_dict[molecule.molID]
+        shell_1 = list(self.molecules_graph.neighbors(molecule.molID))
+        shell_2 = []
+        for neighbor in shell_1:
+            shell_2 += list(self.molecules_graph.neighbors(neighbor))
+        eligible_neighbors = list(set(shell_1 + shell_2))
+        eligible_neighbors = distances[np.where(np.isin(distances[:,0], np.array(eligible_neighbors)+0.))]
         return(eligible_neighbors)
 
     def make_distance_dict(self):
@@ -113,6 +120,14 @@ class MALDISpectrum(object):
             return(False)
         else:
             return(neighbors[0:self.ligands_per_fragment])
+            
+    def get_sample_fragment_2(self):
+        random_molecule = self.get_random_molecule()
+        neighbors = self.get_nns_2(random_molecule)
+        if len(neighbors)<self.ligands_per_fragment:
+            return(False)
+        else:
+            return(neighbors[np.argpartition(neighbors[:,1],self.ligands_per_fragment-1)[:self.ligands_per_fragment]])
 
     def get_molecule_type(self,molecule):
         if len(molecule.atoms)==self.type1_numatoms:
@@ -130,7 +145,7 @@ class MALDISpectrum(object):
             return(len([1 for i in ligand_types if i==1]))
     
     def get_maldi_spectrum(self):
-        fragments = [self.get_sample_fragment() for sample in range(self.numsamples)]
+        fragments = [self.get_sample_fragment_2() for sample in range(self.numsamples)]
         fragment_types = np.array([self.get_fragment_category(fragment) for fragment in fragments])
         hist, bins = np.histogram(fragment_types,bins=range(0,self.ligands_per_fragment+2),density=True)
         self.hist = hist
