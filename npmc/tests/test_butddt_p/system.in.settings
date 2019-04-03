@@ -1,0 +1,38 @@
+		pair_coeff 1 1 lj/cut/coul/debye 0.039  2.935
+		pair_coeff 2 2 lj/cut/coul/debye 0.118  3.905
+		pair_coeff 3 3 lj/cut/coul/debye 0.175  3.905
+		pair_coeff 4  4	 lj/cut/coul/debye	0.39743	4.25
+		pair_coeff 5	5	 lj/cut/coul/debye	0.2	2.85
+		pair_coeff 6	6	 lj/cut/coul/debye	0	1.78
+
+		pair_coeff	1 2	lj/cut/coul/debye	0.067838042	3.42
+		pair_coeff	1 3	lj/cut/coul/debye	0.082613558	3.42
+		pair_coeff  1 4    morse   5.58 0.746 2.868
+		pair_coeff	1 5	lj/cut/coul/debye	0.088317609	2.8925
+		pair_coeff	1 6	lj/cut/coul/debye	0	2.3575
+		pair_coeff	2 3	lj/cut/coul/debye	0.143701079	3.905
+		pair_coeff	2 4	lj/cut/coul/debye	0.216556552	4.0775
+		pair_coeff	2 5	lj/cut/coul/debye	0.153622915	3.3775
+		pair_coeff	2 6	lj/cut/coul/debye	0	2.8425
+		pair_coeff	3 4	lj/cut/coul/debye	0.263723814	4.0775
+		pair_coeff	3 5	lj/cut/coul/debye	0.187082869	3.3775
+		pair_coeff	3 6	lj/cut/coul/debye	0	2.8425
+		pair_coeff	4	 5	lj/cut/coul/debye	0.281932616	3.55
+		pair_coeff	4	 6	lj/cut/coul/debye	0	3.015
+		pair_coeff	5	 6	lj/cut/coul/debye	0	2.315
+
+		bond_coeff	2 harmonic 260 1.54
+		bond_coeff  1 harmonic 222 1.81
+		bond_coeff  3 harmonic 386 1.425
+		bond_coeff  4 harmonic 553 0.945	
+
+		angle_coeff 1 harmonic 62.5 114.4
+		angle_coeff 2 harmonic 63.0 109.47
+		angle_coeff 3 harmonic 80.0 120.4
+		angle_coeff 4 harmonic 55.0 108.5
+		
+		dihedral_coeff 1 opls 2.8238 -0.54374 6.294058 0.
+		dihedral_coeff 2 opls 2.8238 -0.54374 6.294058 0.
+		dihedral_coeff 3 opls  1.876 0. 0. 0.
+		dihedral_coeff 4 opls 0. 1.404 -0.424 6.120 
+		dihedral_coeff 5 opls -0.356 -0.174 0.492 0.

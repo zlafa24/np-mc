@@ -43,14 +43,14 @@ class Simulation(object):
 
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
-        
+        print('1')
         #if parrallel:
         #    pool = mpc.Pool()
         #    self.lmp_clones = pool.map(self.clone_lammps,range(numtrials)) 
         #    pool.close()
         self.molecules = mol.constructMolecules(datafile)
         self.atomlist = self.get_atoms()
-        
+        print('2')
         self.lmp.command("thermo 1")
         self.lmp.command("thermo_style    custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
         self.temp = temp
@@ -58,7 +58,7 @@ class Simulation(object):
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
         self.exclude=False
-
+        print('3')
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
@@ -66,7 +66,7 @@ class Simulation(object):
         self.initialize_data_files(restart) 
         self.step=0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
-
+        print('4')
     def clone_lammps(self):
         lmp2 = lammps("",["-echo","none","-screen","lammps.out"])
         lmp2.file(os.path.abspath(self.init_file))
