@@ -7,7 +7,7 @@
 /dist/
 /*.egg-info
 *.eggs/
-
+.eggs
 
 Rosenbluth_Data.txt
 !requirements.txt
