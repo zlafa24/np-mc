@@ -4,6 +4,7 @@ import npmc.forcefield_class as ffc
 import scipy.special as scm
 from math import pi,acos,sin,cos
 import npmc.molecule_class as molc
+import time
 
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
@@ -62,8 +63,8 @@ class CBMCRegrowth(Move):
         self.rosen_file = open('Rosenbluth_Data.txt','a')
         self.rosen_file.write('log_Wo\tlog_Wf\tprobability\tNew Energy\taccepted\n')
         self.parallel = parallel
-        if parallel:
-            self.lmp_clones = [self.simulation.clone_lammps() for i in range(numtrials)]
+        #if parallel:
+        #    self.lmp_clones = [self.simulation.clone_lammps() for i in range(numtrials)]
         self.move_name = "Regrowth"
 
     def select_random_molecule(self):
@@ -146,12 +147,11 @@ class CBMCRegrowth(Move):
             coords.append(self.simulation.get_atom_coords())
             #self.simulation.update_clone_coord(self.lmp_clones[i],atom_coords)
             molecule.rotateDihedral(index,-rotation)
-        energies = self.simulation.parallel_pair_PE(self.lmp_clones,coords)
-        return(np.array([energy for energy in energies]))
+        energies = self.simulation.parallel_pair_PE(coords)
+        #energies = np.array([energy for energy in energies])
+        return(energies)
+
         
-
-
-
     def evaluate_energies(self,molecule,index,rotations):
         """Evluates the pair energy of the system for each of the given dihedral rotations at the specified index.  For these enegies to be consistent with CBMC all atoms past the index should be turned off with turn_off_molecule_atoms.
         

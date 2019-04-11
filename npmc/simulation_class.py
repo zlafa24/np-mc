@@ -1,19 +1,57 @@
 """This module contains the simulation class and associated functions which are meant to encapsulate a LAMMPS simulation.
 """
-from lammps import lammps
+from lammps import lammps, PyLammps
 import npmc.molecule_class as mol
 import npmc.atom_class as atm
 import npmc.move_class as mvc
 import os
+import time
 import numpy as np
 import random as rnd
 import npmc.forcefield_class as ffc
-import multiprocessing as mpc
+import multiprocessing as mp
 #import dill
 #from pathos.multiprocessing import ProcessPool
 import concurrent.futures as cncf
 from math import *
 from subprocess import check_output
+    
+def test(process_name,tasks,results,atomlist):
+
+    lmp2 = lammps("",["-echo","none","-screen","lammps2.out"])
+    lmp2.file(os.path.abspath(os.path.abspath('./system.in')))
+    
+    lmp2.command("thermo 1")
+    lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
+    
+    lmp2.command("group silver type 1")
+    lmp2.command("group adsorbate type 2 3 4 5 6")
+    
+    lmp2.command("compute pair_pe all pe")
+    lmp2.command("compute mol_pe all pe dihedral")
+    lmp2.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
+    lmp2.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
+    lmp2.command("compute pair_total all pair lj/cut/coul/debye")
+    
+    lmp2.command("fix fxfrc silver setforce 0. 0. 0.")
+    
+    while True:
+        index, atom_coords = tasks.get()
+        
+        indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
+        coords = lmp2.gather_atoms("x",1,3)
+        for idx,i in zip(indxs,range(atom_coords.shape[0])):
+            coords[i*3]=atom_coords[idx][0]
+            coords[i*3+1]=atom_coords[idx][1]
+            coords[i*3+2]=atom_coords[idx][2]
+        
+        lmp2.scatter_atoms("x",1,3,coords)
+        lmp2.command("run 1 pre no post no")
+        energy = lmp2.extract_compute("pair_total",0,0)
+        
+        results.put((index, energy))
+        
+
 
 class Simulation(object):
     """This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.
@@ -36,21 +74,24 @@ class Simulation(object):
         A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
     def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False,parallel=False):
+        mp.set_start_method('fork')
         dname = os.path.dirname(os.path.abspath(init_file))
-        print("Configuration file is ".format(init_file))
-        print('Directory name is '.format(dname))
+        print(f'Configuration file is {init_file}')
+        print(f'Directory name is {dname}')
         os.chdir(dname)
 
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
-        print('1')
-        #if parrallel:
+        
+        self.numtrials = numtrials
+        
+        #if parallel:
         #    pool = mpc.Pool()
         #    self.lmp_clones = pool.map(self.clone_lammps,range(numtrials)) 
         #    pool.close()
         self.molecules = mol.constructMolecules(datafile)
         self.atomlist = self.get_atoms()
-        print('2')
+        
         self.lmp.command("thermo 1")
         self.lmp.command("thermo_style    custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
         self.temp = temp
@@ -58,7 +99,7 @@ class Simulation(object):
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
         self.exclude=False
-        print('3')
+        
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
@@ -66,15 +107,32 @@ class Simulation(object):
         self.initialize_data_files(restart) 
         self.step=0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
-        print('4')
+        
+        if parallel:
+            self.manager = mp.Manager()
+            self.tasks = self.manager.Queue()
+            self.results = self.manager.Queue()
+        
+            self.pool = mp.Pool(processes=self.numtrials)
+            self.processes = []
+        
+            for i in range(self.numtrials):
+                process_name = f'p{i}'
+                new_process = mp.Process(target=test, args=(process_name,self.tasks,self.results,self.atomlist), daemon=True)
+                self.processes.append(new_process)
+                new_process.start()
+
+    
     def clone_lammps(self):
-        lmp2 = lammps("",["-echo","none","-screen","lammps.out"])
+       
+        lmp2 = lammps("",["-echo","none","-screen","lammps2.out"])
         lmp2.file(os.path.abspath(self.init_file))
         lmp2.command("thermo 1")
         lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
         self.initializeGroups(lmp2)
         self.initializeComputes(lmp2)
         self.initializeFixes(lmp2)
+        
         return(lmp2)
 
     def initializeGroups(self,lmp):
@@ -160,22 +218,31 @@ class Simulation(object):
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("lj_pe",0,0)
 
-    def get_pair_PE(self): 
+    def get_pair_PE(self):
+        
         self.lmp.command("run 1 pre no post no")
-        return(self.lmp.extract_compute("pair_total",0,0))
+        energies = self.lmp.extract_compute("pair_total",0,0)
+        return(energies)
 
-    def parallel_pair_PE(self,lmps,coords):
-        #import pdb;pdb.set_trace()
-        n = mpc.cpu_count()
-        with cncf.ThreadPoolExecutor(n) as executor:
-            energies = executor.map(self.get_clone_pair_PE,lmps,coords)
-        return energies
+    def parallel_pair_PE(self,coords):
+    
+        for i,atom_coords in enumerate(coords):
+            self.tasks.put((i, atom_coords))
 
-    def get_clone_pair_PE(self,lmp2,coords):
+        energies = np.empty(self.numtrials)
+        for i in range(self.numtrials):
+            index, energy = self.results.get()
+            energies[index] = energy
+        return energies    
+
+    def get_clone_pair_PE(self,coords):
+        
+        #lmp2 = self.clone_lammps()
         self.update_clone_coords(lmp2,coords)
         lmp2.command("run 0 post no")
-        return(lmp2.extract_compute("pair_total",0,0))
-
+        energy = lmp2.extract_compute("pair_total",0,0)
+        return(energy)
+    
     def get_total_PE(self):
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("thermo_pe",0,0)

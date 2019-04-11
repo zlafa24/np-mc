@@ -1,4 +1,5 @@
 import os,sys
+import time
 import npmc.move_class
 import npmc.simulation_class as simc
 
@@ -13,9 +14,13 @@ sim.exclude_type(1,1)
 print("Energy after exclude_type is "+str(sim.get_total_PE()))
 sim.minimize()
 
-numsteps=800000
+numsteps=100
 
+start = time.time()
 for i in range(numsteps):
+    if((i%10)==0):
+        current = time.time()
+        print(f'time = {current-start}')
     if((i%1000)==0):
         sim.dump_atoms()
     print("Simulation at step "+str(i+1))
