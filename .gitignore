@@ -6,6 +6,7 @@
 *.out
 /dist/
 /*.egg-info
+.eggs
 
 !requirements.txt
 trial*/
