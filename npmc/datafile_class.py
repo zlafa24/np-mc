@@ -11,12 +11,20 @@ class XYZAtom(object):
 
 
 class XYZFile(object):
-    
+    """A class encapsulating an XYZ file, also containing built in functions for adding predefined molecules (currently just alkanethiols).
+    """
     def __init__(self,filename):
         self.file =filename
         self.elements = np.empty((0,4))
 
     def create_alkanethiol(self,chainlength):
+    """A functioned defined for adding an alkanethiol with a given chainlength to the XYZFile object.
+
+    Parameters
+    ----------
+    chainlength : int
+        Chainlength of alkanethiol to be added to the XYZFile object.
+    """
         self.elements = np.empty((chainlength,4),dtype=np.float)
         self.elements[0,:]=[32,0.,0.,0.]
         current_pos = np.array([0.,0.,0.])
@@ -25,20 +33,33 @@ class XYZFile(object):
             current_pos[1]=0.562 if i%2==0 else 0.
             element[:] = np.concatenate(([12],current_pos))
 
-    def create_hollow_np(self,radius):
-        np_object = nanop.create_hollow_icosahedron(radius,10)
+    def create_hollow_np(self,outer_radius,inner_radius):
+        """Creates a hollow icosahedral nanoparticle of defined radius and adds it to the XYZFile object.
+
+        Parameters
+        ----------
+        outer_radius : float
+            Outer radius of hollow icosahedron to be added to the XYZFile object
+        
+        inner_radius : float
+            Inner radius of hollow icosahedron to be added to the XYZFile object
+        """
+        np_object = nanop.create_hollow_icosahedron(outer_radius,inner_radius)
         atoms = np_object.atoms
         np_elements = atoms_to_xyz(atoms)
         self.elements = np.vstack((self.elements,np_elements))
 
     def write_to_file(self):
+        """Writes the elements contained within the XYZFile object to an XYZ file with the filename given by the instance variable self.file.
+        """
         numelements = self.elements.shape[0]
         np.savetxt(self.file,self.elements,header="{}\n".format(numelements),fmt = '%i %5.4f %5.4f %5.4f',comments="")
 
 
 
 class TemplateSystem(object):
-    
+    """A class encapsulating a system lt file with specified molecule lt files.
+    """
     def __init__(self,tmols,quantities):
         self.lt_mols = tmols
         self.nmol1, self.nmol2 = quantities
@@ -51,7 +72,8 @@ class TemplateSystem(object):
 
 
 class TemplateMolecule(object):
-
+    """A class encapsulating a molecule lt file.
+    """
     def __init__(self,filename : str,molecule : mlc.Molecule):
         self.file = filename
         self.mol_name = filename.split(".")[0]
