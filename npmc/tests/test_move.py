@@ -47,14 +47,14 @@ class TestCBMCRegrowth(unittest.TestCase):
         energies = self.cbmc_move.evaluate_energies(molecule,4,rotations)
         actual_energies = [-1.1082622,-1.34260189,-1.1082622,-1.55146693,-1.1082622]
         np.testing.assert_array_almost_equal(energies,actual_energies,err_msg="evaluate_energies does not return correct energies for a set of specified rotation angles.")
-
+    '''
     def test_parallel_evaluate_energies_returns_expected_energies_for_specified_angles(self):
         molecule = self.simulation.molecules[1]
         rotations = [0,pi,2*pi,pi/2.,2*pi]
         energies = self.cbmc_move_parallel.parallel_evaluate_energies(molecule,4,rotations)
         actual_energies = [-1.1082622,-1.34260189,-1.1082622,-1.55146693,-1.1082622]
         np.testing.assert_array_almost_equal(energies,actual_energies,err_msg="evaluate_energies does not return correct energies for a set of specified rotation angles.")
-
+    '''
 
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],3)

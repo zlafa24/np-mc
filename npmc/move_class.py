@@ -56,6 +56,7 @@ class CBMCRegrowth(Move):
     """
     def __init__(self,simulation,anchortype,numtrials=5,parallel=False):
         self.dihedral_ffs = ffc.initialize_dihedral_ffs(simulation.init_file+'.settings')
+        self.angle_ffs = ffc.initialize_angle_ffs(simulation.init_file+'.settings')
         self.numtrials = numtrials
         super(CBMCRegrowth,self).__init__(simulation)
         self.anchortype = anchortype
@@ -102,7 +103,7 @@ class CBMCRegrowth(Move):
         """
         return(rnd.randrange(3,len(molecule.atoms)))
 
-    def select_dih_angles(self,dih_type):
+    def select_dih_angles(self,dihedrals):
         """Returns numtrials number of dihedral angles with probability given by the PDF given by the boltzmann distribution determined by the temperature and the dihedral forcefield.
 
         Parameters
@@ -115,10 +116,22 @@ class CBMCRegrowth(Move):
         trial_dih_angles : Numpy array of floats
             An array of floats which correspond to the selected dihedral angles in radians.
         """
+        print('single')
+        dih_type = dihedrals[0].dih_type
         force_field = [ff for ff in self.dihedral_ffs if ff.dihedral_type==dih_type][0]
         (thetas,ff_pdf) = force_field.get_pdf(self.temp)
         dtheta = thetas[1]-thetas[0]
         trial_dih_angles = np.random.choice(thetas,size=self.numtrials,p=ff_pdf*dtheta)
+        return(trial_dih_angles)
+    
+    def select_dih_angles_branched(self,molecule,dihedrals,atoms):
+        print('branched')
+        trial_dih_angles = []
+        pdfs_atom1 = []; pdfs_atom2 = []
+        for dihedral in dihedrals:
+        
+        trial_dih_angles.append(np.random.choice(thetas,size=self.numtrials,p=ff_pdf*dtheta))
+        print('trial angles', trial_dih_angles)
         return(trial_dih_angles)
 
     def parallel_evaluate_energies(self,molecule,index,rotations):
@@ -141,14 +154,16 @@ class CBMCRegrowth(Move):
         #coords = [atom.position for atom in self.simulation.atomlist]
         #num_atoms = self.simulation.atoms.shape[0]
         #eval_coords = np.empty((self.numtrials,num_atoms,3))
-        coords=[]
+        energies = self.simulation.parallel_pair_PE(molecule.molID,index,rotations)
+        '''
+        atoms = [] #np.empty(len(rotations))
         for i,rotation in enumerate(rotations):
             molecule.rotateDihedral(index,rotation)
-            coords.append(self.simulation.get_atom_coords())
+            atoms.append(self.simulation.atomlist)
             #self.simulation.update_clone_coord(self.lmp_clones[i],atom_coords)
             molecule.rotateDihedral(index,-rotation)
-        energies = self.simulation.parallel_pair_PE(coords)
-        #energies = np.array([energy for energy in energies])
+        energies = self.simulation.parallel_pair_PE(atoms)
+        '''
         return(energies)
 
         
@@ -188,8 +203,9 @@ class CBMCRegrowth(Move):
 
     def evaluate_trial_rotations(self,molecule,index,keep_original=False):
         beta = 1./(self.kb*self.temp)
-        dihedral = molecule.index2dihedral(index)
-        thetas = self.select_dih_angles(dihedral.dihType)
+        dihedrals, atoms = molecule.index2dihedrals(index)
+        if len(atoms) == 1: thetas = self.select_dih_angles(dihedrals)
+        if len(atoms) == 2: thetas = self.select_dih_angles_branched(molecule, dihedrals, atoms)
         theta0 = molecule.getDihedralAngle(dihedral)
         rotations = thetas-theta0
         if keep_original:
@@ -209,14 +225,14 @@ class CBMCRegrowth(Move):
 
     def regrow(self,molecule,index,keep_original=False):
         total_log_rosen_weight = 0
-        for index in range(index,len(molecule.atoms)):             
-            self.turn_off_molecule_atoms(molecule,index)
+        for idx in range(index,len(molecule.atoms)):
+            self.turn_off_molecule_atoms(molecule,idx)
             try:
-                (log_step_weight,selected_rotation) = self.evaluate_trial_rotations(molecule,index,keep_original)
+                (log_step_weight,selected_rotation) = self.evaluate_trial_rotations(molecule,idx,keep_original)
             except ValueError as e:
                 return False
             rotation = 0 if keep_original else selected_rotation
-            molecule.rotateDihedral(index,rotation)
+            molecule.rotateDihedral(idx,rotation)
             total_log_rosen_weight+=log_step_weight
         return total_log_rosen_weight
 
@@ -304,6 +320,7 @@ class CBMCSwap(CBMCRegrowth):
         self.swap_molecule_positions(mol1,mol2)
         log_Wf_chain1 = self.regrow(mol1,self.starting_index,keep_original=False)
         log_Wf_chain2 = self.regrow(mol2,self.starting_index,keep_original=False)
+        print(log_Wo_chain1, log_Wo_chain2, log_Wf_chain1, log_Wf_chain2)
         probability = min(1,np.exp(log_Wf_chain1+log_Wf_chain2-(log_Wo_chain1+log_Wo_chain2)))
         accepted = probability>rnd.random()
         if not all([log_Wo_chain1,log_Wo_chain2,log_Wf_chain2,log_Wf_chain1]):

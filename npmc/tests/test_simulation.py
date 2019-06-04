@@ -93,11 +93,11 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
 
     def test_getCoulPE_with_two_MeOHs_separated_by_5A(self):
         self.assertAlmostEqual(0.5628225,self.sim.getCoulPE(),places=4,msg="getCoulPE does not return expected value for Coulombic energy of two MeOHs separated by 5A")
-
+    '''
     def test_get_clone_pair_PE_returns_correct_PE_for_two_MeOHs_separated_by_5A(self):
         lmp2 = self.sim.clone_lammps()
         self.assertAlmostEqual(-1.6710847+0.5628225,self.sim.get_clone_pair_PE(lmp2,np.array(self.two_meoh_init_coords)),places=4,msg="get_clone_pair_PE does not return the correct energy for a cloned LAMMPS instance of 2 MEOHs separated by 5A.")
-
+    
     def test_parallel_energy_evaluation_using_get_clone_pair_PE_on_two_MeOH_5A(self):
         numthreads = 5
         initial_energy = -1.6710847+0.5628225
@@ -113,7 +113,7 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
             results = executor.map(self.sim.get_clone_pair_PE,lmp2,coords)
         energies = [result for result in results]
         np.testing.assert_allclose(actual_energies,energies,rtol=1e-05,err_msg="Parallel execution of get_clone_pair_PE does not return the expected PE.")
-
+    
     def test_parallel_energy_evaluation_using_parallel_pair_PE_function(self):
         numthreads=5
         initial_energy = -1.6710847+0.5628225
@@ -127,7 +127,7 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
         coords[2]=self.two_meoh_1A_coords
         energies = self.sim.parallel_pair_PE(lmp2,coords)
         np.testing.assert_allclose([energy for energy in energies],actual_energies,rtol=1e-05,err_msg="parallel_pair_PE does not return the expected energies")
-
+    '''
 class TestSimulationTurningOffAtoms(unittest.TestCase):
     @classmethod
     def setUpClass(self):

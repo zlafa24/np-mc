@@ -1,0 +1,9 @@
+$/angle:bytype1 @/angle:Glotzer/SCC $/atom:brancheds[0]/S $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2
+$/angle:bytype2 @/angle:Glotzer/CCC $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C3
+$/angle:bytype3 @/angle:Glotzer/CCC $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4
+$/angle:bytype4 @/angle:Glotzer/CCC $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6
+$/angle:bytype5 @/angle:Glotzer/CCC $/atom:brancheds[0]/C3 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4
+$/angle:bytype6 @/angle:Glotzer/CCC $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C3 $/atom:brancheds[0]/C5
+$/angle:bytype7 @/angle:Glotzer/CCC $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6 $/atom:brancheds[0]/C7
+$/angle:bytype8 @/angle:Glotzer/CCC $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6 $/atom:brancheds[0]/C8
+$/angle:bytype9 @/angle:Glotzer/CCC $/atom:brancheds[0]/C7 $/atom:brancheds[0]/C6 $/atom:brancheds[0]/C8

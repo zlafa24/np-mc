@@ -1,1 +1,1 @@
-step	#Regrowth	Rate	#Translation	Rate	#CBMCSwap	Rate	#Rotation	Rate
+step	#Regrowth	Rate

@@ -28,6 +28,3 @@ class TestMALDI(unittest.TestCase):
 
     def test_get_maldi_spectrum_returns_histogram_with_correct_size(self):
         self.assertEqual(len(self.maldi.get_maldi_spectrum()[0]),self.maldi.ligands_per_fragment+1,msg = "Histogram returned by get_maldi_spectrum is not the expected size.")
-    
-    def test_molecules_graph(self):
-        import pdb; pdb.set_trace()

@@ -1,0 +1,8 @@
+$/dihedral:bytype1 @/dihedral:Glotzer/SCCC $/atom:brancheds[0]/S $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C3
+$/dihedral:bytype2 @/dihedral:Glotzer/SCCC $/atom:brancheds[0]/S $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4
+$/dihedral:bytype3 @/dihedral:Glotzer/CCCC $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C3 $/atom:brancheds[0]/C5
+$/dihedral:bytype4 @/dihedral:Glotzer/CCCC $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6 $/atom:brancheds[0]/C7
+$/dihedral:bytype5 @/dihedral:Glotzer/CCCC $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6 $/atom:brancheds[0]/C8
+$/dihedral:bytype6 @/dihedral:Glotzer/CCCC $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C3 $/atom:brancheds[0]/C5
+$/dihedral:bytype7 @/dihedral:Glotzer/CCCC $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6
+$/dihedral:bytype8 @/dihedral:Glotzer/CCCC $/atom:brancheds[0]/C3 $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6

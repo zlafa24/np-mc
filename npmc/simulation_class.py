@@ -6,6 +6,7 @@ import npmc.atom_class as atm
 import npmc.move_class as mvc
 import os
 import time
+from cpuinfo import get_cpu_info
 import numpy as np
 import random as rnd
 import npmc.forcefield_class as ffc
@@ -14,43 +15,7 @@ import multiprocessing as mp
 #from pathos.multiprocessing import ProcessPool
 import concurrent.futures as cncf
 from math import *
-from subprocess import check_output
-    
-def test(process_name,tasks,results,atomlist):
-
-    lmp2 = lammps("",["-echo","none","-screen","lammps2.out"])
-    lmp2.file(os.path.abspath(os.path.abspath('./system.in')))
-    
-    lmp2.command("thermo 1")
-    lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
-    
-    lmp2.command("group silver type 1")
-    lmp2.command("group adsorbate type 2 3 4 5 6")
-    
-    lmp2.command("compute pair_pe all pe")
-    lmp2.command("compute mol_pe all pe dihedral")
-    lmp2.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
-    lmp2.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
-    lmp2.command("compute pair_total all pair lj/cut/coul/debye")
-    
-    lmp2.command("fix fxfrc silver setforce 0. 0. 0.")
-    
-    while True:
-        index, atom_coords = tasks.get()
-        
-        indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
-        coords = lmp2.gather_atoms("x",1,3)
-        for idx,i in zip(indxs,range(atom_coords.shape[0])):
-            coords[i*3]=atom_coords[idx][0]
-            coords[i*3+1]=atom_coords[idx][1]
-            coords[i*3+2]=atom_coords[idx][2]
-        
-        lmp2.scatter_atoms("x",1,3,coords)
-        lmp2.command("run 1 pre no post no")
-        energy = lmp2.extract_compute("pair_total",0,0)
-        
-        results.put((index, energy))
-        
+from subprocess import check_output        
 
 
 class Simulation(object):
@@ -74,7 +39,6 @@ class Simulation(object):
         A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
     def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False,parallel=False):
-        mp.set_start_method('fork')
         dname = os.path.dirname(os.path.abspath(init_file))
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
@@ -107,21 +71,16 @@ class Simulation(object):
         self.initialize_data_files(restart) 
         self.step=0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
-        
+        '''
         if parallel:
             self.manager = mp.Manager()
-            self.tasks = self.manager.Queue()
-            self.results = self.manager.Queue()
-        
-            self.pool = mp.Pool(processes=self.numtrials)
-            self.processes = []
-        
+            self.tasks = self.manager.Queue(maxsize=5)
+            self.results = self.manager.Queue(maxsize=5)
             for i in range(self.numtrials):
-                process_name = f'p{i}'
-                new_process = mp.Process(target=test, args=(process_name,self.tasks,self.results,self.atomlist), daemon=True)
-                self.processes.append(new_process)
+                pname = f'p{i}'
+                new_process = mp.Process(target=test, args=(pname,i,self.tasks,self.results), daemon=True)
                 new_process.start()
-
+        '''
     
     def clone_lammps(self):
        
@@ -157,10 +116,10 @@ class Simulation(object):
     
     def initializeMoves(self,anchortype,max_disp,type_lengths,numtrials,parallel=False):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,numtrials)
-        translate_move = mvc.TranslationMove(self,max_disp,[1])
-        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel)
-        rotation_move = mvc.RotationMove(self,anchortype,0.1745)
-        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
+        #translate_move = mvc.TranslationMove(self,max_disp,[1])
+        #swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel)
+        #rotation_move = mvc.RotationMove(self,anchortype,0.1745)
+        self.moves = [cbmc_move] #[cbmc_move,translate_move,swap_move,rotation_move]
     
     def initialize_data_files(self,restart=False):
         if not restart:
@@ -224,11 +183,10 @@ class Simulation(object):
         energies = self.lmp.extract_compute("pair_total",0,0)
         return(energies)
 
-    def parallel_pair_PE(self,coords):
+    def parallel_pair_PE(self,molID,index,rotations):
     
-        for i,atom_coords in enumerate(coords):
-            self.tasks.put((i, atom_coords))
-
+        for i,rotation in enumerate(rotations):
+            self.tasks.put((i,molID,index,rotation,self.get_atom_coords_2()))
         energies = np.empty(self.numtrials)
         for i in range(self.numtrials):
             index, energy = self.results.get()
@@ -318,6 +276,19 @@ class Simulation(object):
         """
         atom_coords = np.array([atom.position for atom in self.atomlist])
         return atom_coords
+    
+    def get_atom_coords_2(self):
+        """Returns positions of each atom in a Nx3 array
+
+        Returns
+        --------
+        atom_coords : float array
+            A Nx3 array with each row representing an atom and the columns containing the x, ym and z coordinates in that order.
+        """
+        atom_coords = np.empty((len(self.atomlist),3))
+        for atom in self.atomlist:
+            atom_coords[atom.atomID-1,:] = atom.position
+        return atom_coords
 
     def update_coords(self):
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
@@ -363,5 +334,97 @@ class Simulation(object):
         self.potential_file.flush()
         return accepted
             
+'''    
+def test(pname,ind,tasks,results):
 
+    lmp2 = lammps("",["-echo","none","-screen","lammps2.out"])
+    lmp2.file(os.path.abspath(os.path.abspath('./system.in')))
+    
+    lmp2.command("thermo 1")
+    lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
+    
+    lmp2.command("group silver type 1")
+    lmp2.command("group adsorbate type 2 3 4 5 6")
+    
+    lmp2.command("compute pair_pe all pe")
+    lmp2.command("compute mol_pe all pe dihedral")
+    lmp2.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
+    lmp2.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
+    lmp2.command("compute pair_total all pair lj/cut/coul/debye")
+    
+    lmp2.command("fix fxfrc silver setforce 0. 0. 0.")
+    
+    molecules = mol.constructMolecules('./system.data')
+    atomlist = []
+    for key in molecules:
+        atomlist.extend(molecules[key].atoms)
+
+    atomdict = {}
+    for atom in atomlist:
+        atomdict[atom.atomID] = atom
+
+    anchortype=4    
+    for key, molecule in molecules.items():
+        anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==anchortype]
+        if len(anchorIDs)>0:
+            molecule.setAnchorAtom(anchorIDs[0])
+    
+    while True:
+    
+        index, molID, mol_index, rotation, atom_coords, start_idx = tasks.get()
+        
+        start = time.time()
+        
+        molecule = molecules[molID]
+        if (index+1>=len(molecule.atoms)):
+            self.simulation.turn_on_all_atoms()
+        else:
+            indices_to_turn_off = np.arange(index+1,len(molecule.atoms))
+            atoms = map(molecule.getAtomByMolIndex,indices_to_turn_off)
+            atomIDs = [atom.atomID for atom in atoms]
+            self.simulation.turn_off_atoms(atomIDs)
+        
+        for i,atom_coord in enumerate(atom_coords):
+            atomdict[i+1].position = atom_coord
+
+        if start_idx:
+        
+            indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
+            coords = lmp2.gather_atoms("x",1,3)
+            for idx,i in zip(indxs,range(len(atomlist))):
+                coords[i*3]=atomlist[idx].position[0]
+                coords[i*3+1]=atomlist[idx].position[1]
+                coords[i*3+2]=atomlist[idx].position[2]
+            lmp2.scatter_atoms("x",1,3,coords)
+            lmp2.command("run 0 post no")    
+            
+        indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
+        coords = lmp2.gather_atoms("x",1,3)
+        for idx,i in zip(indxs,range(len(atomlist))):
+            coords[i*3]=atomlist[idx].position[0]
+            coords[i*3+1]=atomlist[idx].position[1]
+            coords[i*3+2]=atomlist[idx].position[2]
+        lmp2.scatter_atoms("x",1,3,coords)
+        lmp2.command("run 0 post no")
+        
+        molecule.rotateDihedral(mol_index,rotation)
+         
+        indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
+        coords = lmp2.gather_atoms("x",1,3)
+        for idx,i in zip(indxs,range(len(atomlist))):
+            coords[i*3]=atomlist[idx].position[0]
+            coords[i*3+1]=atomlist[idx].position[1]
+            coords[i*3+2]=atomlist[idx].position[2]
+                
+        lmp2.scatter_atoms("x",1,3,coords)
+        lmp2.command("run 1 pre no post no")
+        energy = lmp2.extract_compute("pair_total",0,0)
+        
+        molecule.rotateDihedral(mol_index,-rotation)
+        
+        #print(pname, time.time()-start)
+        #print(energy)
+                
+        results.put((index, energy))
+'''
 

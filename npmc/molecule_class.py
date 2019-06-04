@@ -115,12 +115,48 @@ class Molecule(object):
         """
         if(index>(len(self.atoms)-1)):
             return None
-        successor_dict= ntwkx.dfs_successors(self.graph,source=self.anchorAtom.atomID)
+        successor_dict = ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID)
         currentID = self.anchorAtom.atomID
-        for i in range(index):
-            currentID = successor_dict[currentID][0]
+        idx = 1
+        while idx < index:
+            level = next(successor_dict)
+            while idx < index:
+                try: 
+                    currentID = level[1].pop(0)
+                    idx += 1
+                except: break
         return self.getAtomByID(currentID)
+        
+    def getAtomsByMolIndex(self,index):
+        """Returns the Atom by it's index in the molecule where the index is defined as the number of bonds away from the anchor atom 
+        (i.e. the atom at index 1 is the atom directly connected to the anchor atom)
 
+        Parameters
+        ----------
+        index : int
+            The molecular index of the Atom object one wishes to retrieve where the index is defined as the number of bonds away from the anchor atom.
+
+        Returns
+        -------
+        Atom Object
+            The Atom Object located at the specified index if the index is greater than the number of atoms in the molecule minus one then 
+            the function returns None as this is out of the range of the atom list.
+        """
+        if(index>(len(self.atoms)-1)):
+            return None
+        successor_dict = ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID)
+        currentID = self.anchorAtom.atomID
+        indexed_atoms = [currentID]
+        idx = 0
+        while idx < index:
+            atoms = []
+            IDs = next(successor_dict)[1]
+            indexed_atoms.extend(IDs)
+            for ID in IDs:
+                atoms.append(self.getAtomByID(ID))
+            idx += len(IDs)
+        return atoms, indexed_atoms
+        
     def rotateDihedral(self,index,theta):
         """Rotates the atoms of the molecule from the atom given by 'index' all the way to the last atom (here the last atom is the one opposite the defined "anchor atom") about a dihedral axis.
         Here the dihedral axis is defined by the two atoms that come before the 'index' atom as defined by the graph of the molecule.  Due to the way the function is defined the 'index' of the 
@@ -144,7 +180,13 @@ class Molecule(object):
             atom4.position = rot_quat(vector,theta,axis)+atom3.position
 
     
-    def index2dihedral(self,index):
+    def findPaths(self,atom,length):
+        if length == 0:
+            return [[atom]]
+        paths = [[atom]+path for neighbor in self.graph.neighbors(atom) for path in self.findPaths(neighbor,length-1) if atom not in path]
+        return paths
+    
+    def index2dihedrals(self,index):
         """Returns the dihedral associated with the given atom index of the molecule.
 
         Parameters
@@ -159,12 +201,21 @@ class Molecule(object):
         """
         if(index<3 or index>(len(self.atoms)-1)):
             raise ValueError("You must pass the index of the fourth atom, which means the index must br greater than 2 and less than the length of the molecule.  The index you passed %d" % index)
-        atom1 = self.getAtomByMolIndex(index-3)
-        atom2 = self.getAtomByMolIndex(index-2)
-        atom3 = self.getAtomByMolIndex(index-1)
-        atom4 = self.getAtomByMolIndex(index)
-        dihedral = [dihedral for dihedral in self.dihedrals if all([dihedral.atom1==atom1.atomID,dihedral.atom2==atom2.atomID,dihedral.atom3==atom3.atomID,dihedral.atom4==atom4.atomID])][0]
-        return(dihedral)
+        print('index', index)
+        dihedrals_IDs = []
+        dihedrals = []
+        atoms, indexed_atoms = self.getAtomsByMolIndex(index)
+        print('indexed atoms', indexed_atoms)
+        print('atoms', [[atom.atomID] for atom in atoms])
+        for atom in atoms:
+            dihedrals_IDs.extend(self.findPaths(atom.atomID,3))
+        for dihedral_IDs in list(dihedrals_IDs):
+            if any(atom not in indexed_atoms for atom in dihedral_IDs): dihedrals_IDs.remove(dihedral_IDs)
+            else: dihedrals.extend([dihedral for dihedral in self.dihedrals if set(dihedral_IDs) == dihedral.atoms])
+        print('dihedral IDs', dihedrals_IDs)
+        for dihedral in dihedrals:
+            print('dihedral', dihedral.atoms)
+        return(dihedrals, atoms)
 
     
     def getDihedralAngle(self,dihedral):
@@ -194,7 +245,7 @@ class Molecule(object):
         angle = atan2(np.dot(m1,b2norm),np.dot(n1,n2))    
         angle=angle%(2*pi)
         return angle
-
+        
     def align_to_vector(self,vector):
         molecule_vector = self.get_com()-self.anchorAtom.position
         if np.linalg.norm(vector)==0. or np.linalg.norm(molecule_vector)==0.:
@@ -266,6 +317,7 @@ class Angle(object):
         self.atom1 = int(atom1)
         self.atom2 = int(atom2)
         self.atom3 = int(atom3)
+        self.atoms = [atom1,atom2,atom3]
     
     def __eq__(self,other):
         if isinstance(other,self.__class__):
@@ -300,6 +352,7 @@ class Dihedral(object):
         self.atom2 = int(atom2)
         self.atom3 = int(atom3)
         self.atom4 = int(atom4)
+        self.atoms = set([atom1,atom2,atom3,atom4])
     
     def __eq__(self,other):
         if isinstance(other,self.__class__):
@@ -401,8 +454,8 @@ def getAnglesFromAtoms(atomlist,bondlist,angles):
     angle_combos=[]
     #Get possible angles by getting subgraphs with only 2 steps
     for atom1,atom2 in permutations(mol_graph.__iter__(),r=2):
-        if(ntwkx.shortest_path_length(mol_graph,source=atom1,target=atom2)==2):
-            angle_combos.append(ntwkx.shortest_path(mol_graph,source=atom1,target=atom2))      
+        if (ntwkx.shortest_path_length(mol_graph,source=atom1,target=atom2)==2):
+            angle_combos.append(ntwkx.shortest_path(mol_graph,source=atom1,target=atom2))
     anglelist=[]
     for angle in angles:
         if([angle.atom1,angle.atom2,angle.atom3] in angle_combos):
