@@ -8,6 +8,7 @@ from itertools import groupby, permutations
 import networkx as ntwkx
 import numpy as np
 from math import *
+import pdb
 
 class Molecule(object):
     """This class is used to represent a molecule in a simulation and holds all
@@ -80,6 +81,19 @@ class Molecule(object):
             A Networkx Graph object with the nodes being the atom ID's of the atoms in the molecule and the connections defined by the Molecule's Bonds
         """
         return molecule2graph(self.atoms,self.bonds)
+        
+    def findBranchPoints(self): 
+        branch_points = []
+        predecessor_dict = dict(ntwkx.bfs_predecessors(self.graph,source=self.anchorAtom.atomID))
+        for node in self.graph:
+            if len(self.graph[node])>2: 
+                branch_atoms = set(list(self.graph[node].keys())+[node]+[predecessor_dict[predecessor_dict[node]]])
+                dihedral_types = [dihedral.dihType for dihedral in self.dihedrals if dihedral.atoms.issubset(branch_atoms)]
+                angle_atoms = set(list(self.graph[node].keys())+[node]); angle_atoms.remove(predecessor_dict[node])
+                angle_type = [angle.angleType for angle in self.angles if angle.atoms==angle_atoms]
+                branch_points.append(tuple(dihedral_types+angle_type))
+        return branch_points
+        
     def getAtomByID(self,atomID):
         """Returns the Atom object associated with the given atom ID as long as the atom is associated with the molecule.
 
@@ -155,9 +169,9 @@ class Molecule(object):
             for ID in IDs:
                 atoms.append(self.getAtomByID(ID))
             idx += len(IDs)
-        return atoms, indexed_atoms
+        return atoms,indexed_atoms
         
-    def rotateDihedral(self,index,theta):
+    def rotateDihedrals(self,atoms,thetas):
         """Rotates the atoms of the molecule from the atom given by 'index' all the way to the last atom (here the last atom is the one opposite the defined "anchor atom") about a dihedral axis.
         Here the dihedral axis is defined by the two atoms that come before the 'index' atom as defined by the graph of the molecule.  Due to the way the function is defined the 'index' of the 
         atom must be greater than 3, but of course less than the total length of the molecule.
@@ -169,17 +183,36 @@ class Molecule(object):
         theta : float
             The angle in radians which specifies the angle of rotation about the dihedral axis which you want to perform.
         """
-        if(index<3 or index>(len(self.atoms)-1)):
-            raise ValueError("In order to rotate dihedral you must pass an 3<=index<=len(atoms)-1, you passed %d" % index)
-        atom2 = self.getAtomByMolIndex(index-2)
-        atom3 = self.getAtomByMolIndex(index-1)
-        axis = atom3.position-atom2.position
-        for i in range(index,len(self.atoms)):
-            atom4 = self.getAtomByMolIndex(i)
-            vector = atom4.position-atom3.position
-            atom4.position = rot_quat(vector,theta,axis)+atom3.position
+        successor_dict = dict(ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID))
+        predecessor_dict = dict(ntwkx.bfs_predecessors(self.graph,source=self.anchorAtom.atomID))
+        if len(atoms) == 1: thetas = [thetas]
+        for i,atom1 in enumerate(atoms):
+            atom2_ID = predecessor_dict[atom1.atomID]
+            atom2 = self.getAtomByID(atom2_ID)
+            atom3 = self.getAtomByID(predecessor_dict[atom2_ID])
+            axis = atom3.position-atom2.position
+            rotate_ID = atom1.atomID
+            branch_ID = 0
+            while True:
+                atom4 = self.getAtomByID(rotate_ID)
+                vector = atom4.position-atom3.position
+                atom4.position = rot_quat(vector,thetas[i],axis)+atom3.position
+                try: rotate_ID = successor_dict[rotate_ID]
+                except: 
+                    if branch_ID > 0: 
+                        rotate_ID = branch_ID
+                        atom4 = self.getAtomByID(rotate_ID)
+                        vector = atom4.position-atom3.position
+                        atom4.position = rot_quat(vector,thetas[i],axis)+atom3.position
+                        branch_ID = 0
+                        continue
+                    else: break
+                if len(rotate_ID) == 1:
+                    rotate_ID = rotate_ID[0]
+                elif len(rotate_ID) == 2: 
+                    branch_ID = rotate_ID[1]
+                    rotate_ID = rotate_ID[0]
 
-    
     def findPaths(self,atom,length):
         if length == 0:
             return [[atom]]
@@ -201,21 +234,15 @@ class Molecule(object):
         """
         if(index<3 or index>(len(self.atoms)-1)):
             raise ValueError("You must pass the index of the fourth atom, which means the index must br greater than 2 and less than the length of the molecule.  The index you passed %d" % index)
-        print('index', index)
         dihedrals_IDs = []
         dihedrals = []
-        atoms, indexed_atoms = self.getAtomsByMolIndex(index)
-        print('indexed atoms', indexed_atoms)
-        print('atoms', [[atom.atomID] for atom in atoms])
+        atoms,indexed_atoms = self.getAtomsByMolIndex(index)
         for atom in atoms:
             dihedrals_IDs.extend(self.findPaths(atom.atomID,3))
         for dihedral_IDs in list(dihedrals_IDs):
             if any(atom not in indexed_atoms for atom in dihedral_IDs): dihedrals_IDs.remove(dihedral_IDs)
             else: dihedrals.extend([dihedral for dihedral in self.dihedrals if set(dihedral_IDs) == dihedral.atoms])
-        print('dihedral IDs', dihedrals_IDs)
-        for dihedral in dihedrals:
-            print('dihedral', dihedral.atoms)
-        return(dihedrals, atoms)
+        return dihedrals,atoms
 
     
     def getDihedralAngle(self,dihedral):
@@ -252,11 +279,11 @@ class Molecule(object):
             raise ValueError("Alignment vector passed in must have a non-zero magnitude.")
         anchor_position = self.anchorAtom.position
         axis_rotation = np.cross(molecule_vector,vector)
+        print(axis_rotation)
         angle = acos(np.dot(molecule_vector/np.linalg.norm(molecule_vector),vector/np.linalg.norm(vector)))
         rotate_atoms = [atom for atom in self.atoms if not (atom.atomID==self.anchorAtom.atomID)]
         for atom in rotate_atoms:
-            atom.position = rot_quat((atom.position-anchor_position),angle,axis_rotation)+anchor_position
-        
+            atom.position = rot_quat((atom.position-anchor_position),angle,axis_rotation)+anchor_position       
 
     def move_atoms(self,move):
         for atom in self.atoms:
@@ -317,7 +344,7 @@ class Angle(object):
         self.atom1 = int(atom1)
         self.atom2 = int(atom2)
         self.atom3 = int(atom3)
-        self.atoms = [atom1,atom2,atom3]
+        self.atoms = set([int(atom1),int(atom2),int(atom3)])
     
     def __eq__(self,other):
         if isinstance(other,self.__class__):
@@ -352,7 +379,7 @@ class Dihedral(object):
         self.atom2 = int(atom2)
         self.atom3 = int(atom3)
         self.atom4 = int(atom4)
-        self.atoms = set([atom1,atom2,atom3,atom4])
+        self.atoms = set([int(atom1),int(atom2),int(atom3),int(atom4)])
     
     def __eq__(self,other):
         if isinstance(other,self.__class__):

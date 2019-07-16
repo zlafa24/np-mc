@@ -1,0 +1,13 @@
+tolerance 2.5
+
+seed -1
+
+output sing_branched.xyz
+
+filetype xyz
+
+structure branched.xyz
+	number 1
+    center
+    fixed 0. 0. 0. 0. 0. 0.
+end structure
