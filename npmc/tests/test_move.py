@@ -10,6 +10,7 @@ from math import *
 import sys
 import npmc.move_class as mvc
 import npmc.molecule_class as mlc
+import pdb
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -25,8 +26,8 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
         self.temp = 298.15
         self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
-        self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2)
-        self.cbmc_move_parallel = mvc.CBMCRegrowth(self.simulation,2,parallel=True)
+        self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2,(5,5))
+        self.cbmc_move_parallel = mvc.CBMCRegrowth(self.simulation,2,(5,5),parallel=True)
 
     def test_select_random_molecule_returns_molecule(self):
         self.assertIsInstance(self.cbmc_move.select_random_molecule(),mlc.Molecule,msg="select_random_molecule does not return an object of type Molecule.")
@@ -37,14 +38,14 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.assertTrue(3<=index<len(test_molecule.atoms),msg="Index returned by select_index is outside the bounds of the prescribed range.")
 
     def test_select_dih_angles_returns_correct_pdf_after_1000000_trials_for_a_CCOH_OPLS_dihedral(self):
-        cbmc_move_large_trials = mvc.CBMCRegrowth(self.simulation,2,numtrials=10000000)
+        cbmc_move_large_trials = mvc.CBMCRegrowth(self.simulation,2,(5,5),numtrials=10000000)
         (normed_histogram,bins) = np.histogram(cbmc_move_large_trials.select_dih_angles(4),bins=500,density=True)
         np.testing.assert_array_almost_equal(normed_histogram,self.dihedral_type4_pdf,decimal=2,err_msg="The resulting histogram from 100000 trials of select_dih_angles does not match the distriburion expected by the PDF of the OPLS dihedral type for a CCOH dihedral.")
 
     def test_evaluate_energies_returns_expected_energies_for_specified_angles(self):
         molecule = self.simulation.molecules[1]
         rotations = [0,pi,2*pi,pi/2.,2*pi]
-        energies = self.cbmc_move.evaluate_energies(molecule,4,rotations)
+        energies = self.cbmc_move.evaluate_energies(molecule,[molecule.getAtomByMolIndex(4)],rotations)
         actual_energies = [-1.1082622,-1.34260189,-1.1082622,-1.55146693,-1.1082622]
         np.testing.assert_array_almost_equal(energies,actual_energies,err_msg="evaluate_energies does not return correct energies for a set of specified rotation angles.")
     '''
@@ -59,7 +60,7 @@ class TestCBMCRegrowth(unittest.TestCase):
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],3)
         self.assertAlmostEqual(-1.6710847+1.1598538,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
-    
+      
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen_and_oxygen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],2)
         self.assertAlmostEqual(-1.4003423+0.0120187,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
@@ -161,6 +162,31 @@ class TestCBMCSwap(unittest.TestCase):
         position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
         position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
         np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms.")
+        
+    def test_swap_molecule_positions_maintains_bond_angles(self):
+        molecule1,molecule2=self.swap_move.select_random_molecules()
+        atoms1 = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
+        atoms2 = [molecule2.getAtomByMolIndex(i) for i in range(len(molecule2.atoms))]
+        angles_pre = getAngles(atoms2)       
+        self.swap_move.swap_molecule_positions(molecule1,molecule2)
+        angles_post = getAngles(atoms1)
+        np.testing.assert_allclose(angles_pre,angles_post,err_msg='swap_molecule_positions changes bond angles')
+        
+    def test_align_molecules_maintains_bond_angles(self):
+        molecule1,molecule2=self.swap_move.select_random_molecules()
+        atoms = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
+        angles_pre = getAngles(atoms)
+        self.swap_move.align_molecules(molecule1,molecule2)
+        angles_post = getAngles(atoms)   
+        np.testing.assert_allclose(angles_pre,angles_post,err_msg='align_molecules changes bond angles')
+        
+    def test_swap_anchor_positions_maintains_bond_angles(self):
+        molecule1,molecule2=self.swap_move.select_random_molecules()
+        atoms = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
+        angles_pre = getAngles(atoms)
+        self.swap_move.swap_anchor_positions(molecule1,molecule2)
+        angles_post = getAngles(atoms)   
+        np.testing.assert_allclose(angles_pre,angles_post,err_msg='swap_anchor_positions changes bond angles')    
 
     @mock.patch.object(mvc.CBMCSwap,'regrow')
     def test_move_returns_False_when_regrow_returns_False(self,mock_method):
@@ -184,7 +210,16 @@ class TestCBMCSwap(unittest.TestCase):
     def tearDown(self):
         os.chdir(script_path)
 
-
+def getAngles(atoms):
+    angles = np.empty(2)
+    for i in range(2):
+        atom1 = atoms[0+i].position
+        atom2 = atoms[1+i].position
+        atom3 = atoms[2+i].position
+        line1 = atom1-atom2
+        line2 = atom3-atom2
+        angles[i] = np.arccos(np.dot(line1, line2) / (np.linalg.norm(line1)*np.linalg.norm(line2)))
+    return angles
 
 
 

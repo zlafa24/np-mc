@@ -131,7 +131,7 @@ class Molecule(object):
             return None
         successor_dict = ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID)
         currentID = self.anchorAtom.atomID
-        idx = 1
+        idx = 0
         while idx < index:
             level = next(successor_dict)
             while idx < index:
@@ -186,12 +186,12 @@ class Molecule(object):
         successor_dict = dict(ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID))
         predecessor_dict = dict(ntwkx.bfs_predecessors(self.graph,source=self.anchorAtom.atomID))
         if len(atoms) == 1: thetas = [thetas]
-        for i,atom1 in enumerate(atoms):
-            atom2_ID = predecessor_dict[atom1.atomID]
-            atom2 = self.getAtomByID(atom2_ID)
-            atom3 = self.getAtomByID(predecessor_dict[atom2_ID])
+        for i,atom4 in enumerate(atoms):
+            atom3_ID = predecessor_dict[atom4.atomID]
+            atom3 = self.getAtomByID(atom3_ID)
+            atom2 = self.getAtomByID(predecessor_dict[atom3_ID])
             axis = atom3.position-atom2.position
-            rotate_ID = atom1.atomID
+            rotate_ID = atom4.atomID
             branch_ID = 0
             while True:
                 atom4 = self.getAtomByID(rotate_ID)
@@ -205,7 +205,8 @@ class Molecule(object):
                         vector = atom4.position-atom3.position
                         atom4.position = rot_quat(vector,thetas[i],axis)+atom3.position
                         branch_ID = 0
-                        continue
+                        try: rotate_ID = successor_dict[rotate_ID]
+                        except: break
                     else: break
                 if len(rotate_ID) == 1:
                     rotate_ID = rotate_ID[0]
@@ -279,7 +280,6 @@ class Molecule(object):
             raise ValueError("Alignment vector passed in must have a non-zero magnitude.")
         anchor_position = self.anchorAtom.position
         axis_rotation = np.cross(molecule_vector,vector)
-        print(axis_rotation)
         angle = acos(np.dot(molecule_vector/np.linalg.norm(molecule_vector),vector/np.linalg.norm(vector)))
         rotate_atoms = [atom for atom in self.atoms if not (atom.atomID==self.anchorAtom.atomID)]
         for atom in rotate_atoms:

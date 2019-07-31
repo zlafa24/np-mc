@@ -105,6 +105,8 @@ class Simulation(object):
         """
         lmp.command("compute pair_pe all pe")
         lmp.command("compute mol_pe all pe dihedral")
+        lmp.command("compute ang_pe all pe angle")
+        lmp.command("compute bond_pe all pe bond")
         lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
         lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
         lmp.command("compute pair_total all pair lj/cut/coul/debye")

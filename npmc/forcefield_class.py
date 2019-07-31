@@ -129,7 +129,7 @@ class BranchPDF():
     
     def unnorm_prob(self,phi1,phi2):
         theta = np.absolute(phi1-phi2)
-        theta = np.where(theta>pi, 2*pi-theta, theta)
+        theta = np.where(theta>pi, 2*pi-theta, theta) % (2*np.pi)
         unnorm_probs = np.exp(-self.beta*(self.dihFF1.ff_function(phi1)+self.dihFF2.ff_function(phi2)+self.angleFF.ff_function(theta)))
         return unnorm_probs
        
