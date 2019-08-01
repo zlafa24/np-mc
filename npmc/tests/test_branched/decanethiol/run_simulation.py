@@ -14,7 +14,7 @@ sim.exclude_type(1,1)
 print("Energy after exclude_type is "+str(sim.get_total_PE()))
 sim.minimize()
 
-numsteps=10000
+numsteps=1000
 
 start = time.time()
 energyfile = 'full_potential_energy.txt'

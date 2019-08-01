@@ -167,26 +167,13 @@ class TestCBMCSwap(unittest.TestCase):
         molecule1,molecule2=self.swap_move.select_random_molecules()
         atoms1 = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
         atoms2 = [molecule2.getAtomByMolIndex(i) for i in range(len(molecule2.atoms))]
-        angles_pre = getAngles(atoms2)       
+        angles1_pre = getAngles(atoms1[2:5],1)
+        angles2_pre = getAngles(atoms2[2:6],2)       
         self.swap_move.swap_molecule_positions(molecule1,molecule2)
-        angles_post = getAngles(atoms1)
-        np.testing.assert_allclose(angles_pre,angles_post,err_msg='swap_molecule_positions changes bond angles')
-        
-    def test_align_molecules_maintains_bond_angles(self):
-        molecule1,molecule2=self.swap_move.select_random_molecules()
-        atoms = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
-        angles_pre = getAngles(atoms)
-        self.swap_move.align_molecules(molecule1,molecule2)
-        angles_post = getAngles(atoms)   
-        np.testing.assert_allclose(angles_pre,angles_post,err_msg='align_molecules changes bond angles')
-        
-    def test_swap_anchor_positions_maintains_bond_angles(self):
-        molecule1,molecule2=self.swap_move.select_random_molecules()
-        atoms = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
-        angles_pre = getAngles(atoms)
-        self.swap_move.swap_anchor_positions(molecule1,molecule2)
-        angles_post = getAngles(atoms)   
-        np.testing.assert_allclose(angles_pre,angles_post,err_msg='swap_anchor_positions changes bond angles')    
+        angles1_post = getAngles(atoms1[2:5],1)
+        angles2_post = getAngles(atoms2[2:6],2) 
+        np.testing.assert_allclose(angles1_pre,angles1_post,err_msg='swap_molecule_positions changes bond angles in molecule 1')  
+        np.testing.assert_allclose(angles2_pre,angles2_post,err_msg='swap_molecule_positions changes bond angles in molecule 2')
 
     @mock.patch.object(mvc.CBMCSwap,'regrow')
     def test_move_returns_False_when_regrow_returns_False(self,mock_method):
@@ -210,9 +197,9 @@ class TestCBMCSwap(unittest.TestCase):
     def tearDown(self):
         os.chdir(script_path)
 
-def getAngles(atoms):
-    angles = np.empty(2)
-    for i in range(2):
+def getAngles(atoms,numAngles):
+    angles = np.empty(numAngles)
+    for i in range(numAngles):
         atom1 = atoms[0+i].position
         atom2 = atoms[1+i].position
         atom3 = atoms[2+i].position

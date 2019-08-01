@@ -337,16 +337,42 @@ class CBMCSwap(CBMCRegrowth):
         for i,position in enumerate(positions):
             move = position-mol.getAtomByMolIndex(i).position
             mol.move_atoms_by_index(move,i)
+            
+    def get_rotation_angles_vectors(self,positions):
+        vector1 = positions[-2]-positions[-3]
+        vector2 = positions[-2]-positions[-1]
+        rotation_axis = np.cross(vector1,vector2)
+        angle = get_bond_angle(positions[-3],positions[-2],positions[-1])
+        return vector1,vector2,rotation_axis,angle
 
-    def swap_molecule_positions(self,mol1,mol2):
-        positions_mol1 = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
-        positions_mol2 = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
+    def adjust_first_regrowth_atoms(self,mol1,mol2,positions_mol1,positions_mol2):
+        vector1_1,vector1_2,rotation_axis1,angle1 = self.get_rotation_angles_vectors(positions_mol1)
+        vector2_1,vector2_2,rotation_axis2,angle2 = self.get_rotation_angles_vectors(positions_mol2)
+        move1 = positions_mol2[-2]-molc.rot_quat(vector2_1,angle1,rotation_axis2)*np.linalg.norm(vector1_2)/np.linalg.norm(vector2_1)-mol1.getAtomByMolIndex(self.starting_index+1).position
+        move2 = positions_mol1[-2]-molc.rot_quat(vector1_1,angle2,rotation_axis1)*np.linalg.norm(vector2_2)/np.linalg.norm(vector1_1)-mol2.getAtomByMolIndex(self.starting_index+1).position
+        mol1.move_atoms_by_index(move1,self.starting_index+1)
+        mol2.move_atoms_by_index(move2,self.starting_index+1)
+        
+    def align_partial_molecule(self,mol,angle):
+        positions = np.copy(np.array([mol.getAtomByMolIndex(i).position for i in np.arange(self.starting_index,len(mol.atoms))]))
+        rotate_angle = angle - get_bond_angle(positions[0],positions[1],positions[2])
+        rotation_axis = np.cross(positions[2]-positions[1],positions[1]-positions[0])
+        for i in np.arange(self.starting_index+2,len(mol.atoms)):
+            mol.getAtomByMolIndex(i).position = positions[1]+molc.rot_quat(mol.getAtomByMolIndex(i).position-positions[1],rotate_angle,rotation_axis)
+
+    def swap_molecule_positions(self,mol1,mol2): 
+        angles = [get_bond_angle(mol.getAtomByMolIndex(self.starting_index).position,mol.getAtomByMolIndex(self.starting_index+1).position,mol.getAtomByMolIndex(self.starting_index+2).position) if len(mol.atoms) > self.starting_index+2 else None for mol in [mol1,mol2]]
+        positions_mol1 = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(self.starting_index+2)]))
+        positions_mol2 = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(self.starting_index+2)]))
         self.swap_anchor_positions(mol1,mol2)
         self.align_molecules(mol1,mol2)
-        self.align_mol_to_positions(mol1,positions_mol2)
-        self.align_mol_to_positions(mol2,positions_mol1)
+        self.align_mol_to_positions(mol1,positions_mol2[:-1])
+        self.align_mol_to_positions(mol2,positions_mol1[:-1])
+        self.adjust_first_regrowth_atoms(mol1,mol2,positions_mol1[-3:],positions_mol2[-3:])
+        for i,mol in enumerate([mol1,mol2]):
+            if len(mol.atoms) > self.starting_index+2:
+                self.align_partial_molecule(mol,angles[i])
         self.simulation.update_coords()
-         
 
     def select_random_molecules(self):
         """Selects a random elegible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
@@ -508,7 +534,11 @@ class RotationMove(Move):
             self.num_accepted+=1
         return(accepted)
 
-
+def get_bond_angle(position1,position2,position3):
+    vector1 = position2-position1   
+    vector2 = position2-position3
+    angle = np.arccos(np.dot(vector1, vector2)/(np.linalg.norm(vector1)*np.linalg.norm(vector2)))
+    return angle
 
 
 
