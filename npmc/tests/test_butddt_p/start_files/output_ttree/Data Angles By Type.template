@@ -1,4 +1,0 @@
-		@/angle:Glotzer/SCC @/atom:Glotzer/S  @/atom:Glotzer/C* @/atom:Glotzer/C* @/bond:Glotzer/SC @/bond:Glotzer/CC
-		@/angle:Glotzer/CCC @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/C* @/bond:Glotzer/CC @/bond:Glotzer/CC
-		@/angle:Glotzer/CCO @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/O  @/bond:Glotzer/CC @/bond:Glotzer/CO
-		@/angle:Glotzer/COH @/atom:Glotzer/C* @/atom:Glotzer/O  @/atom:Glotzer/H  @/bond:Glotzer/CO @/bond:Glotzer/OH

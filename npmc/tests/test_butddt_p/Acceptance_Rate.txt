@@ -1,2 +1,0 @@
-step	#Regrowth	Rate
-1	1	1.0

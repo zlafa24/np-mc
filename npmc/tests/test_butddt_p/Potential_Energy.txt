@@ -1,2 +1,0 @@
-step	Energy	move	Accepted?
-1	-15594.453800669155	Regrowth	True
