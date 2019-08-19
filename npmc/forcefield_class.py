@@ -37,6 +37,7 @@ class DihedralForceField(ForceField):
     def __init__(self,settings_filename,dihedral_type):
         self.dihedral_type = dihedral_type
         (ff_type,ff_params)=get_ff_params(settings_filename,dihedral_type,ff_style='dihedral')
+        self.ff_type = ff_type
         ff_function = get_ff_function(settings_filename,dihedral_type,ff_style='dihedral')
         super(DihedralForceField,self).__init__(ff_function,ff_params) 
     
@@ -80,12 +81,13 @@ class AngleForceField(ForceField):
 
 class BranchPDF():
 
-    def __init__(self,dihFF1,dihFF2,angleFF,temp,read=False,write=False):
+    def __init__(self,dihFF1,dihFF2,angleFF,bond_angles,temp,read=False,write=False):
         self.dihFF1 = dihFF1; self.dihFF2 = dihFF2; self.angleFF = angleFF
+        self.bond_angles = bond_angles
         kb = 0.0019872041
         self.beta = 1./(kb*temp)
         self.Q = si.dblquad(self.unnorm_prob, 0,2*pi, 0,2*pi)[0]
-        self.weighted = True 
+        self.weighted = True      
         if read: self.pdf,self.weights = self.read_pdf(self.weighted)
         elif self.weighted: self.pdf,self.weights = self.tabulate_pdf_weighted(250,write)
         else: self.pdf = self.tabulate_pdf(100,100,write)
@@ -128,8 +130,7 @@ class BranchPDF():
         return flatten_probs
     
     def unnorm_prob(self,phi1,phi2):
-        theta = np.absolute(phi1-phi2)
-        theta = np.where(theta>pi, 2*pi-theta, theta) % (2*np.pi)
+        theta = central_angle_Vincenty(phi1,phi2,self.bond_angles[0],self.bond_angles[1])
         unnorm_probs = np.exp(-self.beta*(self.dihFF1.ff_function(phi1)+self.dihFF2.ff_function(phi2)+self.angleFF.ff_function(theta)))
         return unnorm_probs
        
@@ -188,13 +189,22 @@ def initialize_angle_ffs(settings_filename):
     return([AngleForceField(settings_filename,int(coeff[1])) for coeff in coeffs])
     
 def initialize_branch_pdfs(molecules,dihedral_ffs,angle_ffs,T,read=False,write=False):
-    branch_points = set([branch_point for molecule in molecules for branch_point in molecule.findBranchPoints()])
-    branchPDFs = []
+    branch_points = [branch_point for molecule in molecules for branch_point in molecule.findBranchPoints()]
+    branchPDFs = []; known_types = []
     for branch_point in branch_points:
-        dihedral_ff1 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==branch_point[0]][0]
-        dihedral_ff2 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==branch_point[1]][0]           
-        angle_ff = [angle_ff for angle_ff in angle_ffs if angle_ff.angle_type==branch_point[2]][0]
-        branchPDFs.append(BranchPDF(dihedral_ff1,dihedral_ff2,angle_ff,T,read=read,write=write))
+        types = branch_point[0]
+        if types in known_types: continue
+        dihedral_ff1 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==types[0]][0]
+        dihedral_ff2 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==types[1]][0]           
+        angle_ff = [angle_ff for angle_ff in angle_ffs if angle_ff.angle_type==types[2]][0]
+        branchPDFs.append(BranchPDF(dihedral_ff1,dihedral_ff2,angle_ff,branch_point[1],T,read=read,write=write))
+        known_types.append(types)
     return branchPDFs
     
-        
+def central_angle_Vincenty(phi1,phi2,lambda1,lambda2):
+    lambda1 = lambda1-np.pi/2; lambda2 = lambda2-np.pi/2
+    dphi = np.absolute(phi1-phi2)
+    numerator = ((np.cos(lambda2)*np.sin(dphi))**2 + (np.cos(lambda1)*np.sin(lambda2) - np.sin(lambda1)*np.cos(lambda2)*np.cos(dphi))**2)**0.5
+    denominator = np.sin(lambda1)*np.sin(lambda2) + np.cos(lambda1)*np.cos(lambda2)*np.cos(dphi)
+    theta = np.arctan(numerator/denominator)
+    return np.where(theta<0,pi+theta,theta)   

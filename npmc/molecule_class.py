@@ -85,13 +85,16 @@ class Molecule(object):
     def findBranchPoints(self): 
         branch_points = []
         predecessor_dict = dict(ntwkx.bfs_predecessors(self.graph,source=self.anchorAtom.atomID))
+        successor_dict = dict(ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID))
         for node in self.graph:
             if len(self.graph[node])>2: 
                 branch_atoms = set(list(self.graph[node].keys())+[node]+[predecessor_dict[predecessor_dict[node]]])
-                dihedral_types = [dihedral.dihType for dihedral in self.dihedrals if dihedral.atoms.issubset(branch_atoms)]
-                angle_atoms = set(list(self.graph[node].keys())+[node]); angle_atoms.remove(predecessor_dict[node])
-                angle_type = [angle.angleType for angle in self.angles if angle.atoms==angle_atoms]
-                branch_points.append(tuple(dihedral_types+angle_type))
+                dihedrals = [dihedral for dihedral in self.dihedrals if dihedral.atoms.issubset(branch_atoms)]
+                angle_atoms = list(self.graph[node].keys())+[node]; angle_atoms.remove(predecessor_dict[node])
+                angle_type = [angle.angleType for angle in self.angles if angle.atoms==set(angle_atoms)][0]
+                angle1 = getAngle(self.getAtomByID(predecessor_dict[node]),self.getAtomByID(node),self.getAtomByID(successor_dict[node][0]))
+                angle2 = getAngle(self.getAtomByID(predecessor_dict[node]),self.getAtomByID(node),self.getAtomByID(successor_dict[node][1]))
+                branch_points.append(([dihedrals[0].dihType,dihedrals[1].dihType,angle_type],[angle1,angle2]))
         return branch_points
         
     def getAtomByID(self,atomID):
@@ -707,17 +710,11 @@ def quat_mult(q1,q2):
     z = w1*z2 + z1*w2 + x1*y2 - y1*x2
     return np.array([w,x,y,z])
 
-"""
-def align_vector(vector,align):
-    normed_vector = vector/np.linalg.norm(vector)   
-    normed_align = align/np.linalg.norm(align)
-    axis_rotation = np.cross(vector,align)
-    angle = acos(np.dot(normed_vector,normed_align))
-    #w = cos(angle/2.)
-    #x,y,z = unit_axis_rotation*sin(angle/2.)
-    #quaternion = np.array([w,x,y,z])
-    rot_quat(vector,angle,axis_rotation) 
-"""
+def getAngle(atom1,atom2,atom3):
+    line1 = atom1.position-atom2.position
+    line2 = atom3.position-atom2.position
+    angle = np.arccos(np.dot(line1,line2) / (np.linalg.norm(line1)*np.linalg.norm(line2)))
+    return angle
 
 
 

@@ -235,7 +235,7 @@ class CBMCRegrowth(Move):
         self.simulation.turn_off_atoms(atomIDs)
 
     def evaluate_trial_rotations(self,molecule,index,keep_original=False):
-        rosenW_intra = False
+        rosenW_intra = True
         log_rosen_weight_intra = 0
         beta = 1./(self.kb*self.temp)
         dihedrals,atoms = molecule.index2dihedrals(index)
@@ -262,19 +262,18 @@ class CBMCRegrowth(Move):
             selected_rotation = rotations[np.random.choice(np.arange(self.numtrials),p=np.exp(log_norm_probs))]
         except ValueError as e:
             raise ValueError("Probabilities of trial rotations do not sum to 1")
-        if len(atoms) > 1:
-            test_angle = np.absolute((selected_rotation[0]-theta0s[0])-(selected_rotation[1]-theta0s[1]))
-            test_angle = np.where(test_angle>pi, 2*pi-test_angle, test_angle) % (2*np.pi)
-            angle_energy = [angle_ff for angle_ff in self.angle_ffs if angle_ff.angle_type==5][0].ff_function(test_angle)
-            #print('bond angle',test_angle)
-            #print('angle energy',angle_energy)
         if rosenW_intra: log_rosen_weight += log_rosen_weight_intra
         return rotations,log_rosen_weight,selected_rotation
 
     def regrow(self,molecule,index,keep_original=False):
         total_log_rosen_weight = 0
+        branched = 0
         for idx in range(index,len(molecule.atoms)):
+            if branched > 1:
+                branched -= 1
+                continue
             dihedrals,atoms = molecule.index2dihedrals(idx)
+            branched = len(atoms)
             self.turn_off_molecule_atoms(molecule,idx)          
             try:
                 rotations,log_step_weight,selected_rotation = self.evaluate_trial_rotations(molecule,idx,keep_original)
@@ -348,32 +347,32 @@ class CBMCSwap(CBMCRegrowth):
     def adjust_first_regrowth_atoms(self,mol1,mol2,positions_mol1,positions_mol2):
         vector1_1,vector1_2,rotation_axis1,angle1 = self.get_rotation_angles_vectors(positions_mol1)
         vector2_1,vector2_2,rotation_axis2,angle2 = self.get_rotation_angles_vectors(positions_mol2)
-        move1 = positions_mol2[-2]-molc.rot_quat(vector2_1,angle1,rotation_axis2)*np.linalg.norm(vector1_2)/np.linalg.norm(vector2_1)-mol1.getAtomByMolIndex(self.starting_index+1).position
-        move2 = positions_mol1[-2]-molc.rot_quat(vector1_1,angle2,rotation_axis1)*np.linalg.norm(vector2_2)/np.linalg.norm(vector1_1)-mol2.getAtomByMolIndex(self.starting_index+1).position
-        mol1.move_atoms_by_index(move1,self.starting_index+1)
-        mol2.move_atoms_by_index(move2,self.starting_index+1)
+        move1 = positions_mol2[-2]-molc.rot_quat(vector2_1,angle1,rotation_axis2)*np.linalg.norm(vector1_2)/np.linalg.norm(vector2_1)-mol1.getAtomByMolIndex(self.starting_index).position
+        move2 = positions_mol1[-2]-molc.rot_quat(vector1_1,angle2,rotation_axis1)*np.linalg.norm(vector2_2)/np.linalg.norm(vector1_1)-mol2.getAtomByMolIndex(self.starting_index).position
+        mol1.move_atoms_by_index(move1,self.starting_index)
+        mol2.move_atoms_by_index(move2,self.starting_index)
         
     def align_partial_molecule(self,mol,angle):
-        positions = np.copy(np.array([mol.getAtomByMolIndex(i).position for i in np.arange(self.starting_index,len(mol.atoms))]))
+        positions = np.copy(np.array([mol.getAtomByMolIndex(i).position for i in np.arange(self.starting_index-1,len(mol.atoms))]))
         rotate_angle = angle - get_bond_angle(positions[0],positions[1],positions[2])
         rotation_axis = np.cross(positions[2]-positions[1],positions[1]-positions[0])
-        for i in np.arange(self.starting_index+2,len(mol.atoms)):
+        for i in np.arange(self.starting_index+1,len(mol.atoms)):
             mol.getAtomByMolIndex(i).position = positions[1]+molc.rot_quat(mol.getAtomByMolIndex(i).position-positions[1],rotate_angle,rotation_axis)
 
     def swap_molecule_positions(self,mol1,mol2): 
-        angles = [get_bond_angle(mol.getAtomByMolIndex(self.starting_index).position,mol.getAtomByMolIndex(self.starting_index+1).position,mol.getAtomByMolIndex(self.starting_index+2).position) if len(mol.atoms) > self.starting_index+2 else None for mol in [mol1,mol2]]
-        positions_mol1 = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(self.starting_index+2)]))
-        positions_mol2 = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(self.starting_index+2)]))
+        angles = [get_bond_angle(mol.getAtomByMolIndex(self.starting_index-1).position,mol.getAtomByMolIndex(self.starting_index).position,mol.getAtomByMolIndex(self.starting_index+1).position) if len(mol.atoms) > self.starting_index+1 else None for mol in [mol1,mol2]]
+        positions_mol1 = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
+        positions_mol2 = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
         self.swap_anchor_positions(mol1,mol2)
         self.align_molecules(mol1,mol2)
-        self.align_mol_to_positions(mol1,positions_mol2[:-1])
-        self.align_mol_to_positions(mol2,positions_mol1[:-1])
+        self.align_mol_to_positions(mol1,positions_mol2)
+        self.align_mol_to_positions(mol2,positions_mol1)
         self.adjust_first_regrowth_atoms(mol1,mol2,positions_mol1[-3:],positions_mol2[-3:])
         for i,mol in enumerate([mol1,mol2]):
-            if len(mol.atoms) > self.starting_index+2:
+            if len(mol.atoms) > self.starting_index+1:
                 self.align_partial_molecule(mol,angles[i])
         self.simulation.update_coords()
-
+        
     def select_random_molecules(self):
         """Selects a random elegible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed in at initialization.
 

@@ -1,8 +1,0 @@
-		$/bond:brancheds[0]/SC @/bond:Glotzer/SC $/atom:brancheds[0]/S $/atom:brancheds[0]/C1
-		$/bond:brancheds[0]/CC1 @/bond:Glotzer/CC $/atom:brancheds[0]/C1 $/atom:brancheds[0]/C2
-		$/bond:brancheds[0]/CC2 @/bond:Glotzer/CC $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C3
-        $/bond:brancheds[0]/CC3 @/bond:Glotzer/CC $/atom:brancheds[0]/C2 $/atom:brancheds[0]/C4
-        $/bond:brancheds[0]/CC4 @/bond:Glotzer/CC $/atom:brancheds[0]/C3 $/atom:brancheds[0]/C5
-        $/bond:brancheds[0]/CC5 @/bond:Glotzer/CC $/atom:brancheds[0]/C4 $/atom:brancheds[0]/C6
-        $/bond:brancheds[0]/CC6 @/bond:Glotzer/CC $/atom:brancheds[0]/C6 $/atom:brancheds[0]/C7
-        $/bond:brancheds[0]/CC7 @/bond:Glotzer/CC $/atom:brancheds[0]/C6 $/atom:brancheds[0]/C8

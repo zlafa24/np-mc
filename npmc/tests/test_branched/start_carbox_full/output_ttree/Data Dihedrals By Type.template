@@ -1,6 +1,0 @@
-		@/dihedral:Glotzer/SCCC  @/atom:Glotzer/S  @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/C* @/bond:Glotzer/SC  @/bond:Glotzer/CC  @/bond:Glotzer/CC
-		@/dihedral:Glotzer/CCCC  @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/C* @/bond:Glotzer/CC  @/bond:Glotzer/CC  @/bond:Glotzer/CC
-		@/dihedral:Glotzer/CCCO1 @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/O  @/bond:Glotzer/CC  @/bond:Glotzer/CC  @/bond:Glotzer/CO1
-        @/dihedral:Glotzer/CCCO2 @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/O  @/bond:Glotzer/CC  @/bond:Glotzer/CC  @/bond:Glotzer/CO2
-        @/dihedral:Glotzer/OCOH  @/atom:Glotzer/O  @/atom:Glotzer/C* @/atom:Glotzer/O  @/atom:Glotzer/H  @/bond:Glotzer/CO2 @/bond:Glotzer/CO1 @/bond:Glotzer/OH
-		@/dihedral:Glotzer/CCOH  @/atom:Glotzer/C* @/atom:Glotzer/C* @/atom:Glotzer/O  @/atom:Glotzer/H  @/bond:Glotzer/CC  @/bond:Glotzer/CO1 @/bond:Glotzer/OH

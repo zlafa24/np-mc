@@ -3,9 +3,9 @@ import time
 import npmc.move_class
 import npmc.simulation_class as simc
 
-init_file = os.path.abspath('./hexo.in')
-datafile = os.path.abspath('./hexo.data')
-dumpfile = os.path.abspath('./hexo_out.xyz')
+init_file = os.path.abspath('./system_trappe.in')
+datafile = os.path.abspath('./system_trappe.data')
+dumpfile = os.path.abspath('./system_trappe.xyz')
 temp=298.15
 
 sim = simc.Simulation(init_file,datafile,dumpfile,temp,anchortype=5,max_disp=5.0,type_lengths=(10,10),parallel=False)

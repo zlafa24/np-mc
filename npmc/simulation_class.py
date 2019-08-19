@@ -117,11 +117,11 @@ class Simulation(object):
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
     def initializeMoves(self,anchortype,max_disp,type_lengths,numtrials,parallel=False):
-        cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,parallel=parallel,read_pdf=True,write_pdf=False)
+        cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,parallel=parallel,read_pdf=False,write_pdf=True)
         translate_move = mvc.TranslationMove(self,max_disp,[1])
-        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel,read_pdf=True,write_pdf=False)
+        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel,read_pdf=False,write_pdf=True)
         rotation_move = mvc.RotationMove(self,anchortype,0.1745)
-        self.moves = [swap_move]#[cbmc_move,translate_move,swap_move,rotation_move]
+        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
     
     def initialize_data_files(self,restart=False):
         if not restart:
