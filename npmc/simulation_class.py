@@ -6,12 +6,10 @@ import npmc.atom_class as atm
 import npmc.move_class as mvc
 import os
 import time
-from cpuinfo import get_cpu_info
 import numpy as np
 import random as rnd
 import npmc.forcefield_class as ffc
 import multiprocessing as mp
-#import dill
 #from pathos.multiprocessing import ProcessPool
 import concurrent.futures as cncf
 from math import *

@@ -15,7 +15,7 @@ From: ubuntu:18.04
 	cd lammps
 	mkdir build
 	cd build
-	cmake -D PKG_PYTHON=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on  -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on -D CMAKE_INSTALL_PREFIX=/usr/local ../cmake
+	cmake -D PKG_PYTHON=on -D PKG_USER-MISC=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on -D CMAKE_INSTALL_PREFIX=/usr/local ../cmake
 	make
 	make install
 	cd ../../np-mc/
@@ -31,4 +31,4 @@ From: ubuntu:18.04
 %runscript
 
 	lmp "$@"
- 
+
