@@ -47,6 +47,7 @@ class Simulation(object):
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
         
+        self.rosenW_intra = rosenW_intra
         self.numtrials = numtrials
         
         #if parallel:
@@ -72,7 +73,7 @@ class Simulation(object):
         self.step=0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
         
-        self.rosenW_intra = rosenW_intra
+        
         '''
         if parallel:
             self.manager = mp.Manager()
