@@ -31,4 +31,3 @@ From: ubuntu:18.04
 %runscript
 
 	lmp "$@"
-
