@@ -38,7 +38,7 @@ class Simulation(object):
     restart : binary
         A binary value that determines whether this is a new simulation or a restart of a previous simulation.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False,parallel=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False,parallel=False,rosenW_intra=False):
         dname = os.path.dirname(os.path.abspath(init_file))
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
@@ -71,6 +71,8 @@ class Simulation(object):
         self.initialize_data_files(restart) 
         self.step=0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
+        
+        self.rosenW_intra = rosenW_intra
         '''
         if parallel:
             self.manager = mp.Manager()
@@ -117,9 +119,9 @@ class Simulation(object):
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
     def initializeMoves(self,anchortype,max_disp,type_lengths,numtrials,parallel=False):
-        cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,parallel=parallel,read_pdf=False,write_pdf=True)
+        cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,parallel=parallel,read_pdf=False,write_pdf=True,rosenW_intra=self.rosenW_intra)
         translate_move = mvc.TranslationMove(self,max_disp,[1])
-        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel,read_pdf=False,write_pdf=True)
+        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel,read_pdf=False,write_pdf=True,rosenW_intra=self.rosenW_intra)
         rotation_move = mvc.RotationMove(self,anchortype,0.1745)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
     

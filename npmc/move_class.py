@@ -56,7 +56,7 @@ class CBMCRegrowth(Move):
     anchortype : int
         The type number in the LAMMPS file used for the atom type used for the anchor atom in each molecule.
     """
-    def __init__(self,simulation,anchortype,type_lengths,numtrials=5,parallel=False,read_pdf=False,write_pdf=False):
+    def __init__(self,simulation,anchortype,type_lengths,numtrials=5,parallel=False,read_pdf=False,write_pdf=False,rosenW_intra=False):
         super(CBMCRegrowth,self).__init__(simulation)
         self.move_name = "Regrowth"
         self.numtrials = numtrials  
@@ -72,6 +72,7 @@ class CBMCRegrowth(Move):
         self.branch_pdfs = ffc.initialize_branch_pdfs(pdf_molecules,self.dihedral_ffs,self.angle_ffs,self.temp,read=read_pdf,write=write_pdf)           
                            
         self.parallel = parallel
+        self.rosenW_intra = rosenW_intra
         #if parallel:
         #    self.lmp_clones = [self.simulation.clone_lammps() for i in range(numtrials)]       
 
@@ -235,7 +236,6 @@ class CBMCRegrowth(Move):
         self.simulation.turn_off_atoms(atomIDs)
 
     def evaluate_trial_rotations(self,molecule,index,keep_original=False):
-        rosenW_intra = True
         log_rosen_weight_intra = 0
         beta = 1./(self.kb*self.temp)
         dihedrals,atoms = molecule.index2dihedrals(index)
@@ -262,7 +262,7 @@ class CBMCRegrowth(Move):
             selected_rotation = rotations[np.random.choice(np.arange(self.numtrials),p=np.exp(log_norm_probs))]
         except ValueError as e:
             raise ValueError("Probabilities of trial rotations do not sum to 1")
-        if rosenW_intra: log_rosen_weight += log_rosen_weight_intra
+        if self.rosenW_intra: log_rosen_weight += log_rosen_weight_intra
         return rotations,log_rosen_weight,selected_rotation
 
     def regrow(self,molecule,index,keep_original=False):
@@ -301,8 +301,8 @@ class CBMCRegrowth(Move):
 
 
 class CBMCSwap(CBMCRegrowth):
-    def __init__(self,simulation,anchortype,type_lengths,starting_index=3,numtrials=5,parallel=False,read_pdf=False,write_pdf=False):
-        super(CBMCSwap,self).__init__(simulation,anchortype,type_lengths,numtrials,parallel,read_pdf,write_pdf)
+    def __init__(self,simulation,anchortype,type_lengths,starting_index=3,numtrials=5,parallel=False,read_pdf=False,write_pdf=False,rosenW_intra=False):
+        super(CBMCSwap,self).__init__(simulation,anchortype,type_lengths,numtrials,parallel,read_pdf,write_pdf,rosenW_intra)
         self.starting_index=starting_index
         self.type1_numatoms, self.type2_numatoms = type_lengths
         self.move_name="CBMCSwap"
