@@ -164,8 +164,8 @@ class CBMCRegrowth(Move):
         for i in range(self.numtrials):
             index1 = np.random.randint(pdf.pdf.shape[0])
             index2 = np.random.randint(pdf.pdf.shape[1])
-            angle_pairs[i,0] = np.random.uniform(pdf.pdf[index1,index2,0],pdf.pdf[index1,index2,1])
-            angle_pairs[i,1] = np.random.uniform(pdf.pdf[index1,index2,2],pdf.pdf[index1,index2,3])
+            angle_pairs[i,0] = np.random.uniform(pdf.pdf[index1,index2,2],pdf.pdf[index1,index2,3])
+            angle_pairs[i,1] = np.random.uniform(pdf.pdf[index1,index2,0],pdf.pdf[index1,index2,1])
         return angle_pairs
 
     def parallel_evaluate_energies(self,molecule,index,rotations):
