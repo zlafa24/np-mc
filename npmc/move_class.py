@@ -155,8 +155,8 @@ class CBMCRegrowth(Move):
         angle_pairs = np.empty([self.numtrials,2])
         for i in range(self.numtrials):
             index = np.random.choice(weights.size,p=weights)
-            angle_pairs[i,0] = np.random.uniform(pdf_array[index,0],pdf_array[index,1])
-            angle_pairs[i,1] = np.random.uniform(pdf_array[index,2],pdf_array[index,3])
+            angle_pairs[i,0] = np.random.uniform(pdf_array[index,2],pdf_array[index,3])
+            angle_pairs[i,1] = np.random.uniform(pdf_array[index,0],pdf_array[index,1])
         return angle_pairs    
         
     def select_angles_unweighted(self,pdf):
