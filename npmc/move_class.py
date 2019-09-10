@@ -385,7 +385,7 @@ class CBMCSwap(CBMCRegrowth):
         type2_molecules = [molecule for key,molecule in self.molecules.items() if len(molecule.atoms)==self.type2_numatoms]
         random_mol_type1 = rnd.choice(type1_molecules)
         random_mol_type2 = rnd.choice(type2_molecules)
-        if random_mol_type1 == random_mol_type1: type2_molecules.remove(random_mol_type1); random_mol_type2 = rnd.choice(type2_molecules)
+        if random_mol_type1 == random_mol_type2: type2_molecules.remove(random_mol_type1); random_mol_type2 = rnd.choice(type2_molecules)
         return((random_mol_type1,random_mol_type2))
 
     def move(self):
