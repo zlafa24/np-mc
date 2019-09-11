@@ -99,7 +99,7 @@ class BranchPDF():
             for j in range(intervals): 
                 pdf[i*intervals+j,0] = phis[i]; pdf[i*intervals+j,1] = phis[i+1]
                 pdf[i*intervals+j,2] = phis[j]; pdf[i*intervals+j,3] = phis[j+1]
-                weights[i*intervals+j] = si.dblquad(self.unnorm_prob,pdf[i*intervals+j,0],pdf[i*intervals+j,1],lambda x:pdf[i*intervals+j,2],lambda x:pdf[i*intervals+j,3])[0]
+                weights[i*intervals+j] = si.dblquad(self.unnorm_prob,pdf[i*intervals+j,2],pdf[i*intervals+j,3],lambda x:pdf[i*intervals+j,0],lambda x:pdf[i*intervals+j,1])[0]
         weights = weights/np.sum(weights)
         if write: self.write_pdf(pdf,True,weights)
         return pdf,weights
@@ -111,10 +111,10 @@ class BranchPDF():
             pdf[i,:,0] = pdf_1D[i]; pdf[i,:,1] = pdf_1D[i+1]
             for j in range(intervals2-1):
                 upper_bracket = self.get_upper_bracket(i,j,pdf,1/(intervals1*intervals2)*1.5)
-                boundary=so.brenth(lambda phi:si.dblquad(self.unnorm_prob,pdf[i,j,0],pdf[i,j,1],lambda x:pdf[i,j,2],phi)[0]/self.Q-(1/intervals1)*(1/intervals2),lambda x:pdf[i,j,2],upper_bracket)
+                boundary=so.brenth(lambda phi:si.dblquad(self.unnorm_prob,pdf[i,j,2],phi,lambda x:pdf[i,j,0],lambda x:pdf[i,j,1])[0]/self.Q-(1/intervals1)*(1/intervals2),pdf[i,j,2],upper_bracket)
                 pdf[i,j,3] = boundary; pdf[i,j+1,2] = boundary
-                probs[i,j] = si.dblquad(self.unnorm_prob,pdf[i,j,0],pdf[i,j,1],lambda x:pdf[i,j,2],lambda x:pdf[i,j,3])[0]/self.Q                
-            probs[i,-1] = si.dblquad(self.unnorm_prob,pdf[i,-1,0],pdf[i,-1,1],lambda x:pdf[i,-1,2],lambda x:pdf[i,-1,3])[0]/self.Q
+                probs[i,j] = si.dblquad(self.unnorm_prob,pdf[i,j,2],pdf[i,j,3],lambda x:pdf[i,j,0],lambda x:pdf[i,j,1])[0]/self.Q                
+            probs[i,-1] = si.dblquad(self.unnorm_prob,pdf[i,-1,2],pdf[i,-1,3],lambda x:pdf[i,-1,0],lambda x:pdf[i,-1,1])[0]/self.Q
         if write: self.write_pdf(pdf,False,None)
         return pdf
     
