@@ -2,7 +2,7 @@ Bootstrap: docker
 From: ubuntu:18.04
 
 %post
-        apt-get -y update
+	apt-get -y update
 	apt-get -y install git\
 			 cmake\
 			build-essential\
@@ -30,4 +30,4 @@ From: ubuntu:18.04
 
 %runscript
 
-         lmp "$@"
+	lmp "$@"
