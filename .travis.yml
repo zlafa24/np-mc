@@ -17,7 +17,8 @@ before_script:
   - cmake -D PKG_PYTHON=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on -D CMAKE_INSTALL_PREFIX=${VIRTUAL_ENV} ../cmake
   - make
   - make install
-  - cp ../python/lammps.py ${VIRTUAL_ENV}/site-packages/
+  - python_package_dir=`python -c "import site; print(site.getsitepackages())"`
+  - cp ../python/lammps.py ${python_package_dir}
   - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${VIRTUAL_ENV}/lib
   - cd ${TRAVIS_BUILD_DIR}
 
