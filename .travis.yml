@@ -14,13 +14,11 @@ before_script:
   - cd lammps
   - mkdir build
   - cd build
-  - cmake -D PKG_PYTHON=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on -D CMAKE_INSTALL_PREFIX=${HOME}/.local ../cmake
+  - cmake -D PKG_PYTHON=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on -D CMAKE_INSTALL_PREFIX=${VIRTUAL_ENV} ../cmake
   - make
   - make install
+  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${VIRTUAL_ENV}/lib
   - cd ${TRAVIS_BUILD_DIR}
 
 script:
   - pytest
-
-env:
-  - PATH=${HOME}/.local/bin:$PATH LD_LIBRARY_PATH=${HOME}/.local/lib:$LD_LIBRARY_PATH PYTHONPATH=${PYTHONPATH}:${HOME}/.local/lib/python3/dist-packages/
