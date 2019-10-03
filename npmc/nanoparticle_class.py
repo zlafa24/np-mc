@@ -6,6 +6,7 @@ import os
 import numpy as np
 from scipy.constants import golden_ratio
 from itertools import product
+from math import sqrt
 
 class Nanoparticle(object):
 
@@ -59,6 +60,36 @@ class Nanoparticle(object):
         atoms = [atom for atom in atoms1 if atom.atomID in list(ids)]
         return(cls(atoms))
 
+    @classmethod
+    def create_tetrahedron(cls,outer_edge_length,lattice_units=20,lattice_const=4.08):
+        unit_vertices = np.array([[1,0,-(1/sqrt(2))],
+                                  [-1,0,-(1/sqrt(2))],
+                                  [0,1,1/sqrt(2)],
+                                  [0,-1,1/sqrt(2)]])*0.5
+        outer_vertices = outer_edge_length*unit_vertices
+        outer_hull = Delaunay(outer_vertices)
+        atoms = Nanoparticle.get_atoms_inside(outer_hull,lattice_units,lattice_const)
+        return(cls(atoms))
+
+
+    @classmethod
+    def create_hollow_tetrahedron(cls,outer_edge_length,inner_edge_length):
+        unit_vertices = np.array([[1,0,-(1/sqrt(2))],
+                                  [-1,0,-(1/sqrt(2))],
+                                  [0,1,1/sqrt(2)],
+                                  [0,-1,1/sqrt(2)]])*0.5
+        outer_vertices = outer_edge_length*unit_vertices
+        inner_vertices = inner_edge_length*unit_vertices
+        outer_hull = Delaunay(outer_vertices)
+        inner_hull = Delaunay(inner_vertices)
+        atoms1 = Nanoparticle.get_atoms_outside(inner_hull)
+        ids1 = set([atom.atomID for atom in atoms1])
+        atoms2 = Nanoparticle.get_atoms_inside(outer_hull)
+        ids2 = set([atom.atomID for atom in atoms2])
+        ids = ids1.intersection(ids2)
+        atoms = [atom for atom in atoms1 if atom.atomID in list(ids)]
+        return(cls(atoms))
+
     @staticmethod
     def create_fcc_lattice(lattice_units,lattice_const,atom_type=1):
         ls = range(1,lattice_units+1)
@@ -92,8 +123,8 @@ class Nanoparticle(object):
         return(atoms)
 
     @staticmethod
-    def get_atoms_inside(hull):  
-        template_atoms = Nanoparticle.create_fcc_lattice(20,4.08)
+    def get_atoms_inside(hull,lattice_units=20,lattice_const=4.08):  
+        template_atoms = Nanoparticle.create_fcc_lattice(lattice_units,lattice_const)
         #template_atoms = atmc.loadAtoms(os.path.abspath("../lt_files/nanoparticle_template/lts/nanoparticle.data"))
         atoms = []
         for atom in template_atoms:

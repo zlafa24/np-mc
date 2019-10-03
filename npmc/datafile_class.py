@@ -18,13 +18,13 @@ class XYZFile(object):
         self.elements = np.empty((0,4))
 
     def create_alkanethiol(self,chainlength):
-    """A functioned defined for adding an alkanethiol with a given chainlength to the XYZFile object.
+        """A functioned defined for adding an alkanethiol with a given chainlength to the XYZFile object.
 
-    Parameters
-    ----------
-    chainlength : int
+        Parameters
+        ----------
+        chainlength : int
         Chainlength of alkanethiol to be added to the XYZFile object.
-    """
+        """
         self.elements = np.empty((chainlength,4),dtype=np.float)
         self.elements[0,:]=[32,0.,0.,0.]
         current_pos = np.array([0.,0.,0.])
