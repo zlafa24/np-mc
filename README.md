@@ -1,6 +1,7 @@
 
 NP-MC
 =====
+[![Build Status](https://travis-ci.org/smerz1989/np-mc.svg?branch=master)](https://travis-ci.org/smerz1989/np-mc)
 
 LAMMPS Monte Carlo for Nanoparticle Monolayer
 ----------------------------------------------
