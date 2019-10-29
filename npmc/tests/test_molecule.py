@@ -142,17 +142,9 @@ class TestMoleculeClassMethods(unittest.TestCase):
     def test_getAtomsByMolIndex_returns_None_when_passed_index_out_of_bounds(self):
         self.assertIsNone(self.mol_dict[1].getAtomByMolIndex(5),msg="getAtomsByMolIndex allowed an out of range index to be used without returning None")
 
-    def test_rotateDihedral_raises_exception_when_index_less_than_three(self):
-        with self.assertRaises(ValueError,msg="rotateDihedral did not raise an exception when the index was less than 3"):
-            self.mol_dict[1].rotateDihedral(2,pi/2)
-
-    def test_rotateDihedral_raises_exception_when_index_greater_then_atom_length_minus_one(self):
-        with self.assertRaises(ValueError,msg="rotateDihedral did not raise an exception when the index passed was greater than the atom list length minus one"):
-            self.mol_dict[1].rotateDihedral(5,pi/2)
-
-    def test_rotateDihedral_correctly_rotates_test_MeOH_and_returns_correct_coords_after_pi_div_2_rotation(self):
+    def test_rotateDihedrals_correctly_rotates_test_MeOH_and_returns_correct_coords_after_pi_div_2_rotation(self):
         self.mol_dict[1].setAnchorAtom(1)
-        self.mol_dict[1].rotateDihedral(3,pi/2)
+        self.mol_dict[1].rotateDihedrals([self.mol_dict[1].getAtomByMolIndex(3)],pi/2)
         actual_coords = np.array([self.mol_dict[1].getAtomByMolIndex(0).position,
                                 self.mol_dict[1].getAtomByMolIndex(1).position,
                                 self.mol_dict[1].getAtomByMolIndex(2).position,

@@ -1,7 +1,8 @@
 """This module contains the Atom class and all the helper functions associated with atoms.
-
 """
 import npmc.read_lmp_rev6 as rdlmp
+
+
 class Atom(object):
     """The Atom class represents an atom described by the LAMMPS full atom style.
 

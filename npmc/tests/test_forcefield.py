@@ -22,13 +22,13 @@ class TestDihedralForceField(unittest.TestCase):
         
 
     def test_get_ff_params_returns_correct_dihedral_forcefield_type(self):
-        self.assertEqual(ffc.get_ff_params(self.two_meoh_settings_file,4)[0],self.dih4_params[0],msg="The get_ff_params function of the forcefield class does not return the expected dihedral forcefield type")
+        self.assertEqual(ffc.get_ff_params(self.two_meoh_settings_file,4,'dihedral')[0],self.dih4_params[0],msg="The get_ff_params function of the forcefield class does not return the expected dihedral forcefield type")
 
     def test_get_ff_params_returns_correct_dihedral_parameters(self):
-        self.assertEqual(ffc.get_ff_params(self.two_meoh_settings_file,4)[1],self.dih4_params[1],msg="The get_ff_params function of the forcefield class does not return the expected dihedral parameters from the given settings file")
+        self.assertEqual(ffc.get_ff_params(self.two_meoh_settings_file,4,'dihedral')[1],self.dih4_params[1],msg="The get_ff_params function of the forcefield class does not return the expected dihedral parameters from the given settings file")
 
     def test_get_ff_function_returns_correct_forcefield_function(self):
-        ff_function = ffc.get_ff_function(self.two_meoh_settings_file,4)
+        ff_function = ffc.get_ff_function(self.two_meoh_settings_file,4,'dihedral')
         thetas = np.linspace(0,2*pi,num=100)
         test_result = np.array([ff_function(theta) for theta in thetas])
         np.testing.assert_array_almost_equal(test_result,self.dih4_ff_output,decimal=6,err_msg="The output of the returned function of get_ff_function does not correspond to the expected results.")
