@@ -1,0 +1,25 @@
+import "glotzer_ff.lt"
+
+branched inherits Glotzer{
+	write("Data Atoms"){
+		$atom:S $mol:. @atom:S	0.  -6.135   0.259   0.000
+		$atom:C1 $mol:. @atom:C2 0.	-5.117	-0.303	0
+		$atom:C2 $mol:. @atom:C2 0.	-4.093	0.259	0
+		$atom:C3 $mol:. @atom:C2 0.	-3.069	-0.303	0
+		$atom:C4 $mol:. @atom:C2 0.	-3.069	0.821	0
+        $atom:C5 $mol:. @atom:C3 0.	-2.045	-0.865	0
+        $atom:C6 $mol:. @atom:C2 0.	-2.045	1.383   0
+        $atom:C7 $mol:. @atom:C3 0.	-1.021	0.821	0
+        $atom:C8 $mol:. @atom:C3 0.	-1.021	1.945	0
+	}
+	write("Data Bonds"){
+		$bond:SC @bond:SC $atom:S $atom:C1
+		$bond:CC1 @bond:CC $atom:C1 $atom:C2
+		$bond:CC2 @bond:CC $atom:C2 $atom:C3
+        $bond:CC3 @bond:CC $atom:C2 $atom:C4
+        $bond:CC4 @bond:CC $atom:C3 $atom:C5
+        $bond:CC5 @bond:CC $atom:C4 $atom:C6
+        $bond:CC6 @bond:CC $atom:C6 $atom:C7
+        $bond:CC7 @bond:CC $atom:C6 $atom:C8
+	}
+}

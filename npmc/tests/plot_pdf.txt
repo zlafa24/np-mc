@@ -1,0 +1,24 @@
+        phis,dphi = np.linspace(0,2*pi,10000,retstep=True)
+        
+        fig1, ax1 = plt.subplots()
+        ax1.hist(phi1s,density=True,bins=1000)
+        prob1s = []
+        for phi in phis:
+            prob1s.append(pdf.norm_flatten_probs(phi,phis,dphi))
+        ax1.plot(phis, prob1s)
+        ax1.set_xlabel('$\phi$ (rad)')
+        ax1.set_ylabel('Probability')
+        fig1.suptitle('$\phi_1$')
+        fig1.savefig('phi1s_0.png')
+        
+        
+        fig2, ax2 = plt.subplots()
+        ax2.hist(phi2s,density=True,bins=1000)
+        prob2s = []
+        for phi in phis:
+            prob2s.append(pdf.norm_flatten_probs(phi,phis,dphi))
+        ax2.plot(phis, prob2s)
+        ax2.set_xlabel('$\phi$ (rad)')
+        ax2.set_ylabel('Probability')
+        fig2.suptitle('$\phi_2$')
+        fig2.savefig('phi2s_0.png')

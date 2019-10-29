@@ -1,0 +1,27 @@
+import "glotzer_ff.lt"
+
+HEXO inherits Glotzer{
+	write("Data Atoms"){
+		$atom:S  $mol:. @atom:S   0.0000  -2.5006  -0.2063   0.000
+		$atom:C1 $mol:. @atom:C2  0.0000  -1.7862  -0.6187   0.171  #[2]
+		$atom:C2 $mol:. @atom:C2  0.0000  -1.0717  -0.2063   0.000
+		$atom:C3 $mol:. @atom:C2  0.0000  -0.3572  -0.6187   0.000
+		$atom:C4 $mol:. @atom:C2  0.0000   0.3572  -0.2063   0.000
+		$atom:C5 $mol:. @atom:C2  0.0000   1.0717  -0.6187   0.000
+		$atom:C6 $mol:. @atom:C0  0.0000   1.7862  -0.2063   0.420  #[6]
+		$atom:O1 $mol:. @atom:OH  0.0000   2.5006  -0.6187  -0.460  #[6]
+        $atom:O2 $mol:. @atom:O2  0.0000   1.7862   0.6187  -0.450  #[6]
+        $atom:H1 $mol:. @atom:H   0.0000   3.2236   0.0233   0.370  #[6]
+	}
+	write("Data Bonds"){
+		$bond:SC  @bond:SC  $atom:S  $atom:C1
+		$bond:CC1 @bond:CC  $atom:C1 $atom:C2
+		$bond:CC2 @bond:CC  $atom:C2 $atom:C3
+        $bond:CC3 @bond:CC  $atom:C3 $atom:C4      
+        $bond:CC4 @bond:CC  $atom:C4 $atom:C5      
+        $bond:CC5 @bond:CC  $atom:C5 $atom:C6
+		$bond:CO1 @bond:CO1 $atom:C6 $atom:O1
+		$bond:CO2 @bond:CO2 $atom:C6 $atom:O2
+        $bond:OH1 @bond:OH  $atom:O1 $atom:H1
+	}
+}

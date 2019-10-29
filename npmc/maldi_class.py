@@ -2,6 +2,8 @@ import npmc.molecule_class as mlc
 import numpy as np
 import random as rnd
 import scipy.stats as ss
+import networkx as ntwkx
+import itertools as itr
 
 class MALDISpectrum(object):
     """A class that encapsulates a simulated MALDI spectrum along with it's associated helper functions.
@@ -20,24 +22,37 @@ class MALDISpectrum(object):
         The number of ligands that compose a MALDI fragment.
     """
 
-    def __init__(self,data_file,anchor_type,numsamples,nn_distance,ligands_per_fragment,type_lengths):
+    def __init__(self,data_file,anchor_type,numsamples,nn_distance,graph_index,ligands_per_fragment,type_lengths):
         self.data_file = data_file
         self.molecules = mlc.constructMolecules(self.data_file)
         self.anchor_type = anchor_type
         mlc.set_anchor_atoms(self.molecules,self.anchor_type)
-        self.elegible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchor_type in [atom.atomType for atom in molecule.atoms])] 
+        self.eligible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchor_type in [atom.atomType for atom in molecule.atoms])] 
 
         self.dist_dict = self.make_distance_dict()
         self.type1_numatoms, self.type2_numatoms = type_lengths
         self.numsamples = numsamples
         self.nn_distance = nn_distance
+        self.graph_index = graph_index
         self.ligands_per_fragment = ligands_per_fragment
+        self.molecules_graph = self.create_graph()
+    
+    def create_graph(self):
+        """Creates a graph stucture containing all eligible molecules.
+        """
+        molecules_graph = ntwkx.Graph()
+        for molecule in self.eligible_molecules:
+            molecules_graph.add_node(molecule.molID)
+        for mol1, mol2 in itr.combinations(self.eligible_molecules, 2):
+            if np.linalg.norm(mol1.getAtomByMolIndex(self.graph_index).position-mol2.getAtomByMolIndex(self.graph_index).position)<self.nn_distance:
+                molecules_graph.add_edge(mol1.molID, mol2.molID)
+        return molecules_graph
 
 
     def get_random_molecule(self):
         """Gets a random molecule from the possible list of monolayer ligands as determined by the molecules with anchor atoms.
         """
-        return(rnd.choice(self.elegible_molecules))
+        return(rnd.choice(self.eligible_molecules))
 
     def get_nns(self,molecule):
         """Returns the N-1 nearest neighbors of the given molecule where N is defined by the variable ligands_per_fragment.
@@ -54,12 +69,25 @@ class MALDISpectrum(object):
         """
         #distances = self.get_relative_distances(molecule)
         distances = self.dist_dict[molecule.molID]
-        elegible_neighbors = distances[np.where(distances[:,1]<self.nn_distance)]
-        return(elegible_neighbors)
+        eligible_neighbors = distances[np.where(distances[:,1]<self.nn_distance)]
+        return(eligible_neighbors)
+        
+    def get_nns_2(self, molecule):
+        """
+        Get nearest neighbors from the graph structure, two degrees of separation
+        """
+        distances = self.dist_dict[molecule.molID]
+        shell_1 = list(self.molecules_graph.neighbors(molecule.molID))
+        shell_2 = []
+        for neighbor in shell_1:
+            shell_2 += list(self.molecules_graph.neighbors(neighbor))
+        eligible_neighbors = list(set(shell_1 + shell_2))
+        eligible_neighbors = distances[np.where(np.isin(distances[:,0], np.array(eligible_neighbors)+0.))]
+        return(eligible_neighbors)
 
     def make_distance_dict(self):
         dist_dict = {}
-        for molecule in self.elegible_molecules:
+        for molecule in self.eligible_molecules:
             dist_dict[molecule.molID]=self.get_relative_distances(molecule)
         return(dist_dict)
 
@@ -76,9 +104,9 @@ class MALDISpectrum(object):
         distances : list of float
             A list of the relative distances for each molecule sorted by distance.
         """
-        num_molecules = len(self.elegible_molecules)
+        num_molecules = len(self.eligible_molecules)
         distances = np.zeros((num_molecules,2))
-        for i,mol in enumerate(self.elegible_molecules):
+        for i,mol in enumerate(self.eligible_molecules):
             distances[i,0]=mol.molID
             distances[i,1]=np.linalg.norm(molecule.anchorAtom.position-mol.anchorAtom.position)
 
@@ -92,6 +120,14 @@ class MALDISpectrum(object):
             return(False)
         else:
             return(neighbors[0:self.ligands_per_fragment])
+            
+    def get_sample_fragment_2(self):
+        random_molecule = self.get_random_molecule()
+        neighbors = self.get_nns_2(random_molecule)
+        if len(neighbors)<self.ligands_per_fragment:
+            return(False)
+        else:
+            return(neighbors[np.argpartition(neighbors[:,1],self.ligands_per_fragment-1)[:self.ligands_per_fragment]])
 
     def get_molecule_type(self,molecule):
         if len(molecule.atoms)==self.type1_numatoms:
@@ -109,7 +145,7 @@ class MALDISpectrum(object):
             return(len([1 for i in ligand_types if i==1]))
     
     def get_maldi_spectrum(self):
-        fragments = [self.get_sample_fragment() for sample in range(self.numsamples)]
+        fragments = [self.get_sample_fragment_2() for sample in range(self.numsamples)]
         fragment_types = np.array([self.get_fragment_category(fragment) for fragment in fragments])
         hist, bins = np.histogram(fragment_types,bins=range(0,self.ligands_per_fragment+2),density=True)
         self.hist = hist
@@ -122,15 +158,15 @@ class MALDISpectrum(object):
         return(ss.binom.pmf(numsuccesses,numtries,fraction))
 
     def get_SSR(self):
-        numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
-        numtype2 = len(self.elegible_molecules)-numtype1
+        numtype1 = len([molecule for molecule in self.eligible_molecules if len(molecule.atoms)==self.type1_numatoms])
+        numtype2 = len(self.eligible_molecules)-numtype1
         type1_fraction = float(numtype1)/float(numtype2+numtype1)
         binomial = self.get_binomial(type1_fraction)
         return(sum([(self.hist[i]-binomial[i])**2 for i in range(self.ligands_per_fragment+1)]))
 
     def get_abs_deviation(self):
-        numtype1 = len([molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms])
-        numtype2 = len(self.elegible_molecules)-numtype1
+        numtype1 = len([molecule for molecule in self.eligible_molecules if len(molecule.atoms)==self.type1_numatoms])
+        numtype2 = len(self.eligible_molecules)-numtype1
         type1_fraction = float(numtype1)/float(numtype2+numtype1)
         binomial = self.get_binomial(type1_fraction)
         return(sum([abs(self.hist[i]-binomial[i]) for i in range(self.ligands_per_fragment+1)]))
@@ -141,8 +177,8 @@ class MALDISpectrum(object):
         mol2.move_atoms(swap_vector)
 
     def get_sensitivity(self,numtrials=200,numligand_swapped=1,dev_function='SSR'):
-        type1_mols = [molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type1_numatoms]
-        type2_mols = [molecule for molecule in self.elegible_molecules if len(molecule.atoms)==self.type2_numatoms]
+        type1_mols = [molecule for molecule in self.eligible_molecules if len(molecule.atoms)==self.type1_numatoms]
+        type2_mols = [molecule for molecule in self.eligible_molecules if len(molecule.atoms)==self.type2_numatoms]
         original_SSR = self.get_SSR()
         ssrs = np.empty(numtrials)
         mols_type1 = np.empty(numligand_swapped,dtype=object)
