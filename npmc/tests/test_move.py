@@ -47,7 +47,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         cbmc_move_large_trials = mvc.CBMCRegrowth(self.simulation,2,(5,5),numtrials=10000000)
         molecule = cbmc_move_large_trials.molecules[2]
         dihedrals,atoms = molecule.index2dihedrals(4)
-        (normed_histogram,bins) = np.histogram(cbmc_move_large_trials.select_dih_angles([dihedrals]),bins=500,density=True)
+        (normed_histogram,bins) = np.histogram(cbmc_move_large_trials.select_dih_angles(dihedrals),bins=500,density=True)
         np.testing.assert_array_almost_equal(normed_histogram,self.dihedral_type4_pdf,decimal=2,err_msg="The resulting histogram from 100000 trials of select_dih_angles does not match the distriburion expected by the PDF of the OPLS dihedral type for a CCOH dihedral.")
 
     def test_evaluate_energies_returns_expected_energies_for_specified_angles(self):
