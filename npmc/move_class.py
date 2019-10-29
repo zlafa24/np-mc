@@ -133,8 +133,8 @@ class CBMCRegrowth(Move):
         trial_dih_angles : Numpy array of floats
             An array of the selected dihedral angles in radians.
         """
-        try: dih_type = dihedrals[0].dihType
-        except: dih_type = dihedrals.dihType  
+        try: dih_type = dihedrals[0].dihedral_type
+        except: dih_type = dihedrals.dihedral_type  
         force_field = [ff for ff in self.dihedral_ffs if ff.dihedral_type==dih_type][0]
         thetas,ff_pdf = force_field.get_pdf(self.temp)
         dtheta = thetas[1]-thetas[0]
