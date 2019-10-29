@@ -1,14 +1,13 @@
 """This module contains the molecule class and all classes and functions
 related to molecules.  This includes Bond, Angle, and Dihedral classes as well as helper functions that take in atom and bond lists and generate molecules.
-
 """
+
 import npmc.read_lmp_rev6 as rdlmp
 import npmc.atom_class as atm
-from itertools import groupby, permutations
+from itertools import groupby,permutations
 import networkx as ntwkx
 import numpy as np
 from math import *
-import pdb
 
 class Molecule(object):
     """This class is used to represent a molecule in a simulation and holds all
@@ -26,7 +25,6 @@ class Molecule(object):
             The Angle objects associated with this molecule
         dihedrals : list of type Dihedral
             The Dihedral objects associated with this molecule
-
     """
     def __init__(self,molID,atoms,bonds,angles,dihedrals):
         self.molID = molID
@@ -41,6 +39,7 @@ class Molecule(object):
             return all([self.atoms==other.atoms,self.bonds==other.bonds,self.angles==other.angles,self.dihedrals==other.dihedrals])
         else:
             return False
+            
     def __neq__(self,other):
         return not self.__eq__(other)
 
@@ -54,15 +53,15 @@ class Molecule(object):
         """
         positions = np.array([atom.position for atom in self.atoms])
         com = np.mean(positions,axis=0)
-        return(com)
+        return com
 
     def setAnchorAtom(self,atomID):
-        """Sets the anchor atom of the molecule this is the atom of the molecule that is anchored to the nanoparticle.  Setting this important when using the CBMC regrowth move.
+        """Sets the anchor atom of the molecule: the atom of the molecule that is anchored to the nanoparticle.  Setting this is important when using the CBMC regrowth move.
         
         Parameters
         ----------
         atomID : int
-            The unique atom ID identifier of the Atom object that is anchored to the nanoparticle.
+            The unique atom ID of the Atom object that is anchored to the nanoparticle.
         """
         atom = self.getAtomByID(atomID)
         if(atom!=None):
@@ -72,17 +71,24 @@ class Molecule(object):
             return False
     
     def atomsAsGraph(self):
-        """Returns the graph data structure of the atoms in the molecule defined by the connectivity defined by the Bond objects of the molecule.  
+        """Returns the graph data structure of the atoms in the molecule where the connectivity is defined by the Bond objects of the molecule.  
         The nodes of the graph are the atom ID's of the atoms.
 
         Returns
         -------
         Networkx Graph Object
-            A Networkx Graph object with the nodes being the atom ID's of the atoms in the molecule and the connections defined by the Molecule's Bonds
+            A Networkx Graph object where the nodes are the atom ID's of the atoms in the molecule and the connections are defined by the Molecule's Bonds.
         """
         return molecule2graph(self.atoms,self.bonds)
         
     def findBranchPoints(self): 
+        """Identifies all of the branch points in the molecule; Branch points occur where an atom is bonded to at least three other atoms.
+        
+        Returns
+        -------
+        branch_points : Numpy array of ints
+            A 2D array where the first axis corresponds to the individual branch points and the second axis corresponds to the dihedral and bond angle types for each branch point.
+        """
         branch_points = []
         predecessor_dict = dict(ntwkx.bfs_predecessors(self.graph,source=self.anchorAtom.atomID))
         successor_dict = dict(ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID))
@@ -107,8 +113,8 @@ class Molecule(object):
 
         Returns
         -------
-            Atom
-                The Atom object associated with the atom ID or None if the Atom is not associated with this molecule.
+        atom : Atom or None
+            The Atom object associated with the atom ID; None if the Atom is not associated with this molecule.
         """
         for atom in self.atoms:
             if(atom.atomID==atomID):
@@ -127,7 +133,7 @@ class Molecule(object):
         Returns
         -------
         Atom Object
-            The Atom Object located at the specified index if the index is greater than the number of atoms in the molecule minus one then 
+            The Atom Object located at the specified index. If the index is greater than the number of atoms in the molecule minus one then 
             the function returns None as this is out of the range of the atom list.
         """
         if(index>(len(self.atoms)-1)):
@@ -175,16 +181,16 @@ class Molecule(object):
         return atoms,indexed_atoms
         
     def rotateDihedrals(self,atoms,thetas):
-        """Rotates the atoms of the molecule from the atom given by 'index' all the way to the last atom (here the last atom is the one opposite the defined "anchor atom") about a dihedral axis.
-        Here the dihedral axis is defined by the two atoms that come before the 'index' atom as defined by the graph of the molecule.  Due to the way the function is defined the 'index' of the 
-        atom must be greater than 3, but of course less than the total length of the molecule.
+        """Rotates the atoms of the molecule from the given atom or atoms to the last atom (here the last atom is the one opposite the defined "anchor atom") about a dihedral axis.
+        The dihedral axis is defined by the two atoms that come before the given atom or atoms as defined by the graph of the molecule. 
+        The length of atoms should be equal to the length of thetas; each Atom object in atoms will be rotated by the corresponding angle in thetas.
         
         Parameters
         ----------
-        index : int
-            The index of the atom which is the starting atom of the rotation and consequently the last atom of the dihedral of whose axis you wish to rotate the molecule about.
-        theta : float
-            The angle in radians which specifies the angle of rotation about the dihedral axis which you want to perform.
+        atoms : list of Atom objects
+            The atom or atoms with which to start the rotation and consequently the last atom of the dihedral of whose axis you wish to rotate the molecule about.
+        thetas : list of floats
+            The angle or angles in radians which specifies the angle of rotation about the dihedral axis which you want to perform.
         """
         successor_dict = dict(ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID))
         predecessor_dict = dict(ntwkx.bfs_predecessors(self.graph,source=self.anchorAtom.atomID))
@@ -218,6 +224,20 @@ class Molecule(object):
                     rotate_ID = rotate_ID[0]
 
     def findPaths(self,atom,length):
+        """Finds all the sets of atoms of the specified length which contain the given atom and are connected by Bonds.
+                
+        Parameters
+        ----------
+        atom : Atom
+            The Atom object in which to find paths.
+        length : int
+            The length of paths to find.
+        
+        Returns
+        -------
+        paths : list of lists of Atoms
+            A list containing lists of Atom objects for each path of the specified length which includes atom.
+        """
         if length == 0:
             return [[atom]]
         paths = [[atom]+path for neighbor in self.graph.neighbors(atom) for path in self.findPaths(neighbor,length-1) if atom not in path]
@@ -229,7 +249,7 @@ class Molecule(object):
         Parameters
         -----------
         index : int
-            The index of the molecule that one wants the associated dihedral.  Here the associated dihedral is the dihedral where the atom is the fourth atom of the dihedral.
+            The index of the molecule that one wants the associated dihedral.  The associated dihedral is the dihedral where the atom is the fourth atom of the dihedral.
 
         Returns
         -------
@@ -255,12 +275,12 @@ class Molecule(object):
         Parameters
         ----------
         dihedral : Dihedral 
-            Dihedral Object that one wishes to calculate the dihedral angle of.
+            Dihedral Object from which to calculate the dihedral angle.
 
         Returns
         -------
-        float
-            The current dihedral angle of the Dihedral object
+        angle : float
+            The current dihedral angle of the Dihedral object.
         """
         atom1 = self.getAtomByID(dihedral.atom1)
         atom2 = self.getAtomByID(dihedral.atom2)
@@ -278,6 +298,13 @@ class Molecule(object):
         return angle
         
     def align_to_vector(self,vector):
+        """Rotates all the atoms in the Molecule to align the vector between the anchor atom and the center of mass to the given vector.
+        
+        Parameters
+        ----------
+        vector : Numpy array of floats
+            A 1x3 array of the Cartesian vector to which the Molecule will be aligned.
+        """
         molecule_vector = self.get_com()-self.anchorAtom.position
         if np.linalg.norm(vector)==0. or np.linalg.norm(molecule_vector)==0.:
             raise ValueError("Alignment vector passed in must have a non-zero magnitude.")
@@ -289,10 +316,26 @@ class Molecule(object):
             atom.position = rot_quat((atom.position-anchor_position),angle,axis_rotation)+anchor_position       
 
     def move_atoms(self,move):
+        """Moves all the atoms in the Molecule according to the given move.
+        
+        Parameters
+        ----------
+        move : Numpy array of floats
+            A 1x3 array of the Cartesian vector for the move.
+        """
         for atom in self.atoms:
             atom.position+=move
 
     def move_atoms_by_index(self,move,index):
+        """Moves the atoms between the specified index and the end of the Molecule (opposite the anchor atom) according to the given move.
+        
+        Parameters
+        ----------
+        move : Numpy array of floats
+            A 1x3 array of the Cartesian vector for the move.
+        index : int
+            The index of the Atom at which the move should begin.
+        """
         for i in range(index,len(self.atoms)):
             self.getAtomByMolIndex(i).position+=move
 
@@ -702,15 +745,40 @@ def rot_quat(vector,theta,rot_axis):
     return new_vector[1:]*vector_mag
 
 def quat_mult(q1,q2):
+    """Matrix multiplication for two 1x4 matrices.
+    
+    Parameters
+    ----------
+    q1,q2 : Numpy arrays of floats
+        1x4 arrays to be multiplied.
+    
+    Returns
+    -------
+    results : Numpy array of floats
+        A 1x4 array containing the matrix product of q1 and q2.
+    """
     w1,x1,y1,z1 = q1
     w2,x2,y2,z2 = q2
     w = w1*w2-x1*x2-y1*y2-z1*z2
     x = w1*x2 + x1*w2 + y1*z2 - z1*y2
     y = w1*y2 + y1*w2 + z1*x2 - x1*z2
     z = w1*z2 + z1*w2 + x1*y2 - y1*x2
-    return np.array([w,x,y,z])
+    result = np.array([w,x,y,z])
+    return result
 
 def getAngle(atom1,atom2,atom3):
+    """Returns the smallest angle defined by three atoms.
+    
+    Parameters
+    ----------
+    atom1,atom2,atom3 : Atom
+        The atom objects which define the desired angle; atom2 is the central atom. 
+        
+    Returns
+    -------
+    angle : float
+        The angle between the vector from atom2 to atom1 and the vector from atom2 to atom3.
+    """
     line1 = atom1.position-atom2.position
     line2 = atom3.position-atom2.position
     angle = np.arccos(np.dot(line1,line2) / (np.linalg.norm(line1)*np.linalg.norm(line2)))

@@ -4,16 +4,12 @@ from lammps import lammps, PyLammps
 import npmc.molecule_class as mol
 import npmc.atom_class as atm
 import npmc.move_class as mvc
+import npmc.forcefield_class as ffc
 import os
-import time
 import numpy as np
 import random as rnd
-import npmc.forcefield_class as ffc
-import multiprocessing as mp
-#from pathos.multiprocessing import ProcessPool
-import concurrent.futures as cncf
 from math import *
-from subprocess import check_output        
+from subprocess import check_output       
 
 
 class Simulation(object):
@@ -22,42 +18,46 @@ class Simulation(object):
     Parameters
     ----------
     init_file : str
-        The file name of the initialization LAMMPS file. This file contains all the force field parameters computes and fixes that one wishes to specify for the LAMMPS simulation.
+        The file name of the initialization LAMMPS file. This file contains all the force field parameters computes and fixes that one wishes to specify for the LAMMPS simulation.    
     datafile : str
-        The LAMMPS data file which contains the coordinates of the atoms and bond, angle, and dihedral information.
+        The LAMMPS data file which contains the coordinates of the atoms and bond, angle, and dihedral information.    
     dumpfile : str
-        The filename of the file which one wishes to dump the XYZ information of the simulation.
+        The filename of the file which one wishes to dump the XYZ information of the simulation.   
     temp : float
-        The temperature which one wishes to run the simulation.
-    exclude : binary
-        A binary value that determines whether any interactions are excluded in the simulation.
+        The temperature which one wishes to run the simulation.          
+    type_lengths : list of type int
+        A list with length equal to the number of ligands types and containing the number of atoms in each ligand.    
+    nptype : int
+        The atom type, as specified in the datafile, for the nanoparticle metal (Ag, Au, etc.).    
+    anchortype : int
+        The type number in the LAMMPS file used for the atom type of the anchor atom in each molecule.
+    max_disp : float
+        The maximum linear distance in nanometers attempted by the translation move.    
+    max_angle : float
+        The maximum rotation in radians attempted by the rotation move.    
     numtrials : int
-        The number of trial rotations for each regrowth step in the configurationally biased moves
-    restart : binary
-        A binary value that determines whether this is a new simulation or a restart of a previous simulation.
+        The number of trial rotations for each regrowth step in the configurationally biased moves    
+    restart : Boolean, optional
+        A Boolean that determines whether this is a new simulation or a restart of a previous simulation.    
+    read_pdf : Boolean, optional
+        A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
+        and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,max_disp=1.0,type_lengths=(5,13),numtrials=5,anchortype=2,restart=False,parallel=False,rosenW_intra=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,restart=False,read_pdf=False):
         dname = os.path.dirname(os.path.abspath(init_file))
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
         os.chdir(dname)
-
-        self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
-        self.lmp.file(os.path.abspath(init_file))
-        
-        self.rosenW_intra = rosenW_intra
+        self.temp = temp
         self.numtrials = numtrials
-        
-        #if parallel:
-        #    pool = mpc.Pool()
-        #    self.lmp_clones = pool.map(self.clone_lammps,range(numtrials)) 
-        #    pool.close()
         self.molecules = mol.constructMolecules(datafile)
         self.atomlist = self.get_atoms()
+        self.step = 0 if not restart else self.get_last_step_number()
         
+        self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
+        self.lmp.file(os.path.abspath(init_file))
         self.lmp.command("thermo 1")
-        self.lmp.command("thermo_style    custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
-        self.temp = temp
+        self.lmp.command("thermo_style custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
@@ -66,34 +66,9 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(anchortype,max_disp,type_lengths,numtrials,parallel)
-        self.initialize_data_files(restart) 
-        self.step=0 if not restart else self.get_last_step_number()
-        self.update_neighbor_list()
-        
-        
-        '''
-        if parallel:
-            self.manager = mp.Manager()
-            self.tasks = self.manager.Queue(maxsize=5)
-            self.results = self.manager.Queue(maxsize=5)
-            for i in range(self.numtrials):
-                pname = f'p{i}'
-                new_process = mp.Process(target=test, args=(pname,i,self.tasks,self.results), daemon=True)
-                new_process.start()
-        '''
-    
-    def clone_lammps(self):
-       
-        lmp2 = lammps("",["-echo","none","-screen","lammps2.out"])
-        lmp2.file(os.path.abspath(self.init_file))
-        lmp2.command("thermo 1")
-        lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
-        self.initializeGroups(lmp2)
-        self.initializeComputes(lmp2)
-        self.initializeFixes(lmp2)
-        
-        return(lmp2)
+        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf)
+        self.initialize_data_files(restart)
+        self.update_neighbor_list()        
 
     def initializeGroups(self,lmp):
         """Initialize the LAMMPS groups that one wishes to use in the simulation.
@@ -113,44 +88,47 @@ class Simulation(object):
         lmp.command("compute pair_total all pair lj/cut/coul/debye")
 
     def initializeFixes(self,lmp):
-        """Initializes the fixes one wishes to use in the simulation.
+        """Initializes the LAMMPS fixes one wishes to use in the simulation.
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,anchortype,max_disp,type_lengths,numtrials,parallel=False):
-        cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,parallel=parallel,read_pdf=False,write_pdf=True,rosenW_intra=self.rosenW_intra)
-        translate_move = mvc.TranslationMove(self,max_disp,[1])
-        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,parallel=parallel,read_pdf=False,write_pdf=True,rosenW_intra=self.rosenW_intra)
-        rotation_move = mvc.RotationMove(self,anchortype,0.1745)
+    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf):
+        """Initializes the Monte Carlo moves used in the simulation.
+        """
+        translate_move = mvc.TranslationMove(self,max_disp,[nptype])
+        rotation_move = mvc.RotationMove(self,anchortype,max_angle)
+        cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
+        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
     
     def initialize_data_files(self,restart=False):
+        """Initializes the potential energy and acceptance rate data files for the simulation.
+        """
         if not restart:
             with open('Potential_Energy.txt','w') as potential_file, open('Acceptance_Rate.txt','w') as acceptance_file:
-                potential_file.write("step\tEnergy\tmove\tAccepted?\n")
-                acceptance_file.write("step\t"+"\t".join(["#"+move.move_name+"\tRate" for move in self.moves])+"\n")
+                potential_file.write('step\tEnergy\tmove\tAccepted?\n')
+                acceptance_file.write('step\t'+'\t'.join(['#'+move.move_name+'\tRate' for move in self.moves])+'\n')
         self.potential_file = open('Potential_Energy.txt','a') 
         self.acceptance_file = open("Acceptance_Rate.txt",'a')
 
-
     def get_last_step_number(self):
+        """Gets the last simulation step number from the potential energy data file.
+        """
         last_line = check_output(["tail","-1",self.potential_file.name])
-        return(int(last_line.decode().split('\t')[0]))
+        return int(last_line.decode().split('\t')[0])
         
-
     def minimize(self,force_tol=1e-3,e_tol=1e-5,max_iter=200):
         """Minimizes the system using LAMMPS minimize function.
 
         Parameters
         ----------
         force_tol : float, optional
-            The force tolerance used in the minimization routine.
+            The force tolerance used in the minimization routine.        
         e_tol : float, optional
-            The energy tolerance used in the minimization routine.
+            The energy tolerance used in the minimization routine.        
         max_iter : int, optional
             The maximum allowed iterations in the minimization procedure.
         """
-        #self.lmp.command("dump xyzdump all xyz 10 "+str(self.dumpfile))
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
         self.get_coords()
 
@@ -160,7 +138,7 @@ class Simulation(object):
         Parameters
         ----------
         group_name : str
-            The group ID of the group of atoms that one wishes to dump
+            The group ID of the group of atoms that one wishes to dump       
         filename : str
             The name of the file that the group of atoms will be dumped to.  
             As the specified format is XYZ it is a good idea to append .xyz to the end of the filename.
@@ -173,38 +151,27 @@ class Simulation(object):
         self.lmp.command("write_dump all xyz "+self.dumpfile+" modify append yes")
 
     def getCoulPE(self):
+        """Compute the Coulombic potential energy from LAMMPS.
+        """
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("coul_pe",0,0)
 
     def getVdwlPE(self):
+        """Compute the Van Der Waals potential energy from LAMMPS.
+        """
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("lj_pe",0,0)
 
     def get_pair_PE(self):
-        
+        """Compute the total pair potential energy from LAMMPS.
+        """
         self.lmp.command("run 1 pre no post no")
         energies = self.lmp.extract_compute("pair_total",0,0)
-        return(energies)
-
-    def parallel_pair_PE(self,molID,index,rotations):
-    
-        for i,rotation in enumerate(rotations):
-            self.tasks.put((i,molID,index,rotation,self.get_atom_coords_2()))
-        energies = np.empty(self.numtrials)
-        for i in range(self.numtrials):
-            index, energy = self.results.get()
-            energies[index] = energy
-        return energies    
-
-    def get_clone_pair_PE(self,coords):
-        
-        #lmp2 = self.clone_lammps()
-        self.update_clone_coords(lmp2,coords)
-        lmp2.command("run 0 post no")
-        energy = lmp2.extract_compute("pair_total",0,0)
-        return(energy)
+        return energies
     
     def get_total_PE(self):
+        """Compute the total potential energy from LAMMPS.
+        """
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("thermo_pe",0,0)
 
@@ -219,16 +186,20 @@ class Simulation(object):
         self.atom_type_dict=atom_type_dict
 
     def update_neighbor_list(self):
+        """Update the LAMMPS neighbor list.
+        """
         self.lmp.command("run 0 post no")
 
     def turn_on_all_atoms(self):
+        """Turns on short range interactions for all atoms by including all the atoms in the LAMMPS neighbor list.
+        """
         self.lmp.command("neigh_modify exclude none")
         if self.exclude:
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
         self.update_neighbor_list()
 
     def turn_off_atoms(self,atomIDs):
-        """Turns off short range interactions with specified atoms using 'neigh_modify exclude' command in LAMMPS
+        """Turns off short range interactions with specified atoms by excluding those atoms from the LAMMPS neighbor list.
 
         Parameters
         ----------
@@ -245,23 +216,33 @@ class Simulation(object):
         self.update_neighbor_list()
 
     def exclude_type(self,type1,type2):
+        """Turns off short range interactions with atoms of two specified types by excluding those atoms from the LAMMPS neighbor list.
+
+        Parameters
+        ----------
+        type1, type2: int
+            The atom types with which short range interactions will be turned off.
+        """
         self.excluded_types = (type1,type2)
         self.exclude=True
         self.lmp.command("neigh_modify exclude type %d %d" % (type1,type2))
 
     def getRandomMolecule(self):
         """Returns a randomly selected molecule from the LAMMPS datafile associated with the given instance.
-
         """
-        return(rnd.choice(self.molecules))
+        return rnd.choice(self.molecules)
 
     def get_atoms(self):
+        """Returns a list of atom objects for all atoms in the simulation.
+        """
         atomlist = []
         for key in self.molecules:
             atomlist.extend(self.molecules[key].atoms)
         return atomlist
 
     def get_coords(self):
+        """Updates the atom positions for each instance of the atom class with the atom positions from LAMMPS.
+        """
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
         coords = self.lmp.gather_atoms("x",1,3)
         for idx,i in zip(indxs,range(len(self.atomlist))):
@@ -274,26 +255,15 @@ class Simulation(object):
 
         Returns
         --------
-        atom_coords : float array
-            A Nx3 array with each row representing an atom and the columns containing the x, ym and z coordinates in that order.
+        atom_coords : Numpy array of floats
+            An Nx3 array with each row representing an atom and the columns containing the x, y and z coordinates, respectively.
         """
         atom_coords = np.array([atom.position for atom in self.atomlist])
         return atom_coords
-    
-    def get_atom_coords_2(self):
-        """Returns positions of each atom in a Nx3 array
-
-        Returns
-        --------
-        atom_coords : float array
-            A Nx3 array with each row representing an atom and the columns containing the x, ym and z coordinates in that order.
-        """
-        atom_coords = np.empty((len(self.atomlist),3))
-        for atom in self.atomlist:
-            atom_coords[atom.atomID-1,:] = atom.position
-        return atom_coords
 
     def update_coords(self):
+        """Updates the atom positions in LAMMPS with the atom positions from each instance of the atom class.
+        """
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
         coords = self.lmp.gather_atoms("x",1,3)
         for idx,i in zip(indxs,range(len(self.atomlist))):
@@ -302,17 +272,14 @@ class Simulation(object):
             coords[i*3+2]=self.atomlist[idx].position[2]
         self.lmp.scatter_atoms("x",1,3,coords)
 
-    def update_clone_coords(self,lmp2,atom_coords):
-        indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
-        coords = lmp2.gather_atoms("x",1,3)
-        for idx,i in zip(indxs,range(atom_coords.shape[0])):
-            coords[i*3]=atom_coords[idx][0]
-            coords[i*3+1]=atom_coords[idx][1]
-            coords[i*3+2]=atom_coords[idx][2]
-        lmp2.scatter_atoms("x",1,3,coords)
-
-
     def revert_coords(self,old_positions):
+        """Reverts the atom positions in LAMMPS to the given previous atom positions from all atom objects.
+        
+         Parameters
+        ----------
+        old_positions: Numpy array of floats
+            An Nx3 array with each row representing an atom and the columns containing the x, y and z coordinates, respectively.         
+        """
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
         coords = self.lmp.gather_atoms("x",1,3)
         for idx,i in zip(indxs,range(len(old_positions))):
@@ -323,11 +290,17 @@ class Simulation(object):
         self.get_coords()
 
     def perform_mc_move(self):
+        """Randomly selects one of the Monte Carlo moves included in initializeMoves, performs it, and accepts or rejects the move according to the Metropolis criteria.
+        
+        Returns
+        --------
+        accepted : Boolean
+            A Boolean for whether the move was accepted or not.
+        """
         move = rnd.choice(self.moves)
         old_positions = np.copy([atom.position for atom in self.atomlist])
         accepted = move.move()
-        if (not accepted):
-            self.revert_coords(old_positions)
+        if not accepted: self.revert_coords(old_positions)
         self.step+=1
         self.update_coords()
         new_energy = self.get_total_PE()
@@ -336,98 +309,4 @@ class Simulation(object):
         self.acceptance_file.flush()
         self.potential_file.flush()
         return accepted
-            
-'''    
-def test(pname,ind,tasks,results):
-
-    lmp2 = lammps("",["-echo","none","-screen","lammps2.out"])
-    lmp2.file(os.path.abspath(os.path.abspath('./system.in')))
-    
-    lmp2.command("thermo 1")
-    lmp2.command("thermo_style  custom step etotal ke temp pe ebond eangle edihed eimp evdwl ecoul elong press")
-    
-    lmp2.command("group silver type 1")
-    lmp2.command("group adsorbate type 2 3 4 5 6")
-    
-    lmp2.command("compute pair_pe all pe")
-    lmp2.command("compute mol_pe all pe dihedral")
-    lmp2.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
-    lmp2.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
-    lmp2.command("compute pair_total all pair lj/cut/coul/debye")
-    
-    lmp2.command("fix fxfrc silver setforce 0. 0. 0.")
-    
-    molecules = mol.constructMolecules('./system.data')
-    atomlist = []
-    for key in molecules:
-        atomlist.extend(molecules[key].atoms)
-
-    atomdict = {}
-    for atom in atomlist:
-        atomdict[atom.atomID] = atom
-
-    anchortype=4    
-    for key, molecule in molecules.items():
-        anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==anchortype]
-        if len(anchorIDs)>0:
-            molecule.setAnchorAtom(anchorIDs[0])
-    
-    while True:
-    
-        index, molID, mol_index, rotation, atom_coords, start_idx = tasks.get()
-        
-        start = time.time()
-        
-        molecule = molecules[molID]
-        if (index+1>=len(molecule.atoms)):
-            self.simulation.turn_on_all_atoms()
-        else:
-            indices_to_turn_off = np.arange(index+1,len(molecule.atoms))
-            atoms = map(molecule.getAtomByMolIndex,indices_to_turn_off)
-            atomIDs = [atom.atomID for atom in atoms]
-            self.simulation.turn_off_atoms(atomIDs)
-        
-        for i,atom_coord in enumerate(atom_coords):
-            atomdict[i+1].position = atom_coord
-
-        if start_idx:
-        
-            indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
-            coords = lmp2.gather_atoms("x",1,3)
-            for idx,i in zip(indxs,range(len(atomlist))):
-                coords[i*3]=atomlist[idx].position[0]
-                coords[i*3+1]=atomlist[idx].position[1]
-                coords[i*3+2]=atomlist[idx].position[2]
-            lmp2.scatter_atoms("x",1,3,coords)
-            lmp2.command("run 0 post no")    
-            
-        indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
-        coords = lmp2.gather_atoms("x",1,3)
-        for idx,i in zip(indxs,range(len(atomlist))):
-            coords[i*3]=atomlist[idx].position[0]
-            coords[i*3+1]=atomlist[idx].position[1]
-            coords[i*3+2]=atomlist[idx].position[2]
-        lmp2.scatter_atoms("x",1,3,coords)
-        lmp2.command("run 0 post no")
-        
-        molecule.rotateDihedral(mol_index,rotation)
-         
-        indxs = np.argsort([atom.atomID for atom in atomlist],axis=0)
-        coords = lmp2.gather_atoms("x",1,3)
-        for idx,i in zip(indxs,range(len(atomlist))):
-            coords[i*3]=atomlist[idx].position[0]
-            coords[i*3+1]=atomlist[idx].position[1]
-            coords[i*3+2]=atomlist[idx].position[2]
-                
-        lmp2.scatter_atoms("x",1,3,coords)
-        lmp2.command("run 1 pre no post no")
-        energy = lmp2.extract_compute("pair_total",0,0)
-        
-        molecule.rotateDihedral(mol_index,-rotation)
-        
-        #print(pname, time.time()-start)
-        #print(energy)
-                
-        results.put((index, energy))
-'''
 
