@@ -1,0 +1,7 @@
+import "trappeua_ff.lt"
+
+SILVER inherits trappeUA{
+	write("Data Atoms"){
+		$atom:Ag $mol:. @atom:Ag 0. 0. 0. 0.
+	}
+}

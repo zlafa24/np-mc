@@ -1,0 +1,18 @@
+[1] M.G. Martin, and J.I. Siepmann, Transferable potentials for phase equilibria. 
+        1. United-atom description of n-alkanes. J. Phys. Chem. B 102, 2569-2577 (1998).
+[2] N. Lubna, G. Kamath, J.J. Potoff, N. Rai, and J.I. Siepmann, Transferable potentials for phase equilibria. 
+        8. United-atom description for thiols, sulfides, disulfides, and thiophene. J. Phys. Chem. B 109, 24100-24107 (2005).
+[3] B. Chen, J.J. Potoff, and J.I. Siepmann, Monte Carlo calculations for alcohols and their mixtures with alkanes. Transferable potentials for phase equilibria. 
+        5. United-atom description of primary, secondary and tertiary alcohols. J. Phys. Chem. B 105, 3093-3104 (2001).
+[4] J.M. Stubbs, J.J. Potoff, and J.I. Siepmann, Transferable potentials for phase equilibria. 
+        6. United-atom description for ethers, glycols, ketones and aldehydes. J. Phys. Chem. B 108, 17596-17605 (2004).
+[5] K.A. Maerzke, N.E. Schultz, R.B. Ross, and J.I. Siepmann, TraPPE-UA force field for 
+        acrylates and Monte Carlo simulations for their mixtures with alkanes and alcohols. J. Phys. Chem. B 113, 6415-6425 (2009).
+[6] G. Kamath, F. Cao, and J.J. Potoff, An improved force field for the prediction of the vapor-liquid equilibria for 
+        carboxylic acids. J. Phys. Chem. B 108, 14130–14136 (2004).
+[7] H. Heinz, R.A. Vaia, B.L. Farmer, and R.R. Naik, Accurate simulation of surfaces and interfaces of 
+        face-centered cubic metals using 12-6 and 9-6 Lennard-Jones potentials. J. Phys. Chem. C 112, 17281–17290 (2008).
+[8] E.O. Fetisov and J.I. Siepmann, Structure and Phase Behavior of Mixed Self-Assembled 
+        Alkanethiolate Monolayers on Gold Nanoparticles: A Monte Carlo Study. J. Phys. Chem. B 120, 1972−1978 (2016).
+[9] S.N. Merz, Z.J. Farrell, J. Pearring, E. Hoover, M. Kester, S.A. Egorov, D.L. Green, and K.H. DuBay. Computational and experimental investigation of 
+        janus-like monolayers on ultrasmall noble metal nanoparticles. ACS Nano. 12, 11031-40 (2018).
