@@ -46,7 +46,7 @@ class TestCBMCRegrowth(unittest.TestCase):
 
     def test_select_dih_angles_returns_correct_pdf_after_1000000_trials_for_a_CCOH_OPLS_dihedral(self):
         cbmc_move_large_trials = mvc.CBMCRegrowth(self.simulation,2,(5,5),numtrials=10000000)
-        dihedral = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==4][0]
+        dihedral = [dihedral_ff for dihedral_ff in self.dihedral_ffs if dihedral_ff.dihedral_type==4][0]
         (normed_histogram,bins) = np.histogram(cbmc_move_large_trials.select_dih_angles(dihedral),bins=500,density=True)
         np.testing.assert_array_almost_equal(normed_histogram,self.dihedral_type4_pdf,decimal=2,err_msg="The resulting histogram from 100000 trials of select_dih_angles does not match the distriburion expected by the PDF of the OPLS dihedral type for a CCOH dihedral.")
 
@@ -159,8 +159,8 @@ class TestCBMCSwap(unittest.TestCase):
         self.assertEqual(len(molecule1.atoms),self.swap_move.type1_numatoms)
         
     def test_swap_positions_correctly_swaps_location_of_molecules(self):
-        molecule1 = self.simulation.molecules[-1]
-        molecule2 = self.simulation.molecules[-2]
+        molecule1 = self.simulation.molecules[2446]
+        molecule2 = self.simulation.molecules[2447]
         position1_old = np.copy([atom.position for atom in molecule1.atoms])
         self.swap_move.swap_anchor_positions(molecule1,molecule2)
         self.simulation.get_coords()
