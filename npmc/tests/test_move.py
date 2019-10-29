@@ -34,7 +34,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp)
         self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2,(5,5))
         self.cbmc_move_b = mvc.CBMCRegrowth(self.sim_branched,5,(9,9))
-        self.cbmc_move_parallel = mvc.CBMCRegrowth(self.simulation,2,(5,5))
+        self.dihedral_ffs = ffc.initialize_dihedral_ffs(self.init_file+'.settings')
 
     def test_select_random_molecule_returns_molecule(self):
         self.assertIsInstance(self.cbmc_move.select_random_molecule(),mlc.Molecule,msg="select_random_molecule does not return an object of type Molecule.")
@@ -46,7 +46,8 @@ class TestCBMCRegrowth(unittest.TestCase):
 
     def test_select_dih_angles_returns_correct_pdf_after_1000000_trials_for_a_CCOH_OPLS_dihedral(self):
         cbmc_move_large_trials = mvc.CBMCRegrowth(self.simulation,2,(5,5),numtrials=10000000)
-        (normed_histogram,bins) = np.histogram(cbmc_move_large_trials.select_dih_angles(4),bins=500,density=True)
+        dihedral = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==4][0]
+        (normed_histogram,bins) = np.histogram(cbmc_move_large_trials.select_dih_angles(dihedral),bins=500,density=True)
         np.testing.assert_array_almost_equal(normed_histogram,self.dihedral_type4_pdf,decimal=2,err_msg="The resulting histogram from 100000 trials of select_dih_angles does not match the distriburion expected by the PDF of the OPLS dihedral type for a CCOH dihedral.")
 
     def test_evaluate_energies_returns_expected_energies_for_specified_angles(self):
@@ -82,15 +83,6 @@ class TestCBMCRegrowth(unittest.TestCase):
         bond_angle = getAngles([mol.getAtomByID(angle_atomIDs[0]),mol.getAtomByID(angle_atomIDs[2]),mol.getAtomByID(angle_atomIDs[1])],1)
         bond_angle_calc = ffc.central_angle_Vincenty(dihedral_angle1,dihedral_angle2,bond_angle1,bond_angle2)
         np.testing.assert_array_almost_equal(bond_angle,bond_angle_calc,err_msg="The bond angle is incorrectly calculated from two dihedral angles.")
-    
-    '''
-    def test_parallel_evaluate_energies_returns_expected_energies_for_specified_angles(self):
-        molecule = self.simulation.molecules[1]
-        rotations = [0,pi,2*pi,pi/2.,2*pi]
-        energies = self.cbmc_move_parallel.parallel_evaluate_energies(molecule,4,rotations)
-        actual_energies = [-1.1082622,-1.34260189,-1.1082622,-1.55146693,-1.1082622]
-        np.testing.assert_array_almost_equal(energies,actual_energies,err_msg="evaluate_energies does not return correct energies for a set of specified rotation angles.")
-    '''
 
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],3)
@@ -167,8 +159,8 @@ class TestCBMCSwap(unittest.TestCase):
         self.assertEqual(len(molecule1.atoms),self.swap_move.type1_numatoms)
         
     def test_swap_positions_correctly_swaps_location_of_molecules(self):
-        molecule1 = self.simulation.molecules[1]
-        molecule2 = self.simulation.molecules[2]
+        molecule1 = self.simulation.molecules[-1]
+        molecule2 = self.simulation.molecules[-2]
         position1_old = np.copy([atom.position for atom in molecule1.atoms])
         self.swap_move.swap_anchor_positions(molecule1,molecule2)
         self.simulation.get_coords()
