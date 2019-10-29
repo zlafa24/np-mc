@@ -34,7 +34,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp)
         self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2,(5,5))
         self.cbmc_move_b = mvc.CBMCRegrowth(self.sim_branched,5,(9,9))
-        self.cbmc_move_parallel = mvc.CBMCRegrowth(self.simulation,2,(5,5),parallel=True)
+        self.cbmc_move_parallel = mvc.CBMCRegrowth(self.simulation,2,(5,5))
 
     def test_select_random_molecule_returns_molecule(self):
         self.assertIsInstance(self.cbmc_move.select_random_molecule(),mlc.Molecule,msg="select_random_molecule does not return an object of type Molecule.")
@@ -148,29 +148,6 @@ class TestTranslationMove(unittest.TestCase):
     def tearDown(self):
         os.chdir(script_path)
 
-class TestSwapMove(unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/two_meohs')
-        self.init_file = os.path.abspath(self.lt_directory+'/system.in')
-        self.data_file = os.path.abspath(self.lt_directory+'/system.data')
-        self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
-        self.temp = 298.15
-        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
-        self.swap_move = mvc.SwapMove(self.simulation,anchortype=2)
-        
-    def test_swap_positions_correctly_swaps_location_of_molecules(self):
-        molecule1 = self.simulation.molecules[1]
-        molecule2 = self.simulation.molecules[2]
-        position1_old = np.copy([atom.position for atom in molecule1.atoms])
-        self.swap_move.swap_positions(molecule1,molecule2)
-        self.simulation.get_coords()
-        position2_new = np.copy([atom.position for atom in molecule2.atoms])
-        np.testing.assert_allclose(position1_old,position2_new)
-
-    def tearDown(self):
-        os.chdir(script_path)
-
 class TestCBMCSwap(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -188,6 +165,15 @@ class TestCBMCSwap(unittest.TestCase):
     def test_select_random_molecules_returns_molecules_of_correct_types(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()
         self.assertEqual(len(molecule1.atoms),self.swap_move.type1_numatoms)
+        
+    def test_swap_positions_correctly_swaps_location_of_molecules(self):
+        molecule1 = self.simulation.molecules[1]
+        molecule2 = self.simulation.molecules[2]
+        position1_old = np.copy([atom.position for atom in molecule1.atoms])
+        self.swap_move.swap_anchor_positions(molecule1,molecule2)
+        self.simulation.get_coords()
+        position2_new = np.copy([atom.position for atom in molecule2.atoms])
+        np.testing.assert_allclose(position1_old,position2_new)
 
     def test_align_mol_to_positions_correctly_aligns_atom_positions(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()

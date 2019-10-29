@@ -36,13 +36,6 @@ class TestSimulationInitializations(unittest.TestCase):
         self.sim.dump_group("adsorbate","adsorbate.xyz") 
         actual_coords = np.loadtxt(self.data_folder+"/adsorbate.xyz",skiprows=2)
         np.testing.assert_almost_equal(actual_coords,self.adsorbate_expected_coords,decimal=4,err_msg="Coords do not match")
-
-    def test_clone_lammps_returns_LAMMPS_object_that_gives_the_same_PE(self):
-        self.sim.lmp.command("run 0 post no")
-        original_energy = self.sim.lmp.extract_compute("thermo_pe",0,0)
-        lmp2 = self.sim.clone_lammps()
-        lmp2.command("run 0 post no")
-        self.assertEqual(original_energy,lmp2.extract_compute("thermo_pe",0,0))
     
     def test_get_last_step_number_returns_correct_step(self):
         self.sim.potential_file = open(self.test_potential_file,'a')
@@ -93,41 +86,7 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
 
     def test_getCoulPE_with_two_MeOHs_separated_by_5A(self):
         self.assertAlmostEqual(0.5628225,self.sim.getCoulPE(),places=4,msg="getCoulPE does not return expected value for Coulombic energy of two MeOHs separated by 5A")
-    '''
-    def test_get_clone_pair_PE_returns_correct_PE_for_two_MeOHs_separated_by_5A(self):
-        lmp2 = self.sim.clone_lammps()
-        self.assertAlmostEqual(-1.6710847+0.5628225,self.sim.get_clone_pair_PE(lmp2,np.array(self.two_meoh_init_coords)),places=4,msg="get_clone_pair_PE does not return the correct energy for a cloned LAMMPS instance of 2 MEOHs separated by 5A.")
-    
-    def test_parallel_energy_evaluation_using_get_clone_pair_PE_on_two_MeOH_5A(self):
-        numthreads = 5
-        initial_energy = -1.6710847+0.5628225
-        displaced_energy = -0.6194387
-        actual_energies = [initial_energy for i in range(numthreads)]
-        actual_energies[1]=displaced_energy
-        actual_energies[2]=displaced_energy
-        lmp2 = [self.sim.clone_lammps() for i in range(numthreads)]
-        coords = [np.array(self.two_meoh_init_coords) for i in range(numthreads)]
-        coords[1]=self.two_meoh_1A_coords
-        coords[2]=self.two_meoh_1A_coords
-        with conc.ThreadPoolExecutor(max_workers=numthreads) as executor:
-            results = executor.map(self.sim.get_clone_pair_PE,lmp2,coords)
-        energies = [result for result in results]
-        np.testing.assert_allclose(actual_energies,energies,rtol=1e-05,err_msg="Parallel execution of get_clone_pair_PE does not return the expected PE.")
-    
-    def test_parallel_energy_evaluation_using_parallel_pair_PE_function(self):
-        numthreads=5
-        initial_energy = -1.6710847+0.5628225
-        displaced_energy = -0.6194387
-        actual_energies = [initial_energy for i in range(numthreads)]
-        actual_energies[1]=displaced_energy
-        actual_energies[2]=displaced_energy
-        lmp2 = [self.sim.clone_lammps() for i in range(numthreads)]
-        coords = [np.array(self.two_meoh_init_coords) for i in range(numthreads)]
-        coords[1]=self.two_meoh_1A_coords
-        coords[2]=self.two_meoh_1A_coords
-        energies = self.sim.parallel_pair_PE(lmp2,coords)
-        np.testing.assert_allclose([energy for energy in energies],actual_energies,rtol=1e-05,err_msg="parallel_pair_PE does not return the expected energies")
-    '''
+
 class TestSimulationTurningOffAtoms(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -278,13 +237,6 @@ class TestUpdatingCoordinates(unittest.TestCase):
             self.sim.revert_coords(old_coords)
             actual_energy_array[i]=self.sim.get_pair_PE()
         np.testing.assert_allclose(actual_energy_array,orig_energy_array)
-
-    def test_update_clone_coords_returns_expected_energy_after_updating_coords_of_clone(self):
-        lmp2 = self.sim.clone_lammps()
-        new_coords = self.two_meoh_1A_coords
-        self.sim.update_clone_coords(lmp2,new_coords)
-        lmp2.command("run 0 post no")
-        self.assertAlmostEqual(lmp2.extract_compute("pair_total",0,0),-0.6194387,places=5,msg="After cloned LAMMPS instance has displaced one molecule 2A the pair energy does not match expected results.")
 
     def tearDown(self):
         os.chdir(script_path)
