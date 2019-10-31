@@ -52,7 +52,6 @@ class Simulation(object):
         self.numtrials = numtrials
         self.molecules = mol.constructMolecules(datafile)
         self.atomlist = self.get_atoms()
-        self.step = 0 if not restart else self.get_last_step_number()
         
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
@@ -68,6 +67,7 @@ class Simulation(object):
         self.initializeFixes(self.lmp)
         self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf)
         self.initialize_data_files(restart)
+        self.step = 0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()        
 
     def initializeGroups(self,lmp):
