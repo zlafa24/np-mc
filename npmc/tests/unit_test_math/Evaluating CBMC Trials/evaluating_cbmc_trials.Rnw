@@ -1,0 +1,362 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{blindtext}
+\usepackage[inline]{enumitem}
+\usepackage{xcolor}
+\usepackage{bm}
+\usepackage {fancyvrb}
+\usepackage {listings}
+\usepackage[makeroom]{cancel}
+
+\begin{document}
+
+\title{Evaluating CBMC Trials \\ \large Rotations of MeOH CCOH Dihedral in a 2 MeOH System}
+\maketitle
+
+\section{Evaluating Initial Energy}
+
+In this case we have two MeOH molecules separated by 5\AA\ in the $y$ direction.
+
+\begin{figure}[H]
+  \center
+  \includegraphics[trim=0 0 0 300,clip,width=0.5\textwidth]{two_meoh}
+\end{figure}
+
+Our MeOH molecules have the following coordinates:
+
+\begin{align*}
+  &S\ (0.138,0.0,-1.654)   &S'\ (0.138,5.0,-1.654)\\
+  &C1\ (0.474,0.0,1.059)   &C1'\ (0.474,5.0,1.059)\\
+  &C2\ (-0.621,0.0,-0.007) &C2'\ (-0.621,5.0,-0.007)\\
+  &O\ (-0.125,0.0,2.357)   &O'\ (-0.125,5.0,2.357)\\
+  &H\ (0.598,0.0,2.999)    &H'\ (0.598,5.0,2.999)\\
+\end{align*}
+
+<<coords-and-types>>=
+  S=c(2,0.0,0.138,0.0,-1.654)
+  C1=c(1,0.0,0.474,0.0,1.059)
+  C2=c(1,0.265,-0.621,0.0,-0.007)
+  O=c(3,-0.700,-0.125,0.0,2.357)
+  H=c(4,0.435,0.598,0.0,2.999)
+  S_2=c(2,0.0,0.138,5.0,-1.654)
+  C1_2=c(1,0.0,0.474,5.0,1.059)
+  C2_2=c(1,0.265,-0.621,5.0,-0.007)
+  O_2=c(3,-0.700,-0.125,5.0,2.357)
+  H_2=c(4,0.435,0.598,5.0,2.999)
+@
+
+
+Based on the number of atoms the total number of pairwise interactions are:
+
+\[ \binom{N_{atoms}}{2}=\binom{10}{2} = 45 \]
+
+Subtracting off the excluded intramolecular forces we have:
+
+\[  \binom{N_{atoms}}{2}-2\cdot\binom{N_{atoms}/2}{2}+2=\binom{10}{2}-2\cdot\binom{5}{2}+2=27\]
+The LJ Parameters are:
+
+<<LJ-parameters,echo=FALSE,results='asis'>>=
+  library(xtable)
+  elements=c("C","S","O","H")
+  epsilons=c(0.118,0.39743,0.20,0.000)
+  sigmas=c(3.905,4.25,2.85,1.78)
+  frame = data.frame(elements,epsilons,sigmas)
+  colnames(frame) = c("Elements","Epsilons (kcal/mol)","Sigmas (A)")
+  print(xtable(frame,digits=c(0,-1,3,3),align = c('|l|','|l|','|c|','|c|')),include.rownames=FALSE)
+@
+
+Calculating the energies of all possible combinations we get:
+
+<<combinations>>=
+  distance=function(atom1,atom2){
+    return(norm(atom1[3:5]-atom2[3:5],type="2"))
+  }
+  energy=function(atom1,atom2){
+    r=distance(atom1,atom2)
+    sigma = (sigmas[atom1[1]]+sigmas[atom2[1]])/2
+    epsilon = sqrt(epsilons[atom1[1]]*epsilons[atom2[1]])
+    return(4*epsilon*((sigma/r)^12-(sigma/r)^6))
+  }
+  atoms = list(S,C1,C2,O,H,S_2,C1_2,C2_2,O_2,H_2)
+  atom_combos = combn(atoms,2)
+  distances=mapply(distance,atom_combos[1,],atom_combos[2,])
+  print(distances)
+  vdw_energies = mapply(energy,atom_combos[,distances>=5][1,],atom_combos[,distances>=5][2,])
+  print(vdw_energies)
+  sprintf("Total intermolecular Van der Waals Energy is: %4.4f kcal/mol",sum(vdw_energies))
+@
+
+Therefore the total energy is given as the total intermolecular energy plus the intramolecular energy of the two MeOHs:
+
+\begin{align*}
+  \text{Total Van der Waals Energy}&=\text{Intermolecular Energy}+\text{Intramolecular Energy}\\
+    &=\Sexpr{sum(vdw_energies)}+\Sexpr{2*-0.1406}=\Sexpr{sum(vdw_energies)+2*-0.1406}\ \text{kcal/mol}
+\end{align*}
+
+Now we use the following code to calculate the total coulombic energy:
+
+<<coul-combos>>=
+  coul_energy=function(atom1,atom2){
+    r=distance(atom1,atom2)
+    k=0.2
+    return(332.0636*((atom1[2]*atom2[2])/r)*exp(-k*r))
+  }
+  charged_atoms = list(C2,O,H,C2_2,O_2,H_2)
+  charge_combos = combn(charged_atoms,2)
+  distances=mapply(distance,charge_combos[1,],charge_combos[2,])
+  print(distances)
+  coul_energies = mapply(coul_energy,charge_combos[,distances>=5][1,],charge_combos[,distances>=5][2,])
+  print(sum(coul_energies))
+@
+
+The coulombic energy calculated here is:
+
+\begin{align*}
+  \Aboxed{\text{Total Coulombic Energy}=\Sexpr{sum(coul_energies)}\ \text{kcal/mol}}
+\end{align*}
+
+Then total energy is:
+
+$$\Sexpr{sum(coul_energies)+sum(vdw_energies)+2*-0.1406}\ \text{kcal/mol}$$
+
+
+
+\section{Rotating CCOH Dihedral $\pi$ Radians}
+
+The axis of rotation for the $CCOH$ dihedral is:
+
+<<define-axis>>=
+  library(scatterplot3d)
+  axis = O[3:5]-C2[3:5]
+  message(sprintf("The axis of rotation is: %s",paste(axis,collapse=", ")))
+  normaxis = axis/sqrt(sum(axis^2))
+  message(sprintf("The normed axis of rotation is: %s",paste(normaxis,collapse = ", ")))
+  
+  #Plot the molecule using scatterplot3d
+  x = c(S[3],C1[3],C2[3],O[3],H[3])
+  y = c(S[4],C1[4],C2[4],O[4],H[4])
+  z = c(S[5],C1[5],C2[5],O[5],H[5])
+  #data_frame = data.frame(x,y,z)
+  scatterplot3d(x,y,z,type = "l")
+@
+
+The quaternion that defines a $\pi$ radian rotation about this axis is:
+
+$$\vec{q}=\cos(\frac{\theta}{2})+\sin(\frac{\theta}{2})\cdot\frac{1}{\| a \|}\vec{a}=\cos(\frac{\pi}{2})+\sin(\frac{\pi}{2})\cdot\frac{1}{\| a \|}\vec{a}$$
+
+This turns out to be:
+
+<<define-quaternion,tidy=TRUE>>=
+  library(onion)
+  theta = pi
+  q = cos(theta/2)+sin(theta/2)*normaxis[1]*Hi+sin(theta/2)*normaxis[2]*Hj+sin(theta/2)*normaxis[3]*Hk
+  message(sprintf("The quaternion of rotation is %s",paste(q,collapse = ", ")))
+@
+
+Finally we get the vectors we wish to rotate:
+
+<<define-vectors,tidy=TRUE>>=
+  v1 = H[3:5]-O[3:5]
+  message(sprintf("Vector 1 is %s",paste(v1,collapse = ", ")))
+@
+
+Applying the rotation quaternions we get:
+
+<<rotation,tidy=TRUE>>=
+  v1_q = 0+v1[1]*Hi+v1[2]*Hj+v1[3]*Hk
+  v1_rot_q = (q*v1_q)*Conj(q)
+  v1_rot = c(i(v1_rot_q),j(v1_rot_q),k(v1_rot_q))
+  message(sprintf("v1 rotated pi radians is now %s",paste(v1_rot,collapse = ", ")))
+@
+
+This translates to final coordinates of O and H of:
+
+<<new-coords,tidy=TRUE>>=
+  Hnew = c(4,0.435,v1_rot+O[3:5])
+  message(sprintf("Hnew is %s",paste(Hnew,collapse = ",")))  
+  #Plot the new dihedral
+  xnew = c(S[3],C1[3],C2[3],O[3],Hnew[3])
+  ynew = c(S[4],C1[4],C2[4],O[4],Hnew[4])
+  znew = c(S[5],C1[5],C2[5],O[5],Hnew[5])
+  
+  xtotal = c(x,xnew)
+  ytotal = c(y,ynew)
+  ztotal = c(z,znew)
+  category = c(rep("blue",5),rep("red",5))
+  data_frame = data.frame(xtotal,ytotal,ztotal)
+  data_frame$fac = factor(rep(LETTERS[1:2],each=5)) 
+  print(c(as.numeric(data_frame$xtotal)))
+  scatterplot3d(x=data_frame$xtotal,y = data_frame$ytotal,z = data_frame$ztotal)
+  #,type = "l",color=as.numeric(data_frame$fac)
+@
+
+The calculated dihedral angle from these new coordinates is:
+
+<<calculate-angle,tidy=TRUE>>=
+  library(pracma)
+  b1 = C2[3:5]-C1[3:5]
+  b2 = O[3:5]-C2[3:5]
+  b3 = Hnew[3:5]-O[3:5]
+  b2norm = b2/sqrt(sum(b2^2))
+  n1 = cross(b1,b2)/sqrt(sum(cross(b1,b2)^2))
+  n2 = cross(b3,b2)/sqrt(sum(cross(b2,b3)^2))
+  m1 = cross(n1,n2)
+  angle = atan2((m1%*%b2norm), (n1%*%n2))
+  message(sprintf("The calculated dihedral angle of the resulting rotation is: %4.2f degrees",angle*180/pi))
+@
+
+The new energies are:
+
+<<energy-evaluation-pi>>=
+  atoms = list(S,C1,C2,O,Hnew,S_2,C1_2,C2_2,O_2,H_2)
+  atom_combos = combn(atoms,2)
+  distances=mapply(distance,atom_combos[1,],atom_combos[2,])
+  print(distances)
+  vdw_energies = mapply(energy,atom_combos[,distances>=5][1,],atom_combos[,distances>=5][2,])
+  print(vdw_energies)
+  print(sum(vdw_energies))+(2*-0.1406)
+  charged_atoms = list(C2,O,Hnew,C2_2,O_2,H_2)
+  charge_combos = combn(charged_atoms,2)
+  distances=mapply(distance,charge_combos[1,],charge_combos[2,])
+  print(distances)
+  coul_energies = mapply(coul_energy,charge_combos[,distances>=4.4][1,],charge_combos[,distances>=4.4][2,])
+  print(coul_energies)
+  print(sum(coul_energies))
+  sprintf("Total energy is %4.8f kcal/mol",sum(coul_energies)+sum(vdw_energies)+(2*-0.1406))
+@
+
+\section{Rotating CCOH Dihedral $\frac{\pi}{2}$ Radians}
+
+The axis of rotation for the $CCOH$ dihedral is:
+
+<<define-axis-pi-div-2>>=
+  library(scatterplot3d)
+  axis = O[3:5]-C2[3:5]
+  message(sprintf("The axis of rotation is: %s",paste(axis,collapse=", ")))
+  normaxis = axis/sqrt(sum(axis^2))
+  message(sprintf("The normed axis of rotation is: %s",paste(normaxis,collapse = ", ")))
+  
+  #Plot the molecule using scatterplot3d
+  x = c(S[3],C1[3],C2[3],O[3],H[3])
+  y = c(S[4],C1[4],C2[4],O[4],H[4])
+  z = c(S[5],C1[5],C2[5],O[5],H[5])
+  #data_frame = data.frame(x,y,z)
+  scatterplot3d(x,y,z,type = "l")
+@
+
+The quaternion that defines a $\frac{\pi}{2}$ radian rotation about this axis is:
+
+$$\vec{q}=\cos(\frac{\theta}{2})+\sin(\frac{\theta}{2})\cdot\frac{1}{\| a \|}\vec{a}=\cos(\frac{\pi}{4})+\sin(\frac{\pi}{4})\cdot\frac{1}{\| a \|}\vec{a}$$
+
+This turns out to be:
+
+<<define-quaternion-pi-div-2,tidy=TRUE>>=
+  library(onion)
+  theta = pi/2
+  q = cos(theta/2)+sin(theta/2)*normaxis[1]*Hi+sin(theta/2)*normaxis[2]*Hj+sin(theta/2)*normaxis[3]*Hk
+  message(sprintf("The quaternion of rotation is %s",paste(q,collapse = ", ")))
+@
+
+Finally we get the vectors we wish to rotate:
+
+<<define-vectors-pi-div-2,tidy=TRUE>>=
+  v1 = H[3:5]-O[3:5]
+  message(sprintf("Vector 1 is %s",paste(v1,collapse = ", ")))
+@
+
+Applying the rotation quaternions we get:
+
+<<rotation-pi-div-2,tidy=TRUE>>=
+  v1_q = 0+v1[1]*Hi+v1[2]*Hj+v1[3]*Hk
+  v1_rot_q = (q*v1_q)*Conj(q)
+  v1_rot = c(i(v1_rot_q),j(v1_rot_q),k(v1_rot_q))
+  message(sprintf("v1 rotated pi radians is now %s",paste(v1_rot,collapse = ", ")))
+@
+
+This translates to final coordinates of O and H of:
+
+<<new-coords-pi-div-2,tidy=TRUE>>=
+  Hnew = c(4,0.435,v1_rot+O[3:5])
+  message(sprintf("Hnew is %s",paste(Hnew,collapse = ",")))  
+  #Plot the new dihedral
+  xnew = c(S[3],C1[3],C2[3],O[3],Hnew[3])
+  ynew = c(S[4],C1[4],C2[4],O[4],Hnew[4])
+  znew = c(S[5],C1[5],C2[5],O[5],Hnew[5])
+  
+  xtotal = c(x,xnew)
+  ytotal = c(y,ynew)
+  ztotal = c(z,znew)
+  category = c(rep("blue",5),rep("red",5))
+  data_frame = data.frame(xtotal,ytotal,ztotal)
+  data_frame$fac = factor(rep(LETTERS[1:2],each=5)) 
+  print(c(as.numeric(data_frame$xtotal)))
+  scatterplot3d(x=data_frame$xtotal,y = data_frame$ytotal,z = data_frame$ztotal)
+  #,type = "l",color=as.numeric(data_frame$fac)
+@
+
+The calculated dihedral angle from these new coordinates is:
+
+<<calculate-angle-pi-div-2,tidy=TRUE>>=
+  library(pracma)
+  b1 = C2[3:5]-C1[3:5]
+  b2 = O[3:5]-C2[3:5]
+  b3 = Hnew[3:5]-O[3:5]
+  b2norm = b2/sqrt(sum(b2^2))
+  n1 = cross(b1,b2)/sqrt(sum(cross(b1,b2)^2))
+  n2 = cross(b3,b2)/sqrt(sum(cross(b2,b3)^2))
+  m1 = cross(n1,n2)
+  angle = atan2((m1%*%b2norm), (n1%*%n2))
+  message(sprintf("The calculated dihedral angle of the resulting rotation is: %4.2f degrees",angle*180/pi))
+@
+
+The new energies are:
+
+<<energy-evaluation-pi-div-2>>=
+  atoms = list(S,C1,C2,O,Hnew,S_2,C1_2,C2_2,O_2,H_2)
+  atom_combos = combn(atoms,2)
+  distances=mapply(distance,atom_combos[1,],atom_combos[2,])
+  print(distances)
+  vdw_energies = mapply(energy,atom_combos[,distances>=5][1,],atom_combos[,distances>=5][2,])
+  print(vdw_energies)
+  print(sum(vdw_energies))+(2*-0.1406)
+  charged_atoms = list(C2,O,Hnew,C2_2,O_2,H_2)
+  charge_combos = combn(charged_atoms,2)
+  distances=mapply(distance,charge_combos[1,],charge_combos[2,])
+  print(distances)
+  coul_energies = mapply(coul_energy,charge_combos[,distances>=4.4][1,],charge_combos[,distances>=4.4][2,])
+  print(coul_energies)
+  print(sum(coul_energies))
+  sprintf("Total energy is %4.8f kcal/mol",sum(coul_energies)+sum(vdw_energies)+(2*-0.1406))
+@
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

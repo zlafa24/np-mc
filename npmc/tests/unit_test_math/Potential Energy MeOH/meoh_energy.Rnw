@@ -1,0 +1,113 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{blindtext}
+\usepackage[inline]{enumitem}
+\usepackage{xcolor}
+\usepackage{bm}
+\usepackage {fancyvrb}
+\usepackage {listings}
+\usepackage[makeroom]{cancel}
+
+\begin{document}
+
+\title{Potential Energy of MeOH}
+\maketitle
+
+Our MeOH molecule has the position coordinates:
+
+\begin{align*}
+  &S\ (0.138,0.0,-1.654)\\
+  &C1\ (0.474,0.0,1.059)\\
+  &C2\ (-0.621,0.0,-0.007)\\
+  &O\ (-0.125,0.0,2.357)\\
+  &H\ (0.598,0.0,2.999)\\
+\end{align*}
+
+<<coords>>=
+  S=c(0.138,0.0,-1.654)
+  C1=c(0.474,0.0,1.059)
+  C2=c(-0.621,0.0,-0.007)
+  O=c(-0.125,0.0,2.357)
+  H=c(0.598,0.0,2.999)
+@
+
+The Lennard-Jones function for \textit{lj/cut} in LAMMPS is given by:
+
+$$E = 4\epsilon[(\frac{\sigma}{r})^{12}-(\frac{\sigma}{r})^6]\ \ r<r_c $$
+
+For MeOH the relevant LJ parameters are:
+
+<<LJ-parameters,echo=FALSE,results='asis'>>=
+  library(xtable)
+  elements=c("C","S","O","H")
+  epsilons=c(0.118,0.39743,0.20,0.000)
+  sigmas=c(3.905,4.25,2.85,1.78)
+  frame = data.frame(elements,epsilons,sigmas)
+  colnames(frame) = c("Elements","Epsilons (kcal/mol)","Sigmas (A)")
+  print(xtable(frame,digits=c(0,-1,3,3),align = c('|l|','|l|','|c|','|c|')),include.rownames=FALSE)
+@
+
+This gives a Lennard-Jones Energy for each of the 10 combinations (${5}\choose{2}$):
+
+<<lj-energy,results='asis',tidy=TRUE>>=
+  library(xtable)
+  lj_energy=function(r,epsilon,sigma){
+    return(4*epsilon*((sigma/r)^12-(sigma/r)^6))
+  }
+  distance=function(coord1,coord2){
+    return(norm(coord1-coord2,type="2"))
+  }
+  rs=c(distance(S,C1),distance(S,C2),distance(S,O),distance(S,H),distance(C1,C2),distance(C1,O),distance(C1,H),distance(C2,O),distance(C2,H),distance(O,H))
+  mix_epsilons = c(sqrt(epsilons[2]*epsilons[1]),sqrt(epsilons[2]*epsilons[1]),sqrt(epsilons[2]*epsilons[3]),sqrt(epsilons[2]*epsilons[4]),sqrt(epsilons[1]*epsilons[1]),sqrt(epsilons[1]*epsilons[3]),sqrt(epsilons[1]*epsilons[4]),sqrt(epsilons[1]*epsilons[3]),sqrt(epsilons[1]*epsilons[4]),sqrt(epsilons[3]*epsilons[4]))
+  mix_sigmas = c((sigmas[2]+sigmas[1])/2,(sigmas[2]+sigmas[1])/2,(sigmas[2]+sigmas[3])/2,(sigmas[2]+sigmas[4])/2,(sigmas[1]+sigmas[1])/2,(sigmas[1]+sigmas[3])/2,(sigmas[1]+sigmas[4])/2,(sigmas[1]+sigmas[3])/2,(sigmas[1]+sigmas[4])/2,(sigmas[3]+sigmas[4])/2)
+  energies = mapply(lj_energy,rs,mix_epsilons,mix_sigmas)
+  combinations=c("S->C1","S->C2","S->O","S->H","C1->C2","C1->O","C1->H","C2->O","C2->H","O->H")
+  frame = data.frame(combinations,rs,mix_epsilons,mix_sigmas,energies)
+  colnames(frame)=c("Combinations","r (A)","Epsilon (kcal/mol)","Sigma (A)","Energies (kcal/mol)")
+  print(xtable(frame,digits = c(0,-1,3,3,3,5),align = c("|l|","|l|","c|","c|","c|","c|")),include.rownames=FALSE)
+@
+
+Taking into account that in the OPLS force field Van der Waals are weighted between bonded atoms.  For atoms separated by one or two bonds the Van der Waals potential is weighted by 0.  For atoms separated by three bonds the Van der Waals potential is scaled by 0.5.  All other intramolecular Van der Waals forces are weighted by 1.  As there is only one pair of atoms separated by 3 or more bonds ($\text{S$\rightarrow$ O}$) the total Van der Waals force is:
+
+$$\boxed{\text{Total Van der Waals Potential }=\frac{\text{S$\rightarrow$ O}}{2}=\frac{-0.2812}{2}=-0.1406\ \text{kcal/mol}}$$
+
+The coulombic potential for \textit{coul/debye} is given by:
+
+$$E_{ij} =  \frac{Cq_i q_j}{\epsilon r_{ij}}e^{-\kappa r_{ij}}$$
+
+Here $\kappa=0.2$ and the charges are:
+
+<<Debye-params,results='asis',echo=FALSE>>=
+  library(xtable)
+  atom_types = c("S","C1","C2","O","H")
+  charges = c(0.000,0.000,0.265,-0.700,0.435)
+  frame = data.frame(atom_types,charges)
+  colnames(frame) = c("Atom Types","Charge")
+  print(xtable(frame,digits=c(0,-1,3),align=c('|l|','|l','|c|')),include.rownames=FALSE)
+@
+
+For the OPLS forcefield the weighting factors for intramolecular coulombic potential is 0 for atoms separated by one or two bonds, and $\frac{5}{6}$ for atoms separated by three bonds.  As there are now atom pairs greater than two bonds apart the total coulombic potential should be zero:
+
+$$\boxed{\text{Total Coulombic Potential }=0\ \text{kcal/mol}}$$
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

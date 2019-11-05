@@ -1,0 +1,191 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{blindtext}
+\usepackage[inline]{enumitem}
+\usepackage{xcolor}
+\usepackage{bm}
+\usepackage {fancyvrb}
+\usepackage {listings}
+\usepackage[makeroom]{cancel}
+
+\begin{document}
+
+\title{Potential Energy of Two MeOH Molecules}
+\maketitle
+
+In this case we have two MeOH molecules separated by 5\AA\ in the $y$ direction.
+
+\begin{figure}[H]
+  \center
+  \includegraphics[trim=0 0 0 300,clip,width=0.5\textwidth]{two_meoh}
+\end{figure}
+
+Our MeOH molecules have the following coordinates:
+
+\begin{align*}
+  &S\ (0.138,0.0,-1.654)   &S'\ (0.138,5.0,-1.654)\\
+  &C1\ (0.474,0.0,1.059)   &C1'\ (0.474,5.0,1.059)\\
+  &C2\ (-0.621,0.0,-0.007) &C2'\ (-0.621,5.0,-0.007)\\
+  &O\ (-0.125,0.0,2.357)   &O'\ (-0.125,5.0,2.357)\\
+  &H\ (0.598,0.0,2.999)    &H'\ (0.598,5.0,2.999)\\
+\end{align*}
+
+<<coords-and-types>>=
+  S=c(2,0.0,0.138,0.0,-1.654)
+  C1=c(1,0.0,0.474,0.0,1.059)
+  C2=c(1,0.265,-0.621,0.0,-0.007)
+  O=c(3,-0.700,-0.125,0.0,2.357)
+  H=c(4,0.435,0.598,0.0,2.999)
+  S_2=c(2,0.0,0.138,5.0,-1.654)
+  C1_2=c(1,0.0,0.474,5.0,1.059)
+  C2_2=c(1,0.265,-0.621,5.0,-0.007)
+  O_2=c(3,-0.700,-0.125,5.0,2.357)
+  H_2=c(4,0.435,0.598,5.0,2.999)
+@
+
+
+Based on the number of atoms the total number of pairwise interactions are:
+
+\[ \binom{N_{atoms}}{2}=\binom{10}{2} = 45 \]
+
+Subtracting off the excluded intramolecular forces we have:
+
+\[  \binom{N_{atoms}}{2}-2\cdot\binom{N_{atoms}/2}{2}+2=\binom{10}{2}-2\cdot\binom{5}{2}+2=27\]
+The LJ Parameters are:
+
+<<LJ-parameters,echo=FALSE,results='asis'>>=
+  library(xtable)
+  elements=c("C","S","O","H")
+  epsilons=c(0.118,0.39743,0.20,0.000)
+  sigmas=c(3.905,4.25,2.85,1.78)
+  frame = data.frame(elements,epsilons,sigmas)
+  colnames(frame) = c("Elements","Epsilons (kcal/mol)","Sigmas (A)")
+  print(xtable(frame,digits=c(0,-1,3,3),align = c('|l|','|l|','|c|','|c|')),include.rownames=FALSE)
+@
+
+Calculating the energies of all possible combinations we get:
+
+<<combinations>>=
+  distance=function(atom1,atom2){
+    return(norm(atom1[3:5]-atom2[3:5],type="2"))
+  }
+  energy=function(atom1,atom2){
+    r=distance(atom1,atom2)
+    sigma = (sigmas[atom1[1]]+sigmas[atom2[1]])/2
+    epsilon = sqrt(epsilons[atom1[1]]*epsilons[atom2[1]])
+    return(4*epsilon*((sigma/r)^12-(sigma/r)^6))
+  }
+  atoms = list(S,C1,C2,O,H,S_2,C1_2,C2_2,O_2,H_2)
+  atom_combos = combn(atoms,2)
+  distances=mapply(distance,atom_combos[1,],atom_combos[2,])
+  print(distances)
+  interm_energies = mapply(energy,atom_combos[,distances>=5][1,],atom_combos[,distances>=5][2,])
+  print(interm_energies)
+  sprintf("Total intermolecular Van der Waals Energy is: %4.4f kcal/mol",sum(interm_energies))
+@
+
+Therefore the total energy is given as the total intermolecular energy plus the intramolecular energy of the two MeOHs:
+
+\begin{align*}
+  \text{Total Van der Waals Energy}&=\text{Intermolecular Energy}+\text{Intramolecular Energy}\\
+    &=\Sexpr{sum(interm_energies)}+\Sexpr{2*-0.1406}=\Sexpr{sum(interm_energies)+2*-0.1406}\ \text{kcal/mol}
+\end{align*}
+
+Now we use the following code to calculate the total coulombic energy:
+
+<<coul-combos>>=
+  coul_energy=function(atom1,atom2){
+    r=distance(atom1,atom2)
+    k=0.2
+    return(332.0636*((atom1[2]*atom2[2])/r)*exp(-k*r))
+  }
+  charged_atoms = list(C2,O,H,C2_2,O_2,H_2)
+  charge_combos = combn(charged_atoms,2)
+  distances=mapply(distance,charge_combos[1,],charge_combos[2,])
+  print(distances)
+  interm_energies = mapply(coul_energy,charge_combos[,distances>=5][1,],charge_combos[,distances>=5][2,])
+  print(sum(interm_energies))
+@
+
+The coulombic energy calculated here is:
+
+\begin{align*}
+  \Aboxed{\text{Total Coulombic Energy}=\Sexpr{sum(interm_energies)}\ \text{kcal/mol}}
+\end{align*}
+
+\section{Displace MeOH by 2A in Y Direction}
+
+<<displace-vdw>>=
+  distance=function(atom1,atom2){
+    return(norm(atom1[3:5]-atom2[3:5],type="2"))
+  }
+  energy=function(atom1,atom2){
+    r=distance(atom1,atom2)
+    sigma = (sigmas[atom1[1]]+sigmas[atom2[1]])/2
+    epsilon = sqrt(epsilons[atom1[1]]*epsilons[atom2[1]])
+    return(4*epsilon*((sigma/r)^12-(sigma/r)^6))
+  }
+  S_2[4]=S_2[4]+1.
+  C1_2[4]=C1_2[4]+1.
+  C2_2[4]=C2_2[4]+1.
+  O_2[4]=O_2[4]+1.
+  H_2[4]=H_2[4]+1.
+  atoms = list(S,C1,C2,O,H,S_2,C1_2,C2_2,O_2,H_2)
+  atom_combos = combn(atoms,2)
+  distances=mapply(distance,atom_combos[1,],atom_combos[2,])
+  print(distances)
+  interm_energies = mapply(energy,atom_combos[,distances>=5][1,],atom_combos[,distances>=5][2,])
+  vdw_energy = sum(interm_energies)+2*-0.1406
+  print(interm_energies)
+  sprintf("Total intermolecular Van der Waals Energy is: %4.8f kcal/mol",sum(interm_energies))
+@
+
+<<displace-coul-combos>>=
+  coul_energy=function(atom1,atom2){
+    r=distance(atom1,atom2)
+    k=0.2
+    return(332.0636*((atom1[2]*atom2[2])/r)*exp(-k*r))
+  }
+  charged_atoms = list(C2,O,H,C2_2,O_2,H_2)
+  charge_combos = combn(charged_atoms,2)
+  distances=mapply(distance,charge_combos[1,],charge_combos[2,])
+  print(distances)
+  interm_energies = mapply(coul_energy,charge_combos[,distances>=5][1,],charge_combos[,distances>=5][2,])
+  print(sum(interm_energies))
+  coul_energy = sum(interm_energies)
+  sprintf("Total intermolecular Coulombic Energy is: %4.8f kcal/mol",sum(interm_energies))
+@
+
+$$\text{Total Energy}=\Sexpr{vdw_energy+coul_energy}\ \text{kcal/mol}$$
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

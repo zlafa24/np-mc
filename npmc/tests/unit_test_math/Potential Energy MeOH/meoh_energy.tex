@@ -1,0 +1,218 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{blindtext}
+\usepackage[inline]{enumitem}
+\usepackage{xcolor}
+\usepackage{bm}
+\usepackage {fancyvrb}
+\usepackage {listings}
+\usepackage[makeroom]{cancel}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\title{Potential Energy of MeOH}
+\maketitle
+
+Our MeOH molecule has the position coordinates:
+
+\begin{align*}
+  &S\ (0.138,0.0,-1.654)\\
+  &C1\ (0.474,0.0,1.059)\\
+  &C2\ (-0.621,0.0,-0.007)\\
+  &O\ (-0.125,0.0,2.357)\\
+  &H\ (0.598,0.0,2.999)\\
+\end{align*}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{S}\hlkwb{=}\hlkwd{c}\hlstd{(}\hlnum{0.138}\hlstd{,}\hlnum{0.0}\hlstd{,}\hlopt{-}\hlnum{1.654}\hlstd{)}
+  \hlstd{C1}\hlkwb{=}\hlkwd{c}\hlstd{(}\hlnum{0.474}\hlstd{,}\hlnum{0.0}\hlstd{,}\hlnum{1.059}\hlstd{)}
+  \hlstd{C2}\hlkwb{=}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.621}\hlstd{,}\hlnum{0.0}\hlstd{,}\hlopt{-}\hlnum{0.007}\hlstd{)}
+  \hlstd{O}\hlkwb{=}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.125}\hlstd{,}\hlnum{0.0}\hlstd{,}\hlnum{2.357}\hlstd{)}
+  \hlstd{H}\hlkwb{=}\hlkwd{c}\hlstd{(}\hlnum{0.598}\hlstd{,}\hlnum{0.0}\hlstd{,}\hlnum{2.999}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+The Lennard-Jones function for \textit{lj/cut} in LAMMPS is given by:
+
+$$E = 4\epsilon[(\frac{\sigma}{r})^{12}-(\frac{\sigma}{r})^6]\ \ r<r_c $$
+
+For MeOH the relevant LJ parameters are:
+
+% latex table generated in R 3.3.3 by xtable 1.8-2 package
+% Wed Apr 19 12:55:51 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{|l||c||c|}
+  \hline
+Elements & Epsilons (kcal/mol) & Sigmas (A) \\ 
+  \hline
+C & 0.118 & 3.905 \\ 
+  S & 0.397 & 4.250 \\ 
+  O & 0.200 & 2.850 \\ 
+  H & 0.000 & 1.780 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+This gives a Lennard-Jones Energy for each of the 10 combinations (${5}\choose{2}$):
+
+\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(xtable)}
+\hlstd{lj_energy} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{r}\hlstd{,} \hlkwc{epsilon}\hlstd{,} \hlkwc{sigma}\hlstd{) \{}
+    \hlkwd{return}\hlstd{(}\hlnum{4} \hlopt{*} \hlstd{epsilon} \hlopt{*} \hlstd{((sigma}\hlopt{/}\hlstd{r)}\hlopt{^}\hlnum{12} \hlopt{-} \hlstd{(sigma}\hlopt{/}\hlstd{r)}\hlopt{^}\hlnum{6}\hlstd{))}
+\hlstd{\}}
+\hlstd{distance} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{coord1}\hlstd{,} \hlkwc{coord2}\hlstd{) \{}
+    \hlkwd{return}\hlstd{(}\hlkwd{norm}\hlstd{(coord1} \hlopt{-} \hlstd{coord2,} \hlkwc{type} \hlstd{=} \hlstr{"2"}\hlstd{))}
+\hlstd{\}}
+\hlstd{rs} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlkwd{distance}\hlstd{(S, C1),} \hlkwd{distance}\hlstd{(S, C2),} \hlkwd{distance}\hlstd{(S, O),} \hlkwd{distance}\hlstd{(S, H),} \hlkwd{distance}\hlstd{(C1,}
+    \hlstd{C2),} \hlkwd{distance}\hlstd{(C1, O),} \hlkwd{distance}\hlstd{(C1, H),} \hlkwd{distance}\hlstd{(C2, O),} \hlkwd{distance}\hlstd{(C2, H),}
+    \hlkwd{distance}\hlstd{(O, H))}
+\hlstd{mix_epsilons} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{2}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{1}\hlstd{]),} \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{2}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{1}\hlstd{]),}
+    \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{2}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{3}\hlstd{]),} \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{2}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{4}\hlstd{]),} \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{1}\hlstd{]} \hlopt{*}
+        \hlstd{epsilons[}\hlnum{1}\hlstd{]),} \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{1}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{3}\hlstd{]),} \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{1}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{4}\hlstd{]),}
+    \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{1}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{3}\hlstd{]),} \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{1}\hlstd{]} \hlopt{*} \hlstd{epsilons[}\hlnum{4}\hlstd{]),} \hlkwd{sqrt}\hlstd{(epsilons[}\hlnum{3}\hlstd{]} \hlopt{*}
+        \hlstd{epsilons[}\hlnum{4}\hlstd{]))}
+\hlstd{mix_sigmas} \hlkwb{=} \hlkwd{c}\hlstd{((sigmas[}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{sigmas[}\hlnum{1}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{sigmas[}\hlnum{1}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{2}\hlstd{]} \hlopt{+}
+    \hlstd{sigmas[}\hlnum{3}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{sigmas[}\hlnum{4}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{sigmas[}\hlnum{1}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{1}\hlstd{]} \hlopt{+}
+    \hlstd{sigmas[}\hlnum{3}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{sigmas[}\hlnum{4}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{sigmas[}\hlnum{3}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{1}\hlstd{]} \hlopt{+}
+    \hlstd{sigmas[}\hlnum{4}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{, (sigmas[}\hlnum{3}\hlstd{]} \hlopt{+} \hlstd{sigmas[}\hlnum{4}\hlstd{])}\hlopt{/}\hlnum{2}\hlstd{)}
+\hlstd{energies} \hlkwb{=} \hlkwd{mapply}\hlstd{(lj_energy, rs, mix_epsilons, mix_sigmas)}
+\hlstd{combinations} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlstr{"S->C1"}\hlstd{,} \hlstr{"S->C2"}\hlstd{,} \hlstr{"S->O"}\hlstd{,} \hlstr{"S->H"}\hlstd{,} \hlstr{"C1->C2"}\hlstd{,} \hlstr{"C1->O"}\hlstd{,} \hlstr{"C1->H"}\hlstd{,}
+    \hlstr{"C2->O"}\hlstd{,} \hlstr{"C2->H"}\hlstd{,} \hlstr{"O->H"}\hlstd{)}
+\hlstd{frame} \hlkwb{=} \hlkwd{data.frame}\hlstd{(combinations, rs, mix_epsilons, mix_sigmas, energies)}
+\hlkwd{colnames}\hlstd{(frame)} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlstr{"Combinations"}\hlstd{,} \hlstr{"r (A)"}\hlstd{,} \hlstr{"Epsilon (kcal/mol)"}\hlstd{,} \hlstr{"Sigma (A)"}\hlstd{,}
+    \hlstr{"Energies (kcal/mol)"}\hlstd{)}
+\hlkwd{print}\hlstd{(}\hlkwd{xtable}\hlstd{(frame,} \hlkwc{digits} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{5}\hlstd{),} \hlkwc{align} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"|l|"}\hlstd{,} \hlstr{"|l|"}\hlstd{,} \hlstr{"c|"}\hlstd{,}
+    \hlstr{"c|"}\hlstd{,} \hlstr{"c|"}\hlstd{,} \hlstr{"c|"}\hlstd{)),} \hlkwc{include.rownames} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.3.3 by xtable 1.8-2 package
+% Wed Apr 19 12:55:51 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+  \hline
+Combinations & r (A) & Epsilon (kcal/mol) & Sigma (A) & Energies (kcal/mol) \\ 
+  \hline
+S-$>$C1 & 2.734 & 0.217 & 4.077 & 95.48781 \\ 
+  S-$>$C2 & 1.813 & 0.217 & 4.077 & 14349.84114 \\ 
+  S-$>$O & 4.020 & 0.282 & 3.550 & -0.28120 \\ 
+  S-$>$H & 4.676 & 0.000 & 3.015 & -0.00000 \\ 
+  C1-$>$C2 & 1.528 & 0.118 & 3.905 & 36448.96234 \\ 
+  C1-$>$O & 1.430 & 0.154 & 3.377 & 18483.08366 \\ 
+  C1-$>$H & 1.944 & 0.000 & 2.842 & 0.00000 \\ 
+  C2-$>$O & 2.415 & 0.154 & 3.377 & 29.73401 \\ 
+  C2-$>$H & 3.244 & 0.000 & 2.842 & -0.00000 \\ 
+  O-$>$H & 0.967 & 0.000 & 2.315 & 0.00000 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+Taking into account that in the OPLS force field Van der Waals are weighted between bonded atoms.  For atoms separated by one or two bonds the Van der Waals potential is weighted by 0.  For atoms separated by three bonds the Van der Waals potential is scaled by 0.5.  All other intramolecular Van der Waals forces are weighted by 1.  As there is only one pair of atoms separated by 3 or more bonds ($\text{S$\rightarrow$ O}$) the total Van der Waals force is:
+
+$$\boxed{\text{Total Van der Waals Potential }=\frac{\text{S$\rightarrow$ O}}{2}=\frac{-0.2812}{2}=-0.1406\ \text{kcal/mol}}$$
+
+The coulombic potential for \textit{coul/debye} is given by:
+
+$$E_{ij} =  \frac{Cq_i q_j}{\epsilon r_{ij}}e^{-\kappa r_{ij}}$$
+
+Here $\kappa=0.2$ and the charges are:
+
+% latex table generated in R 3.3.3 by xtable 1.8-2 package
+% Wed Apr 19 12:55:51 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{|l|c|}
+  \hline
+Atom Types & Charge \\ 
+  \hline
+S & 0.000 \\ 
+  C1 & 0.000 \\ 
+  C2 & 0.265 \\ 
+  O & -0.700 \\ 
+  H & 0.435 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+For the OPLS forcefield the weighting factors for intramolecular coulombic potential is 0 for atoms separated by one or two bonds, and $\frac{5}{6}$ for atoms separated by three bonds.  As there are now atom pairs greater than two bonds apart the total coulombic potential should be zero:
+
+$$\boxed{\text{Total Coulombic Potential }=0\ \text{kcal/mol}}$$
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

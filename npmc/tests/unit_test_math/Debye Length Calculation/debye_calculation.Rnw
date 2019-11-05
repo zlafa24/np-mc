@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{numprint}
+\usepackage{amsmath}
+
+\newcommand{\ttext}[1]{\text{\tiny #1}}
+
+\begin{document}
+
+The equation for the Debye length, $\kappa$, is given in the limit of low concentration as:
+
+$$\kappa = \sqrt{\frac{2c_\ttext{0} e^2}{\epsilon \epsilon_0 k_\ttext{B} T}}$$
+
+<<debye-calc>>=
+  c0 = 0.134
+  e = 1.602e-19
+  eps = 24.5
+  eps0 = 8.854e-12
+  kb = 1.3806e-23
+  Temp=298.15
+  Na = 6.022e23
+  #kappa = sqrt((2*c0*e^2)/(eps*eps0*kb*Temp))
+  kappa = sqrt((1000*e^2*Na*2*c0)/(eps*eps0*kb*Temp))
+@
+The Debye length is:
+\nproundexpdigits{3}
+$$\kappa = \Sexpr{kappa}\ \text{m}^{-1}$$
+$$\lambda_\ttext{D} = \Sexpr{1/kappa}\ \text{m} = \Sexpr{(1/kappa)*1e10}\ \text{\AA}$$
+
+\end{document}
