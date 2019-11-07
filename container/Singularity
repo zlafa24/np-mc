@@ -20,7 +20,6 @@ From: ubuntu:18.04
 	make install
 	cd ../../np-mc/
 	pip3 install .
-	pip3 install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
 %environment
 	
