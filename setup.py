@@ -24,6 +24,9 @@ setup(name='npmc',
             'networkx',
             'numpy',
             'scipy',
+            'google-api-python-client',
+            'google-auth-httplib2',
+            'google-auth-oauthlib'
             ],
         include_package_data=True,
         zip_safe=False)
