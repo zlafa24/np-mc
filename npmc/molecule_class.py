@@ -122,7 +122,7 @@ class Molecule(object):
         return None
 
     def getAtomByMolIndex(self,index):
-        """Returns the Atom by it's index in the molecule where the index is defined as the number of bonds away from the anchor atom 
+        """Returns the Atom by its index in the molecule where the index is defined as the number of bonds away from the anchor atom 
         (i.e. the atom at index 1 is the atom directly connected to the anchor atom)
 
         Parameters

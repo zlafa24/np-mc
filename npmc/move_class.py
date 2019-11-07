@@ -5,7 +5,6 @@ import random as rnd
 from math import *
 import scipy.special as scm
 
-
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
 
@@ -198,8 +197,8 @@ class CBMCRegrowth(Move):
             molecule.rotateDihedrals(atoms,-rotation)
         return energies
 
-    def turn_off_molecule_atoms(self,molecule,index):
-        """Turn off the atoms in the specified molecule between the specified index and the anchor atom
+    def turn_off_molecule_atoms(self,molecule,index,atomIDs=None):
+        """Turn off the atoms in the specified molecule between the specified index and the end of the molecule.
         
         Parameters
         ----------
@@ -208,13 +207,15 @@ class CBMCRegrowth(Move):
         index : int
             The index at which atoms will be turned off.
         """
+        if atomIDs is None: atomIDs = []
         if (index+1>=len(molecule.atoms)):
             self.simulation.turn_on_all_atoms()
             return
         indices_to_turn_off = np.arange(index+1,len(molecule.atoms))
-        atoms = map(molecule.getAtomByMolIndex,indices_to_turn_off)
-        atomIDs = [atom.atomID for atom in atoms]
-        self.simulation.turn_off_atoms(atomIDs)
+        atoms = map(molecule.getAtomsByMolIndex,indices_to_turn_off)
+        atomIDs_off = [atom.atomID for atom_lists in atoms for atom in atom_lists[0]]
+        atomIDs_off = [atomID for atomID in atomIDs_off if atomID not in atomIDs]
+        self.simulation.turn_off_atoms(atomIDs_off)
 
     def evaluate_trial_rotations(self,molecule,index,keep_original=False):
         """At the specified index of a Molecule that is being regrown, numtrials rotations are generated for the full set of dihedral angles relevant to the regrowth step.
@@ -245,13 +246,14 @@ class CBMCRegrowth(Move):
             rotations = thetas-theta0
             if keep_original:
                 rotations[0]=0
+            self.turn_off_molecule_atoms(molecule,index-1)
         else: 
             theta_pairs = self.select_dih_angles_branched(molecule,dihedrals,atoms)
             theta0s = [molecule.getDihedralAngle(dihedral) for dihedral in dihedrals]
             rotations = [thetas-theta0s for thetas in theta_pairs]
             if keep_original:
                 rotations[0]=np.array([0,0])
-        self.turn_off_molecule_atoms(molecule,index-1)
+            self.turn_off_molecule_atoms(molecule,index-1,atomIDs=[atom.atomID for atom in atoms])
         self.simulation.update_coords()
         initial_energy = self.simulation.get_pair_PE()
         self.turn_off_molecule_atoms(molecule,index)

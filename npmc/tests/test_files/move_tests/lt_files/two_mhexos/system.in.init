@@ -3,5 +3,4 @@
 		pair_style hybrid/overlay lj/cut/coul/debye 0.2 10.0 morse 10.0
 		bond_style hybrid harmonic
 		angle_style hybrid harmonic
-		dihedral_style hybrid opls
-		special_bonds amber
+		dihedral_style hybrid opls fourier

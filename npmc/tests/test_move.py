@@ -26,9 +26,9 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.init_file = os.path.abspath(self.lt_directory+'/two_meohs/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/two_meohs/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/two_meohs/regrow.xyz')
-        self.init_file_b = os.path.abspath(self.lt_directory+'/hexo/hexo.in')
-        self.data_file_b = os.path.abspath(self.lt_directory+'/hexo/hexo.data')
-        self.dump_file_b = os.path.abspath(self.lt_directory+'/hexo/hexo.xyz')
+        self.init_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/system.in')
+        self.data_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/system.data')
+        self.dump_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/regrow.xyz')
         self.temp = 298.15
         self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
         self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp)
@@ -67,7 +67,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         np.testing.assert_array_almost_equal(lammps,internal,err_msg="LAMMPS and internal bond angle energy calculations are not equal.")
     
     def test_angle_calculation_from_two_dihedral_angles(self):
-        mol = self.sim_branched.molecules[1460]
+        mol = self.sim_branched.molecules[1]
         predecessor_dict = dict(ntwkx.bfs_predecessors(mol.graph,source=mol.anchorAtom.atomID))
         successor_dict = dict(ntwkx.bfs_successors(mol.graph,source=mol.anchorAtom.atomID))
         for node in mol.graph:
@@ -83,6 +83,10 @@ class TestCBMCRegrowth(unittest.TestCase):
         bond_angle = getAngles([mol.getAtomByID(angle_atomIDs[0]),mol.getAtomByID(angle_atomIDs[2]),mol.getAtomByID(angle_atomIDs[1])],1)
         bond_angle_calc = ffc.central_angle_Vincenty(dihedral_angle1,dihedral_angle2,bond_angle1,bond_angle2)
         np.testing.assert_array_almost_equal(bond_angle,bond_angle_calc,err_msg="The bond angle is incorrectly calculated from two dihedral angles.")
+        
+    def test_turn_off_molecule_atoms_for_2_mHexo_system_returns_correct_energy_after_turning_off_hydrogen(self):
+        self.cbmc_move_b.turn_off_molecule_atoms(self.cbmc_move_b.simulation.molecules[1],7,[8,9])
+        self.assertAlmostEqual(157.3177818467294-2.726749134750375,self.cbmc_move_b.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 mHexo system using turn_off_molecule_atoms is not the expected value.")
 
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],3)

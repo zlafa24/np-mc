@@ -2,16 +2,16 @@
 
 # ----------------- Init Section -----------------
 
-include "hexo.in.init"
+include "system.in.init"
 
 
 # ----------------- Atom Definition Section -----------------
 
-read_data "hexo.data"
+read_data "system.data"
 
 # ----------------- Settings Section -----------------
 
-include "hexo.in.settings"
+include "system.in.settings"
 
 
 # ----------------- Run Section -----------------
