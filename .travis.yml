@@ -7,6 +7,9 @@ before_install:
   
 install:
   - pip install .
+  - pip install pytest
+  - pip install pytest-cov
+  - pip install coveralls
 
 before_script:
   - cd ${HOME}
@@ -24,3 +27,7 @@ before_script:
 
 script:
   - pytest
+  - pytest --cov=npmc/
+
+after_success:
+  - coveralls
