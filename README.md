@@ -1,7 +1,7 @@
 
 NP-MC
 =====
-[![Build Status](https://travis-ci.org/smerz1989/np-mc.svg?branch=master)](https://travis-ci.org/smerz1989/np-mc)
+[![Build Status](https://travis-ci.org/smerz1989/np-mc.svg?branch=master)](https://travis-ci.org/smerz1989/np-mc) [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2531)
 
 LAMMPS Monte Carlo for Nanoparticle Monolayer
 ----------------------------------------------
