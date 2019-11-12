@@ -14,7 +14,7 @@ before_script:
   - cd lammps
   - mkdir build
   - cd build
-  - cmake -D PKG_PYTHON=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on -D CMAKE_INSTALL_PREFIX=${VIRTUAL_ENV} ../cmake
+  - cmake -D PKG_PYTHON=on -D PKG_MC=on -D PKG_MOLECULE=on -D PKG_RIGID=on -D PKG_USER-MISC=on -D BUILD_LIB=on -D BUILD_SHARED_LIBS=on -D CMAKE_INSTALL_PREFIX=${VIRTUAL_ENV} ../cmake
   - make
   - make install
   - python_package_dir=`python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"`
