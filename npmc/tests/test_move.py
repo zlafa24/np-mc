@@ -161,21 +161,12 @@ class TestCBMCSwap(unittest.TestCase):
     def test_select_random_molecules_returns_molecules_of_correct_types(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()
         self.assertEqual(len(molecule1.atoms),self.swap_move.type1_numatoms)
-        
-    def test_swap_anchor_positions_correctly_swaps_locations_of_anchors(self):
-        molecule1 = self.simulation.molecules[2446]
-        molecule2 = self.simulation.molecules[2447]
-        position1_old = np.copy([atom.position for atom in molecule1.atoms])
-        self.swap_move.swap_anchor_positions(molecule1,molecule2)
-        self.simulation.get_coords()
-        position2_new = np.copy([atom.position for atom in molecule2.atoms])
-        np.testing.assert_allclose(position1_old[0,:],position2_new[0,:])
 
     def test_align_mol_to_positions_correctly_aligns_atom_positions(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()
         position1_old = np.copy(np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))]))
         position2_old =  np.copy(np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))]))
-        self.swap_move.align_mol_to_positions(molecule1,position2_old[0:(self.swap_move.starting_index+1)])
+        self.swap_move.align_mol_to_positions(molecule1,position2_old[0:(self.swap_move.starting_index)])
         position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
         position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
         np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms.")
@@ -184,13 +175,25 @@ class TestCBMCSwap(unittest.TestCase):
         molecule1,molecule2=self.swap_move.select_random_molecules()
         atoms1 = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
         atoms2 = [molecule2.getAtomByMolIndex(i) for i in range(len(molecule2.atoms))]
-        angles1_pre = getAngles(atoms1[1:5],2)
-        angles2_pre = getAngles(atoms2[1:],10)       
+        angles1_pre = getAngles(atoms1,3)
+        angles2_pre = getAngles(atoms2,10)       
         self.swap_move.swap_molecule_positions(molecule1,molecule2)
-        angles1_post = getAngles(atoms1[1:5],2)
-        angles2_post = getAngles(atoms2[1:],10) 
-        np.testing.assert_allclose(angles1_pre,angles1_post,err_msg='swap_molecule_positions changes bond angles in molecule 1')  
-        np.testing.assert_allclose(angles2_pre,angles2_post,err_msg='swap_molecule_positions changes bond angles in molecule 2')
+        angles1_post = getAngles(atoms1,3)
+        angles2_post = getAngles(atoms2,10) 
+        np.testing.assert_allclose(np.concatenate((angles1_pre[:1],angles2_pre[1:]),axis=0),angles2_post,err_msg='swap_molecule_positions changes bond angles in molecule 2')
+        np.testing.assert_allclose(np.concatenate((angles2_pre[:1],angles1_pre[1:]),axis=0),angles1_post,err_msg='swap_molecule_positions changes bond angles in molecule 1')  
+        
+    def test_swap_molecule_positions_maintains_bond_lengths(self):
+        molecule1,molecule2=self.swap_move.select_random_molecules()
+        atoms1 = [molecule1.getAtomByMolIndex(i) for i in range(len(molecule1.atoms))]
+        atoms2 = [molecule2.getAtomByMolIndex(i) for i in range(len(molecule2.atoms))]
+        bonds1_pre = getBonds(atoms1,4)
+        bonds2_pre = getBonds(atoms2,11)    
+        self.swap_move.swap_molecule_positions(molecule1,molecule2)
+        bonds1_post = getBonds(atoms1,4)
+        bonds2_post = getBonds(atoms2,11)
+        np.testing.assert_allclose(np.concatenate((bonds1_pre[:2],bonds2_pre[2:]),axis=0),bonds2_post,err_msg='swap_molecule_positions changes bond lengths in molecule 2')
+        np.testing.assert_allclose(np.concatenate((bonds2_pre[:2],bonds1_pre[2:]),axis=0),bonds1_post,err_msg='swap_molecule_positions changes bond lengths in molecule 1')
 
     @mock.patch.object(mvc.CBMCSwap,'regrow')
     def test_move_returns_False_when_regrow_returns_False(self,mock_method):
@@ -224,6 +227,14 @@ def getAngles(atoms,numAngles):
         line2 = atom3-atom2
         angles[i] = np.arccos(np.dot(line1, line2) / (np.linalg.norm(line1)*np.linalg.norm(line2)))
     return angles
+    
+def getBonds(atoms,numBonds):
+    bonds = np.empty(numBonds)
+    for i in range(numBonds):
+        atom1 = atoms[0+i].position
+        atom2 = atoms[1+i].position
+        bonds[i] = np.linalg.norm(atom2-atom1)
+    return bonds
 
 
 

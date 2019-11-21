@@ -348,129 +348,8 @@ class CBMCSwap(CBMCRegrowth):
         self.starting_index=starting_index
         self.type1_numatoms,self.type2_numatoms = type_lengths
         self.move_name="CBMCSwap"
-    
-    def align_molecules(self,molecule1,molecule2):
-        """Aligns two molecules to each others' direction: the vector between the anchor atom and the center of mass.
-        
-        Parameters
-        ----------
-        molecule1,molecule2 : Molecule
-            Two random Molecule objects that are being swapped.
-        """
-        molecule1_vector = molecule1.get_com()-molecule1.anchorAtom.position
-        molecule2_vector = molecule2.get_com()-molecule2.anchorAtom.position
-        molecule1.align_to_vector(molecule2_vector)
-        molecule2.align_to_vector(molecule1_vector)
 
-    def swap_anchor_positions(self,molecule1,molecule2):
-        """Swaps the anchor atom positions of two molecules and moves the rest of the atoms in the molecules to maintain each molecules' geometry.
-        
-        Parameters
-        ----------
-        molecule1,molecule2 : Molecule
-            Two random Molecule objects that are being swapped.
-        """
-        anchor_atom1 = [atom for atom in molecule1.atoms if atom.atomType == self.anchortype][0]
-        anchor_atom2 = [atom for atom in molecule2.atoms if atom.atomType == self.anchortype][0]
-        move1 = anchor_atom2.position - anchor_atom1.position
-        move2 = anchor_atom1.position - anchor_atom2.position
-        molecule1.move_atoms(move1)
-        molecule2.move_atoms(move2)
-        self.simulation.update_coords()
-
-    def align_mol_to_positions(self,mol,positions):
-        """Aligns the atoms in mol to positions.
-        
-        Parameters
-        ----------
-        mol : Molecule
-            A Molecule object to be aligned.
-        positions : Numpy array of floats
-            An array of the desired Cartesian coordinates for the atoms in mol.
-        """
-        for i,position in enumerate(positions):
-            move = position-mol.getAtomByMolIndex(i).position
-            mol.move_atoms_by_index(move,i)
             
-    def get_rotation_angles_vectors(self,positions):
-        """Returns the relevant vectors and angles to restore the first regrown bond angle to its previous value.
-        
-        Parameters
-        ----------
-        positions : Numpy array of floats
-            An array of the Cartesian coordinates from before the swap for one of the Molecule objects involved in the Swap Move.
-        Returns
-        -------
-        vector1 : Numpy array of floats
-            A 1x3 array of the atom-atom vector to be rotated, the vector between the atom at self.starting_index and the atom at self.starting_index-1.
-        vector2 : Numpy array of floats
-            A 1x3 array of the atom-atom vector between the atom at self.starting_index and the atom at self.starting_index+1.
-        rotation_axis : Numpy array of floats
-            A 1x3 array of the vector about which vector1 is rotated.
-        angle : float
-            The previous value, in radians, of the bond angle to be restored.
-        """
-        vector1 = positions[-2]-positions[-3]
-        vector2 = positions[-2]-positions[-1]
-        rotation_axis = np.cross(vector1,vector2)
-        angle = get_bond_angle(positions[-3],positions[-2],positions[-1])
-        return vector1,vector2,rotation_axis,angle
-
-    def adjust_first_regrowth_atoms(self,mol1,mol2,positions_mol1,positions_mol2):
-        """Moves the atom at self.starting_index in both of the swapped molecules to a position which restores the first regrown bond angle to its previous value.
-        
-        Parameters
-        ----------
-        mol1,mol2 : Molecule
-            The Molecule objects that are being swapped.
-        positions_mol1,positions_mol2 : Numpy array of floats
-            Arrays of the Cartesian coordinates from before the swap for the Molecule objects involved in the swap move.
-        """
-        vector1_1,vector1_2,rotation_axis1,angle1 = self.get_rotation_angles_vectors(positions_mol1)
-        vector2_1,vector2_2,rotation_axis2,angle2 = self.get_rotation_angles_vectors(positions_mol2)
-        move1 = positions_mol2[-2]-molc.rot_quat(vector2_1,angle1,rotation_axis2)*np.linalg.norm(vector1_2)/np.linalg.norm(vector2_1)-mol1.getAtomByMolIndex(self.starting_index).position
-        move2 = positions_mol1[-2]-molc.rot_quat(vector1_1,angle2,rotation_axis1)*np.linalg.norm(vector2_2)/np.linalg.norm(vector1_1)-mol2.getAtomByMolIndex(self.starting_index).position
-        mol1.move_atoms_by_index(move1,self.starting_index)
-        mol2.move_atoms_by_index(move2,self.starting_index)
-        
-    def align_partial_molecule(self,mol,angle):
-        """Rotates the atoms in mol from self.starting_index+1 to the end of the molecule, away from the anchor atom, by the given angle.
-        
-        Parameters
-        ----------
-        mol : Molecule
-            A Molecule object to be aligned.
-        angle : float
-            The angle of rotation in radians.
-        """
-        positions = np.copy(np.array([mol.getAtomByMolIndex(i).position for i in np.arange(self.starting_index-1,len(mol.atoms))]))
-        rotate_angle = angle - get_bond_angle(positions[0],positions[1],positions[2])
-        rotation_axis = np.cross(positions[2]-positions[1],positions[1]-positions[0])
-        for i in np.arange(self.starting_index+1,len(mol.atoms)):
-            mol.getAtomByMolIndex(i).position = positions[1]+molc.rot_quat(mol.getAtomByMolIndex(i).position-positions[1],rotate_angle,rotation_axis)
-
-    def swap_molecule_positions(self,mol1,mol2): 
-        """Swap the positions of the two given molecules. The atoms from the anchor atom to the atom at self.starting_index-1 in each molecule take on the positions and angles 
-        of the other molecule. The atoms from self.starting_index to the end of the molecule are adjusted to maintain the pre-swap bond lengths and angles.
-            
-        Parameters
-        ----------
-        mol1,mol2 : Molecule
-            The Molecule objects that are being swapped.
-        """
-        angles = [get_bond_angle(mol.getAtomByMolIndex(self.starting_index-1).position,mol.getAtomByMolIndex(self.starting_index).position,mol.getAtomByMolIndex(self.starting_index+1).position) if len(mol.atoms) > self.starting_index+1 else None for mol in [mol1,mol2]]
-        positions_mol1 = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
-        positions_mol2 = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(self.starting_index+1)]))
-        self.swap_anchor_positions(mol1,mol2)
-        self.align_molecules(mol1,mol2)
-        self.align_mol_to_positions(mol1,positions_mol2)
-        self.align_mol_to_positions(mol2,positions_mol1)
-        self.adjust_first_regrowth_atoms(mol1,mol2,positions_mol1[-3:],positions_mol2[-3:])
-        for i,mol in enumerate([mol1,mol2]):
-            if len(mol.atoms) > self.starting_index+1:
-                self.align_partial_molecule(mol,angles[i])
-        self.simulation.update_coords()
-        
     def select_random_molecules(self):
         """Selects a random eligible molecule, one with an anchor atom set, from the molecules provided by the Simulation object that the CBMCSwap object was passed 
         at initialization.
@@ -488,6 +367,56 @@ class CBMCSwap(CBMCRegrowth):
         random_mol_type2 = rnd.choice(type2_molecules)
         if random_mol_type1 == random_mol_type2: type2_molecules.remove(random_mol_type1); random_mol_type2 = rnd.choice(type2_molecules)
         return random_mol_type1,random_mol_type2
+
+    def align_mol_to_positions(self,mol,positions):
+        """Aligns the atoms in mol to positions.
+        
+        Parameters
+        ----------
+        mol : Molecule
+            A Molecule object to be aligned.
+        positions : Numpy array of floats
+            An array of the desired Cartesian coordinates for the atoms in mol.
+        """
+        for i,position in enumerate(positions):
+            move = position-mol.getAtomByMolIndex(i).position
+            mol.move_atoms_by_index(move,i)
+        
+    def rotate_partial_molecule(self,mol,angle):
+        """Rotates the atoms in mol from self.starting_index+1 to the end of the molecule, away from the anchor atom, by the given angle.
+        
+        Parameters
+        ----------
+        mol : Molecule
+            A Molecule object to be aligned.
+        angle : float
+            The angle of rotation in radians.
+        """
+        positions = np.copy(np.array([mol.getAtomByMolIndex(i).position for i in np.arange(self.starting_index-2,len(mol.atoms))]))
+        rotate_angle = angle - get_bond_angle(positions[0],positions[1],positions[2])
+        rotation_axis = np.cross(positions[2]-positions[1],positions[1]-positions[0])
+        for i in np.arange(self.starting_index,len(mol.atoms)):
+            mol.getAtomByMolIndex(i).position = positions[1]+molc.rot_quat(mol.getAtomByMolIndex(i).position-positions[1],rotate_angle,rotation_axis)
+
+    def swap_molecule_positions(self,mol1,mol2): 
+        """Swap the positions of the two given molecules. The atoms from the anchor atom to the atom at self.starting_index-1 in each molecule take on the positions and angles 
+        of the other molecule. The atoms from self.starting_index to the end of the molecule are adjusted to maintain the pre-swap bond lengths and angles.
+            
+        Parameters
+        ----------
+        mol1,mol2 : Molecule
+            The Molecule objects that are being swapped.
+        """
+        angles = [get_bond_angle(mol.getAtomByMolIndex(self.starting_index-2).position,mol.getAtomByMolIndex(self.starting_index-1).position,mol.getAtomByMolIndex(self.starting_index).position) if len(mol.atoms) > self.starting_index else None for mol in [mol1,mol2]]
+        positions_mol1 = np.copy(np.array([mol1.getAtomByMolIndex(i).position for i in range(self.starting_index)]))
+        positions_mol2 = np.copy(np.array([mol2.getAtomByMolIndex(i).position for i in range(self.starting_index)]))
+        self.align_mol_to_positions(mol1,positions_mol2)
+        self.align_mol_to_positions(mol2,positions_mol1)
+        for i,mol in enumerate([mol1,mol2]):
+            if len(mol.atoms) > self.starting_index:
+                self.rotate_partial_molecule(mol,angles[i])
+        self.simulation.update_coords()
+
 
     def move(self):
         """A CBMC swap move is performed on a random molecule starting from a random index, and it is accepted according to the Metropolis criteria using the Rosenbluth weights.
