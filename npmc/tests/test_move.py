@@ -33,7 +33,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
         self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp)
         self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2,(5,5))
-        self.cbmc_move_b = mvc.CBMCRegrowth(self.sim_branched,5,(9,9))
+        self.cbmc_move_b = mvc.CBMCRegrowth(self.sim_branched,5,(10,10),read_pdf=True)
 
     def test_select_random_molecule_returns_molecule(self):
         self.assertIsInstance(self.cbmc_move.select_random_molecule(),mlc.Molecule,msg="select_random_molecule does not return an object of type Molecule.")
@@ -147,20 +147,26 @@ class TestTranslationMove(unittest.TestCase):
 class TestCBMCSwap(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/nanoparticle_1ddt_1meoh')
-        self.init_file = os.path.abspath(self.lt_directory+'/system.in')
-        self.data_file = os.path.abspath(self.lt_directory+'/system.data')
-        self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
+        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files')
+        self.init_file = os.path.abspath(self.lt_directory+'/nanoparticle_1ddt_1meoh/system.in')
+        self.data_file = os.path.abspath(self.lt_directory+'/nanoparticle_1ddt_1meoh/system.data')
+        self.dump_file = os.path.abspath(self.lt_directory+'/nanoparticle_1ddt_1meoh/regrow.xyz')
         self.temp = 298.15
         self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
         self.swap_move = mvc.CBMCSwap(self.simulation,anchortype=4,type_lengths=(5,13))
+        
+        self.init_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/system.in')
+        self.data_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/system.data')
+        self.dump_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/regrow.xyz')
+        self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp)
+        self.swap_move_b = mvc.CBMCSwap(self.sim_branched,anchortype=5,type_lengths=(10,10),read_pdf=True)
 
     def test_cbmcswap_is_child_of_cbmcregrowth(self):
         self.assertTrue(issubclass(mvc.CBMCSwap,mvc.CBMCRegrowth))
 
     def test_select_random_molecules_returns_molecules_of_correct_types(self):
-        molecule1,molecule2=self.swap_move.select_random_molecules()
-        self.assertEqual(len(molecule1.atoms),self.swap_move.type1_numatoms)
+        molecule1,molecule2=self.swap_move_b.select_random_molecules()
+        self.assertEqual(len(molecule1.atoms),self.swap_move_b.type1_numatoms)
 
     def test_align_mol_to_positions_correctly_aligns_atom_positions(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()
@@ -170,6 +176,17 @@ class TestCBMCSwap(unittest.TestCase):
         position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
         position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
         np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms.")
+        
+    def test_align_mol_to_positions_correctly_aligns_atom_positions_branched(self):
+        molecule1 = self.sim_branched.molecules[1]
+        molecule2 = self.sim_branched.molecules[2]
+        #molecule1,molecule2=self.swap_move_b.select_random_molecules()
+        position1_old = np.copy(np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))]))
+        position2_old =  np.copy(np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))]))
+        self.swap_move_b.align_mol_to_positions(molecule1,position2_old[0:(self.swap_move_b.starting_index)])
+        position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
+        position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
+        np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms for branched ligands.")    
         
     def test_swap_molecule_positions_maintains_bond_angles(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()
