@@ -94,7 +94,7 @@ class TestCBMCRegrowth(unittest.TestCase):
       
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen_and_oxygen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],2)
-        self.assertAlmostEqual(-1.4003423+0.0120187,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
+        self.assertAlmostEqual(-1.4003423+0.0120187,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off atoms in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
 
     @mock.patch.object(mvc.CBMCRegrowth,'evaluate_energies')
     def test_evaluate_trial_rotations_raises_exception_when_probs_do_not_sum_to_1(self,mock_method):

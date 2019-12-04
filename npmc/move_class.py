@@ -253,10 +253,10 @@ class CBMCRegrowth(Move):
             rotations = [thetas-theta0s for thetas in theta_pairs]
             if keep_original:
                 rotations[0]=np.array([0,0])
-            self.turn_off_molecule_atoms(molecule,index-1,atomIDs=[atom.atomID for atom in atoms])
+            self.turn_off_molecule_atoms(molecule,index-1)
         self.simulation.update_coords()
         initial_energy = self.simulation.get_pair_PE()
-        self.turn_off_molecule_atoms(molecule,index)
+        self.turn_off_molecule_atoms(molecule,index,atomIDs=[atom.atomID for atom in atoms])
         energies = self.evaluate_energies(molecule,atoms,rotations)
         log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*(energies-initial_energy))
         log_norm_probs = -1./(self.kb*self.temp)*(energies-initial_energy)-log_rosen_weight
@@ -288,12 +288,8 @@ class CBMCRegrowth(Move):
         total_log_rosen_weight = 0
         branched = 0
         for idx in range(index,len(molecule.atoms)):
-            if branched > 1:
-                branched -= 1
-                continue
             dihedrals,atoms = molecule.index2dihedrals(idx)
-            branched = len(atoms)
-            self.turn_off_molecule_atoms(molecule,idx)          
+            self.turn_off_molecule_atoms(molecule,idx,atomIDs=[atom.atomID for atom in atoms])       
             try:
                 rotations,log_step_weight,selected_rotation = self.evaluate_trial_rotations(molecule,idx,keep_original)
             except ValueError as e:
