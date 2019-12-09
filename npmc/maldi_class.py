@@ -145,7 +145,7 @@ class MALDISpectrum(object):
             return(len([1 for i in ligand_types if i==1]))
     
     def get_maldi_spectrum(self):
-        fragments = [self.get_sample_fragment() for sample in range(self.numsamples)]
+        fragments = [self.get_sample_fragment_2() for sample in range(self.numsamples)]
         fragment_types = np.array([self.get_fragment_category(fragment) for fragment in fragments])
         hist, bins = np.histogram(fragment_types,bins=range(0,self.ligands_per_fragment+2),density=True)
         self.hist = hist

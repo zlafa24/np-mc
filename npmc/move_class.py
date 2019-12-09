@@ -289,7 +289,7 @@ class CBMCRegrowth(Move):
         branched = 0
         for idx in range(index,len(molecule.atoms)):
             dihedrals,atoms = molecule.index2dihedrals(idx)
-            self.turn_off_molecule_atoms(molecule,idx,atomIDs=[atom.atomID for atom in atoms])       
+            self.turn_off_molecule_atoms(molecule,idx,atomIDs=[atom.atomID for atom in atoms])
             try:
                 rotations,log_step_weight,selected_rotation = self.evaluate_trial_rotations(molecule,idx,keep_original)
             except ValueError as e:

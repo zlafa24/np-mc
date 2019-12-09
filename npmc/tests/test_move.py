@@ -35,6 +35,21 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2,(5,5))
         self.cbmc_move_b = mvc.CBMCRegrowth(self.sim_branched,5,(10,10),read_pdf=True)
 
+    def test_rotations_maintain_anchor_positions_for_mhexo(self):
+        mhexo = self.sim_branched.molecules[1]
+        start_pos = mhexo.getAtomsByMolIndex(1)[0][0].position
+        for i in np.arange(3,len(mhexo.atoms)):
+            if i == 7 or i == 8:
+                mhexo.rotateDihedrals(mhexo.getAtomsByMolIndex(i)[0],[np.pi/2,np.pi/2])
+                mhexo.rotateDihedrals(mhexo.getAtomsByMolIndex(i)[0],[np.pi,np.pi])
+                mhexo.rotateDihedrals(mhexo.getAtomsByMolIndex(i)[0],[3*np.pi/2,3*np.pi])
+            else:
+                mhexo.rotateDihedrals(mhexo.getAtomsByMolIndex(i)[0],np.pi/2)
+                mhexo.rotateDihedrals(mhexo.getAtomsByMolIndex(i)[0],np.pi)
+                mhexo.rotateDihedrals(mhexo.getAtomsByMolIndex(i)[0],3*np.pi/2)
+        end_pos = mhexo.getAtomsByMolIndex(1)[0][0].position
+        np.testing.assert_allclose(start_pos,end_pos,err_msg="rotateDihedrals changes anchor atom position.")
+
     def test_select_random_molecule_returns_molecule(self):
         self.assertIsInstance(self.cbmc_move.select_random_molecule(),mlc.Molecule,msg="select_random_molecule does not return an object of type Molecule.")
 
