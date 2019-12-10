@@ -11,7 +11,7 @@ From: ubuntu:18.04
 			python3\
 			python3-pip
 	git clone -b stable_12Dec2018 https://github.com/lammps/lammps.git
-	git clone --single-branch --branch update_swap https://github.com/smerz1989/np-mc.git
+	git clone https://github.com/smerz1989/np-mc.git
 	cd lammps
 	mkdir build
 	cd build
