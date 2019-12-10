@@ -47,6 +47,7 @@ class Simulation(object):
         dname = os.path.dirname(os.path.abspath(init_file))
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
+        print('test')
         os.chdir(dname)
         self.temp = temp
         self.numtrials = numtrials
