@@ -108,7 +108,7 @@ class Nanoparticle(object):
         positions=np.empty((numatoms,4))
         atoms = np.empty((numatoms),dtype=object)
         for lattice_pos,(l,m,n) in enumerate(product(ls,ms,ns)):
-            current_position=np.array([l,m,n])*lattice_const-10*lattice_const*np.array([1,1,1])
+            current_position=np.array([l,m,n])*lattice_const-int(0.5*lattice_units)*lattice_const*np.array([1,1,1])
             for i,atom in enumerate(basis_atoms):
                 #position[i]=np.array((atom_type,atom+current_position))
                 atoms[lattice_pos*4+i]=atmc.Atom(lattice_pos*4+i,1,atomType=atom_type,position=atom+current_position)
