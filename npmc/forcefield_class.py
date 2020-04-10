@@ -139,7 +139,7 @@ class BranchPDF():
     write : Boolean
         A Boolean that determines whether the PDF is read from an already existing .pkl file.
     """
-    def __init__(self,dihFF1,dihFF2,angleFF,bond_angles,temp,read=False,write=False):
+    def __init__(self,dihFF1,dihFF2,angleFF,bond_angles,temp,read=False):
         self.dihFF1 = dihFF1; self.dihFF2 = dihFF2; self.angleFF = angleFF
         self.bond_angles = bond_angles
         kb = 0.0019872041
@@ -147,10 +147,10 @@ class BranchPDF():
         self.Q = si.dblquad(self.unnorm_prob, 0,2*pi, 0,2*pi)[0]
         self.weighted = True
         if read: self.pdf,self.weights = self.read_pdf(self.weighted)
-        elif self.weighted: self.pdf,self.weights = self.tabulate_pdf_weighted(250,write)
-        else: self.pdf = self.tabulate_pdf(100,100,write)
+        elif self.weighted: self.pdf,self.weights = self.tabulate_pdf_weighted(250)
+        else: self.pdf = self.tabulate_pdf(100,100)
           
-    def tabulate_pdf_weighted(self,intervals,write):
+    def tabulate_pdf_weighted(self,intervals):
         """Generate equally spaced intervals for the two dihedral angles along with corresponding probabilities for each interval based on the potential energy of the branch point.
             
         Parameters
@@ -175,10 +175,10 @@ class BranchPDF():
                 pdf[i*intervals+j,2] = phis[j]; pdf[i*intervals+j,3] = phis[j+1]
                 weights[i*intervals+j] = si.dblquad(self.unnorm_prob,pdf[i*intervals+j,2],pdf[i*intervals+j,3],lambda x:pdf[i*intervals+j,0],lambda x:pdf[i*intervals+j,1])[0]
         weights = weights/np.sum(weights)
-        if write: self.write_pdf(pdf,True,weights)
+        self.write_pdf(pdf,True,weights)
         return pdf,weights
   
-    def tabulate_pdf(self,intervals1,intervals2,write):
+    def tabulate_pdf(self,intervals1,intervals2):
         """Generate equal probability intervals for the two dihedral angles along with corresponding probabilities for each interval based on the potential energy of the branch point.
             
         Parameters
@@ -203,7 +203,7 @@ class BranchPDF():
                 pdf[i,j,3] = boundary; pdf[i,j+1,2] = boundary
                 probs[i,j] = si.dblquad(self.unnorm_prob,pdf[i,j,2],pdf[i,j,3],lambda x:pdf[i,j,0],lambda x:pdf[i,j,1])[0]/self.Q                
             probs[i,-1] = si.dblquad(self.unnorm_prob,pdf[i,-1,2],pdf[i,-1,3],lambda x:pdf[i,-1,0],lambda x:pdf[i,-1,1])[0]/self.Q
-        if write: self.write_pdf(pdf,False,None)
+        self.write_pdf(pdf,False,None)
         return pdf
     
     def get_probs_1D(self,phi1s):
