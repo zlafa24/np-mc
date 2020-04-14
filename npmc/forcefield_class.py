@@ -434,7 +434,7 @@ def initialize_angle_ffs(settings_filename):
     angle_ffs = [AngleForceField(settings_filename,int(coeff[1])) for coeff in coeffs]
     return angle_ffs
     
-def initialize_branch_pdfs(molecules,dihedral_ffs,angle_ffs,T,read=False,write=False):
+def initialize_branch_pdfs(molecules,dihedral_ffs,angle_ffs,T,read=False):
     """Initiliaze the PDF's for all the branch points in the ligands.
     
     Parameters
@@ -463,7 +463,7 @@ def initialize_branch_pdfs(molecules,dihedral_ffs,angle_ffs,T,read=False,write=F
         dihedral_ff1 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==types[0]][0]
         dihedral_ff2 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==types[1]][0]           
         angle_ff = [angle_ff for angle_ff in angle_ffs if angle_ff.angle_type==types[2]][0]
-        branchPDFs.append(BranchPDF(dihedral_ff1,dihedral_ff2,angle_ff,branch_point[1],T,read=read,write=write))
+        branchPDFs.append(BranchPDF(dihedral_ff1,dihedral_ff2,angle_ff,branch_point[1],T,read=read))
         known_types.append(types)
     return branchPDFs
     
