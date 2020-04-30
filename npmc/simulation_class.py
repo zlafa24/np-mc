@@ -66,7 +66,7 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf)
+        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart)
         self.initialize_data_files(restart)
         self.step = 0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()        
@@ -93,7 +93,7 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf):
+    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart=False):
         """Initializes the Monte Carlo moves used in the simulation.
         """
         translate_move = mvc.TranslationMove(self,max_disp,[nptype])
@@ -101,6 +101,10 @@ class Simulation(object):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
+        
+        if restart:
+            for i,move in enumerate(self.moves):
+                move.set_acceptance_rate_restart(i,'Acceptance_Rate.txt')
     
     def initialize_data_files(self,restart=False):
         """Initializes the potential energy and acceptance rate data files for the simulation.
@@ -110,7 +114,7 @@ class Simulation(object):
                 potential_file.write('step\tEnergy\tmove\tAccepted?\n')
                 acceptance_file.write('step\t'+'\t'.join(['#'+move.move_name+'\tRate' for move in self.moves])+'\n')
         self.potential_file = open('Potential_Energy.txt','a') 
-        self.acceptance_file = open("Acceptance_Rate.txt",'a')
+        self.acceptance_file = open('Acceptance_Rate.txt','a')
 
     def get_last_step_number(self):
         """Gets the last simulation step number from the potential energy data file.
