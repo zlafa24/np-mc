@@ -38,8 +38,8 @@ class Move(object):
             while file.read(1) != b'\n':
                 file.seek(-2, os.SEEK_CUR)
             last_line = file.readline().decode()
-            self.num_moves += int(last_line[2*index+1])
-            self.num_accepted += int(int(last_line[2*index+1]) * int(last_line[2*index+2]))
+            self.num_moves += int(last_line[2*index+1].strip())
+            self.num_accepted += int(int(last_line[2*index+1].strip()) * int(last_line[2*index+2].strip()))
 
 class CBMCRegrowth(Move):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the Move class.  
