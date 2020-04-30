@@ -3,6 +3,7 @@ import npmc.molecule_class as molc
 import numpy as np
 import random as rnd
 from math import *
+import os
 import scipy.special as scm
 
 class Move(object):
@@ -29,6 +30,16 @@ class Move(object):
     def get_acceptance_rate(self):
         acceptance_rate = float(self.num_accepted)/float(self.num_moves) if self.num_moves>0 else 0.0
         return acceptance_rate
+    
+    def set_acceptance_rate_restart(self,index,acceptance_file):
+        
+        with open(acceptance_file,'rb') as file:
+            file.seek(-2,os.SEEK_END)
+            while file.read(1) != b'\n':
+                file.seek(-2, os.SEEK_CUR)
+            last_line = file.readline().decode()
+            self.num_moves += int(last_line[2*index+1])
+            self.num_accepted += int(last_line[2*index+1] * last_line[2*index+2])
 
 class CBMCRegrowth(Move):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the Move class.  
