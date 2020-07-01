@@ -47,7 +47,6 @@ class Simulation(object):
         dname = os.path.dirname(os.path.abspath(init_file))
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
-        print('test')
         os.chdir(dname)
         self.temp = temp
         self.numtrials = numtrials
@@ -122,7 +121,7 @@ class Simulation(object):
         last_line = check_output(["tail","-1",self.potential_file.name])
         return int(last_line.decode().split('\t')[0])
         
-    def minimize(self,force_tol=1e-3,e_tol=1e-5,max_iter=200):
+    def minimize(self,force_tol=1e-3,e_tol=1e-5,max_iter=500,style='quickmin'):
         """Minimizes the system using LAMMPS minimize function.
 
         Parameters
@@ -134,6 +133,8 @@ class Simulation(object):
         max_iter : int, optional
             The maximum allowed iterations in the minimization procedure.
         """
+        self.lmp.command('timestep 0.5')
+        self.lmp.command(f'min_style {style}')
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
         self.get_coords()
 
