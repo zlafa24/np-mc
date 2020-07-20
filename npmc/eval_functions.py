@@ -47,12 +47,18 @@ def getRowsforColumn(sheet,sheetID,column):
     rows = rows_dict.get('values',[])
     return np.array(rows)
    
-def basicPlot(steps,ys,img_name):
+def basicPlot(steps,ys,xlabel,ylabel,title,img_name,labels=[False]):
     
     fig1, ax1 = plt.subplots()
-    for y in ys:
-        ax1.plot(steps,y)
-    fig1.savefig(f'{img_name}.png')
+    for i,y in enumerate(ys):
+        ax1.plot(steps,y,label=labels[i])
+    ax1.set_xlabel(xlabel)
+    ax1.set_ylabel(ylabel)
+    if labels[0]:
+        ax1.legend(loc='upper right',frameon=False)
+    fig1.suptitle(title,y=1.0)
+    fig1.tight_layout(rect=[0, 0, 1, 0.98])
+    fig1.savefig(f'{img_name}.png',dpi=100)
     
 def pushStart(cwd,slurm_file,jobID,sheetID=os.environ['SIMLOG_SHEETID']):
 
@@ -155,8 +161,8 @@ def checkProgress(cwd,slurm_file,jobID,sheetID=os.environ['SIMLOG_SHEETID']):
     rates2 = acc_data[:,4]
     rates3 = acc_data[:,6]
     rates4 = acc_data[:,8]
-    basicPlot(steps,[energies],'test_nrg')
-    basicPlot(steps,[rates1,rates2,rates3,rates4],'test_rates')
+    basicPlot(steps,[energies],'Simulation Time (# of MC steps)','Potential Energy (kcal/mol)','Total Potential Energy','test_nrg')
+    basicPlot(steps,[rates1,rates2,rates3,rates4],'Simulation Time (# of MC steps)','Acceptance Ratio (# accepted / total)','Acceptance Rate by Move Type','test_rates',['Regrowth','Trans.','Swap','Rot.'])
        
 def pushEnd(cwd,slurm_file,jobID,sheetID=os.environ['SIMLOG_SHEETID']):
     
