@@ -43,7 +43,9 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,restart=False,read_pdf=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,seed=None,restart=False,read_pdf=False):
+        rnd.seed(seed)
+        np.random.seed(seed)
         dname = os.path.dirname(os.path.abspath(init_file))
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
