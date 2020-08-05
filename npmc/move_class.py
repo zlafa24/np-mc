@@ -425,7 +425,7 @@ class CBMCSwap(CBMCRegrowth):
         self.simulation.update_coords()
 
 
-    def move(self):
+    def move(self,mol1=None,mol2=None):
         """A CBMC swap move is performed on a random molecule starting from a random index, and it is accepted according to the Metropolis criteria using the Rosenbluth weights.
         
         Returns
@@ -433,7 +433,8 @@ class CBMCSwap(CBMCRegrowth):
         accepted : Boolean
             A Boolean that indicates whether or not the swap move was accepted.
         """
-        mol1,mol2 = self.select_random_molecules()
+        if mol1 is None and mol2 is None:
+            mol1,mol2 = self.select_random_molecules()
         log_Wo_chain1 = self.regrow(mol1,self.starting_index,keep_original=True)
         log_Wo_chain2 = self.regrow(mol2,self.starting_index,keep_original=True)
         self.swap_molecule_positions(mol1,mol2)
