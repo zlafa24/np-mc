@@ -43,7 +43,7 @@ for i,atom1 in enumerate(atoms):
             for dihedral in dihedrals:
                 if i+1 in dihedral and j+1 in dihedral: allowed = False
             #if i+1==9 or j+1==9: allowed = False
-            if i+1==10 or j+1==10: allowed = False
+            if i+1 not in list(np.arange(1,10)): allowed = False
             if allowed: allowed_pairs.append([i+1,j+1])
 
 LJ_energy = LJ(atoms,LJ_params,allowed_pairs,distances)

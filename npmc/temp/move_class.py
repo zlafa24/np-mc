@@ -130,7 +130,7 @@ class CBMCRegrowth(Move):
             if len(type1_molecule)==1 and len(type2_molecule)==1: break
         return type1_molecule+type2_molecule
 
-    def select_dih_angles(self,molecule,dihedrals,keep_original=False):
+    def select_dih_angles(self,molecule,dihedrals,keep_original):
         """Returns numtrials number of dihedral angles with probability given by the PDF given by the boltzmann distribution determined by the temperature 
         and the dihedral forcefields.
 
@@ -144,17 +144,20 @@ class CBMCRegrowth(Move):
         trial_dih_angles : Numpy array of floats
             An array of the selected dihedral angles in radians.
         """
+        #try: dih_type = dihedrals[0].dihType
+        #except: dih_type = dihedrals.dihType 
         try: dihedral = dihedrals[0]
         except: dihedral = dihedrals 
         force_field = [ff for ff in self.dihedral_ffs if ff.dihedral_type==dihedral.dihType][0]
         thetas,ff_pdf = force_field.get_pdf(self.temp)
         dtheta = thetas[1]-thetas[0]
         trial_dih_angles = np.random.choice(thetas,size=self.numtrials,p=ff_pdf*dtheta)
-        if keep_original: trial_dih_angles[0] = molecule.getDihedralAngle(dihedral)
+        if keep_original:
+            trial_dih_angles[0] = molecule.getDihedralAngle(dihedral)
         energies = force_field.ff_function(trial_dih_angles)
         return trial_dih_angles,energies
     
-    def select_dih_angles_branched(self,molecule,dihedrals,atoms,keep_original):
+    def select_dih_angles_branched(self,molecule,dihedrals,atoms):
         """Returns numtrials number of dihedral angles with probability given by the PDF given by the boltzmann distribution determined by the temperature, 
         the dihedral forcefields, and the angle forcefields.
         
@@ -179,34 +182,11 @@ class CBMCRegrowth(Move):
                 break
         pdf_array = pdf.pdf; weights = pdf.weights
         angle_pairs = np.empty([self.numtrials,2])
-        energies = np.empty([self.numtrials])
         for i in range(self.numtrials):
             index = np.random.choice(weights.size,p=weights)
-            if i == 0 and keep_original: angle_pairs[i,:] = [molecule.getDihedralAngle(dihedrals[0]),molecule.getDihedralAngle(dihedrals[1])]
-            else:
-                angle_pairs[i,0] = np.random.uniform(pdf_array[index,0],pdf_array[index,1]) 
-                angle_pairs[i,1] = np.random.uniform(pdf_array[index,2],pdf_array[index,3])
-            energies[i] = pdf.dihFF1.ff_function(angle_pairs[i,0]) + pdf.dihFF2.ff_function(angle_pairs[i,1])
-        return angle_pairs,energies
-    
-    def turn_off_molecule_atoms(self,molecule,index,atomIDs=None):
-        """Turn off the atoms in the specified molecule between the specified index and the end of the molecule.
-        
-        Parameters
-        ----------
-        molecule : Molecule
-            The Molecule object in which atoms will be turned off.
-        index : int
-            The index at which atoms will be turned off.
-        """
-        if atomIDs is None: atomIDs = []
-        if index+1>=len(molecule.atoms): indices_to_turn_off = np.array([])
-        else: indices_to_turn_off = np.arange(index+1,len(molecule.atoms))
-        atoms = map(molecule.getAtomsByMolIndex,indices_to_turn_off)
-        atomIDs_off = [atom.atomID for atom_lists in atoms for atom in atom_lists[0]]
-        atomIDs_off = [atomID for atomID in atomIDs_off if atomID not in atomIDs]
-        atomIDs_off = np.setdiff1d(np.array([atom.atomID for atom in molecule.atoms]),atomIDs_off)
-        self.simulation.turn_off_atoms(atomIDs_off)
+            angle_pairs[i,0] = np.random.uniform(pdf_array[index,0],pdf_array[index,1])
+            angle_pairs[i,1] = np.random.uniform(pdf_array[index,2],pdf_array[index,3])
+        return angle_pairs   
     
     def evaluate_energies(self,molecule,atoms,rotations):
         """Evluates the pair energy of the system for each of the given dihedral rotations for the specified atoms. 
@@ -233,6 +213,26 @@ class CBMCRegrowth(Move):
             energies[i]=self.simulation.get_pair_PE()
             molecule.rotateDihedrals(atoms,-rotation)
         return energies
+
+    def turn_off_molecule_atoms(self,molecule,index,atomIDs=None):
+        """Turn off the atoms in the specified molecule between the specified index and the end of the molecule.
+        
+        Parameters
+        ----------
+        molecule : Molecule
+            The Molecule object in which atoms will be turned off.
+        index : int
+            The index at which atoms will be turned off.
+        """
+        if atomIDs is None: atomIDs = []
+        if index+1>=len(molecule.atoms): indices_to_turn_off = np.array([])
+        else: indices_to_turn_off = np.arange(index+1,len(molecule.atoms))
+        atoms = map(molecule.getAtomsByMolIndex,indices_to_turn_off)
+        atomIDs_off = [atom.atomID for atom_lists in atoms for atom in atom_lists[0]]
+        atomIDs_off = [atomID for atomID in atomIDs_off if atomID not in atomIDs]
+        #atomIDs_off = np.setdiff1d(np.array([atom.atomID for atom in self.simulation.atomlist]),np.setdiff1d(np.array([atom.atomID for atom in molecule.atoms]),atomIDs_off))
+        atomIDs_off = np.setdiff1d(np.array([atom.atomID for atom in molecule.atoms]),atomIDs_off)
+        self.simulation.turn_off_atoms(atomIDs_off)
 
     def evaluate_trial_rotations(self,molecule,index,keep_original=False):
         """At the specified index of a Molecule that is being regrown, numtrials rotations are generated for the full set of dihedral angles relevant to the regrowth step.
@@ -261,25 +261,38 @@ class CBMCRegrowth(Move):
             thetas,dih_energies = self.select_dih_angles(molecule,dihedrals,keep_original)
             theta0 = molecule.getDihedralAngle(dihedrals[0])
             rotations = thetas-theta0
+            #if keep_original:
+            #    rotations[0]=0
             self.turn_off_molecule_atoms(molecule,index-1)
         else: 
-            theta_pairs,dih_energies = self.select_dih_angles_branched(molecule,dihedrals,atoms)
+            theta_pairs = self.select_dih_angles_branched(molecule,dihedrals,atoms)
             theta0s = [molecule.getDihedralAngle(dihedral) for dihedral in dihedrals]
             rotations = [thetas-theta0s for thetas in theta_pairs]
+            if keep_original:
+                rotations[0]=np.array([0,0])
             self.turn_off_molecule_atoms(molecule,index-1)
         self.simulation.update_coords()
         initial_energy = self.simulation.get_pair_PE()
         self.turn_off_molecule_atoms(molecule,index,atomIDs=[atom.atomID for atom in atoms])
         energies = self.evaluate_energies(molecule,atoms,rotations)
+        #self.turn_off_molecule_atoms(molecule,index,atomIDs=[atom.atomID for atom in atoms])
         log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*(energies-initial_energy))
         log_norm_probs = -1./(self.kb*self.temp)*(energies-initial_energy)-log_rosen_weight
+        '''
         try:
-            index = np.random.choice(np.arange(self.numtrials),p=np.exp(log_norm_probs))
+            selected_rotation = rotations[np.random.choice(np.arange(self.numtrials),p=np.exp(log_norm_probs))]
         except ValueError as e:
             raise ValueError("Probabilities of trial rotations do not sum to 1")
+        '''
         if keep_original:
             index = 0
+        else: 
+            try:
+                index = np.random.choice(np.arange(self.numtrials),p=np.exp(log_norm_probs))
+            except ValueError as e:
+                raise ValueError("Probabilities of trial rotations do not sum to 1")
         selected_rotation = rotations[index]
+        step_energy = energies[index]+dih_energies[index]
         return rotations,log_rosen_weight,selected_rotation,energies[index],dih_energies[index]
 
     def regrow(self,molecule,index,keep_original=False):
@@ -306,19 +319,26 @@ class CBMCRegrowth(Move):
         total_dih_energy = 0
         for idx in range(index,len(molecule.atoms)):
             dihedrals,atoms = molecule.index2dihedrals(idx)
+            #print(atoms[0].atomID)
             self.turn_off_molecule_atoms(molecule,idx,atomIDs=[atom.atomID for atom in atoms])
             try:
                 rotations,log_step_weight,selected_rotation,pair_energy,dih_energy = self.evaluate_trial_rotations(molecule,idx,keep_original)
             except ValueError as e:
-                return False,False,False
+                return False
             if idx == len(molecule.atoms)-1:
                 total_pair_energy = pair_energy
             total_dih_energy += dih_energy
             rotation = rotations[0] if keep_original else selected_rotation
             molecule.rotateDihedrals(atoms,rotation)
             total_log_rosen_weight+=log_step_weight
+        #self.simulation.update_coords()
+        #print(self.simulation.get_pair_PE())
+        #self.simulation.turn_on_all_atoms()
+        #self.turn_off_molecule_atoms(molecule,len(molecule.atoms)-1)
+        #print(self.simulation.get_pair_PE())
+        #print(total_pair_energy)
+        #print(total_dih_energy)
         self.simulation.turn_on_all_atoms()
-        self.simulation.update_coords()
         return total_log_rosen_weight,total_pair_energy,total_dih_energy
 
     def move(self):
@@ -331,8 +351,8 @@ class CBMCRegrowth(Move):
         """
         molecule = self.select_random_molecule()
         index = self.select_index(molecule) 
-        log_Wo,initial_pair_energy,initial_dih_energy = self.regrow(molecule,index,keep_original=True)
-        log_Wf,final_pair_energy,final_dih_energy = self.regrow(molecule,index)
+        log_Wo,initial_energy = self.regrow(molecule,index,keep_original=True)
+        log_Wf,final_energy = self.regrow(molecule,index)
         probability = min(1,np.exp(log_Wf-log_Wo))
         accepted = probability>rnd.random()
         if log_Wo==False or log_Wf==False:
@@ -341,7 +361,7 @@ class CBMCRegrowth(Move):
         self.num_moves+=1
         if(accepted):
             self.num_accepted+=1
-        return accepted,final_pair_energy+final_dih_energy-initial_pair_energy-initial_dih_energy
+        return accepted,final_energy-initial_energy
 
 
 class CBMCSwap(CBMCRegrowth):
@@ -444,20 +464,99 @@ class CBMCSwap(CBMCRegrowth):
         accepted : Boolean
             A Boolean that indicates whether or not the swap move was accepted.
         """
-        if mol1 is None and mol2 is None: mol1,mol2 = self.select_random_molecules() 
-        atomIDs = [atom.atomID for atom in mol1.atoms] + [atom.atomID for atom in mol2.atoms]
+        if mol1 is None and mol2 is None:
+            mol1,mol2 = self.select_random_molecules() 
+            
+        atom1_IDs = [atom.atomID for atom in mol1.atoms]
+        atom2_IDs = [atom.atomID for atom in mol2.atoms]
+        atomIDs = atom1_IDs + atom2_IDs
         self.simulation.turn_off_atoms(atomIDs)
-        initial_pair_PE = self.simulation.get_pair_PE()
-        self.simulation.turn_on_all_atoms()             
+        pe1 = self.simulation.get_pair_PE()
+        self.simulation.turn_on_all_atoms()    
+            
         log_Wo_chain1,initial_pair_PE1,initial_dih_PE1 = self.regrow(mol1,self.starting_index,keep_original=True)
         log_Wo_chain2,initial_pair_PE2,initial_dih_PE2 = self.regrow(mol2,self.starting_index,keep_original=True)              
         self.swap_molecule_positions(mol1,mol2)
+
+
+
         log_Wf_chain1,final_pair_PE1,final_dih_PE1 = self.regrow(mol1,self.starting_index,keep_original=False)
-        log_Wf_chain2,final_pair_PE2,final_dih_PE2 = self.regrow(mol2,self.starting_index,keep_original=False)
-        atomIDs = [atom.atomID for atom in mol1.atoms] + [atom.atomID for atom in mol2.atoms]
-        self.simulation.turn_off_atoms(atomIDs)
-        final_pair_PE = self.simulation.get_pair_PE()
+        '''
+        self.turn_off_molecule_atoms(mol1,len(mol1.atoms)-1)
+        print(self.simulation.get_pair_PE())
         self.simulation.turn_on_all_atoms()
+        '''
+        log_Wf_chain2,final_pair_PE2,final_dih_PE2 = self.regrow(mol2,self.starting_index,keep_original=False)
+        '''
+        self.turn_off_molecule_atoms(mol1,len(mol1.atoms)-1)
+        print(self.simulation.get_pair_PE(),final_energy1)
+        self.simulation.turn_on_all_atoms()
+        
+        self.turn_off_molecule_atoms(mol2,len(mol2.atoms)-1)
+        print(self.simulation.get_pair_PE(),final_energy2)
+        self.simulation.turn_on_all_atoms()
+        '''
+        dist = np.sqrt(np.sum(np.square(mol1.atoms[0].position-mol2.atoms[0].position)))
+        if dist < 10.0: print('dist',dist)
+        
+        print(final_pair_PE1)
+        self.turn_off_molecule_atoms(mol1,len(mol1.atoms)-1)
+        final_pair_PE1 = self.simulation.get_pair_PE()
+        self.simulation.turn_on_all_atoms()
+        print(final_pair_PE1)
+                
+        print(final_pair_PE2)
+        self.turn_off_molecule_atoms(mol2,len(mol2.atoms)-1)
+        final_pair_PE2 = self.simulation.get_pair_PE()
+        self.simulation.turn_on_all_atoms()
+        print(final_pair_PE2)
+               
+        atom1_IDs = [atom.atomID for atom in mol1.atoms]
+        atom2_IDs = [atom.atomID for atom in mol2.atoms]
+        atomIDs = atom1_IDs + atom2_IDs
+        self.simulation.turn_off_atoms(atomIDs)
+        pe2 = self.simulation.get_pair_PE()
+        self.simulation.turn_on_all_atoms()
+        '''
+        atom1_IDs = [atom.atomID for atom in mol1.atoms]
+        atom2_IDs = [atom.atomID for atom in mol2.atoms]
+        atomIDs = atom1_IDs + atom2_IDs
+        self.simulation.legacy_turn_off_atoms(atomIDs)
+        pe1 = self.simulation.get_pair_PE()
+        self.simulation.turn_on_all_atoms()
+        
+        test_atomIDs = atom1_IDs
+        stratoms = ' '.join(map(str,map(int,test_atomIDs)))
+        self.simulation.lmp.command("group onatoms intersect all all")
+        self.simulation.lmp.command("group onatoms clear")
+        self.simulation.lmp.command("group onatoms id "+stratoms)
+        self.simulation.lmp.command("group offatoms intersect all all")
+        self.simulation.lmp.command("group offatoms clear")
+        self.simulation.lmp.command("group offatoms subtract all onatoms")
+        self.simulation.lmp.command("neigh_modify exclude group offatoms offatoms")
+
+        test_atomIDs = atom2_IDs
+        stratoms = ' '.join(map(str,map(int,test_atomIDs)))
+        self.simulation.lmp.command("group onatoms intersect all all")
+        self.simulation.lmp.command("group onatoms clear")
+        self.simulation.lmp.command("group onatoms id "+stratoms)
+        self.simulation.lmp.command("group offatoms intersect all all")
+        self.simulation.lmp.command("group offatoms clear")
+        self.simulation.lmp.command("group offatoms subtract all onatoms")
+        self.simulation.lmp.command("neigh_modify exclude group offatoms offatoms")
+        self.simulation.update_neighbor_list()    
+        pe2 = self.simulation.get_pair_PE()      
+        
+        print(pe1+final_pair_PE1+final_pair_PE2-pe2,pe2)
+        '''
+        print(self.simulation.get_pair_PE())   
+        print(self.simulation.get_total_PE())
+        '''
+        self.turn_off_molecule_atoms(mol2,len(mol2.atoms)-1)
+        final_energy2 = self.simulation.get_pair_PE() + final_energy2
+        self.simulation.turn_on_all_atoms()
+        '''
+        #print(final_energy1,final_energy1a)
         probability = min(1,np.exp(log_Wf_chain1+log_Wf_chain2-(log_Wo_chain1+log_Wo_chain2)))
         accepted = probability>rnd.random()
         if not all([log_Wo_chain1,log_Wo_chain2,log_Wf_chain2,log_Wf_chain1]):
@@ -466,7 +565,23 @@ class CBMCSwap(CBMCRegrowth):
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,final_pair_PE+final_dih_PE1+final_dih_PE2-initial_pair_PE-initial_dih_PE1-initial_dih_PE2
+        '''
+        total_dih_energy = 0
+        for idx in range(self.starting_index,len(mol1.atoms)):
+            dihedrals,atoms = mol1.index2dihedrals(idx)
+            self.turn_off_molecule_atoms(mol1,idx,atomIDs=[atom.atomID for atom in atoms])          
+            try: dihedral = dihedrals[0]
+            except: dihedral = dihedrals 
+            force_field = [ff for ff in self.dihedral_ffs if ff.dihedral_type==dihedral.dihType][0]
+            dih_angle = mol1.getDihedralAngle(dihedral)
+            total_dih_energy += force_field.ff_function(dih_angle)
+           
+        self.simulation.update_coords()
+        self.simulation.turn_on_all_atoms()
+        print(total_dih_energy,final_dih_PE1)
+        '''
+        #return accepted,(pe1+final_dih_PE1+final_dih_PE2)-(initial_pair_PE1+initial_dih_PE1+initial_pair_PE2+initial_dih_PE2),mol1,mol2
+        return accepted,(pe2+final_dih_PE1+final_dih_PE2)-(pe1+initial_dih_PE1+initial_dih_PE2)
 
 
 class TranslationMove(Move):
@@ -532,19 +647,17 @@ class TranslationMove(Move):
         accepted : Boolean
             A Boolean that indicates whether or not the translation move was accepted.
         """
+        old_energy = self.simulation.get_total_PE()
         molecule = self.get_random_molecule()
-        self.simulation.turn_off_atoms([atom.atomID for atom in molecule.atoms])
-        old_energy = self.simulation.get_total_PE()  
         displacement = self.get_random_move()
         self.translate(molecule,displacement)
         new_energy = self.simulation.get_total_PE()
-        self.simulation.turn_on_all_atoms()
         probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
         accepted = probability>rnd.random()
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,new_energy-old_energy        
+        return accepted        
 
 class RotationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
@@ -634,18 +747,17 @@ class RotationMove(Move):
         accepted : Boolean
             A Boolean that indicates whether or not the rotation move was accepted.
         """
-        molecule = self.get_random_molecule()
-        self.simulation.turn_off_atoms([atom.atomID for atom in molecule.atoms])
+        beta = 1./(self.kb*self.temp)
         old_energy = self.simulation.get_total_PE()
+        molecule = self.get_random_molecule()
         self.rotate_molecule(molecule)
         new_energy = self.simulation.get_total_PE()
-        self.simulation.turn_on_all_atoms()
-        probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
+        probability = min(1.,np.exp(-beta*(new_energy-old_energy)))
         accepted = rnd.uniform(0,1)<probability
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,new_energy-old_energy
+        return accepted
 
 def get_bond_angle(position1,position2,position3):
     """Returns the smallest angle defined by three Cartesian positions.

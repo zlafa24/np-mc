@@ -9,7 +9,8 @@ import os
 import numpy as np
 import random as rnd
 from math import *
-from subprocess import check_output       
+from subprocess import check_output
+import time    
 
 
 class Simulation(object):
@@ -70,7 +71,8 @@ class Simulation(object):
         self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart)
         self.initialize_data_files(restart)
         self.step = 0 if not restart else self.get_last_step_number()
-        self.update_neighbor_list()        
+        self.update_neighbor_list()
+        self.deltaE = 0.0
 
     def initializeGroups(self,lmp):
         """Initialize the LAMMPS groups that one wishes to use in the simulation.
@@ -101,8 +103,7 @@ class Simulation(object):
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
-        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
-        
+        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]       
         if restart:
             for i,move in enumerate(self.moves):
                 move.set_acceptance_rate_restart(i,'Acceptance_Rate.txt')
@@ -169,11 +170,18 @@ class Simulation(object):
         """
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("lj_pe",0,0)
+    
+    def getDihPE(self):
+        """Compute the Van Der Waals potential energy from LAMMPS.
+        """
+        self.lmp.command("run 0 post no")
+        return self.lmp.extract_compute("mol_pe",0,0)
 
     def get_pair_PE(self):
         """Compute the total pair potential energy from LAMMPS.
         """
-        self.lmp.command("run 1 pre no post no")
+        #self.lmp.command("run 1 pre no post no")
+        self.lmp.command("run 0 post no")
         energies = self.lmp.extract_compute("pair_total",0,0)
         return energies
     
@@ -207,6 +215,25 @@ class Simulation(object):
         self.update_neighbor_list()
 
     def turn_off_atoms(self,atomIDs):
+        """Turns off short range interactions with specified atoms by excluding those atoms from the LAMMPS neighbor list.
+
+        Parameters
+        ----------
+        atomIDs : list of type int
+            A list of atom IDs of the atoms that will be turned off in the simulation
+        """
+        stratoms = ' '.join(map(str,map(int,atomIDs)))
+        self.lmp.command("group onatoms intersect all all")
+        self.lmp.command("group onatoms clear")
+        self.lmp.command("group onatoms id "+stratoms)
+        self.lmp.command("group offatoms intersect all all")
+        self.lmp.command("group offatoms clear")
+        self.lmp.command("group offatoms subtract all onatoms")
+        self.lmp.command("neigh_modify exclude none")
+        self.lmp.command("neigh_modify exclude group offatoms offatoms")
+        self.update_neighbor_list()
+        
+    def legacy_turn_off_atoms(self,atomIDs):
         """Turns off short range interactions with specified atoms by excluding those atoms from the LAMMPS neighbor list.
 
         Parameters
@@ -307,12 +334,16 @@ class Simulation(object):
         """
         move = rnd.choice(self.moves)
         old_positions = np.copy([atom.position for atom in self.atomlist])
-        accepted = move.move()
-        if not accepted: self.revert_coords(old_positions)
+        accepted,energy = move.move()
+        if accepted:
+            self.deltaE += energy
+        else:  
+            self.revert_coords(old_positions)            
         self.step+=1
         self.update_coords()
-        new_energy = self.get_total_PE()
-        self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+str(move.move_name)+'\t'+str(accepted)+'\n') 
+        print(self.initial_PE+self.deltaE)
+        print(self.get_total_PE())
+        self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
         self.potential_file.flush()
