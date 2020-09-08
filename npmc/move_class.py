@@ -302,7 +302,6 @@ class CBMCRegrowth(Move):
             The log of the total Rosenbluth weight of all the regrowth steps.
         """
         total_log_rosen_weight = 0
-        #total_pair_energy = 0
         total_dih_energy = 0
         for idx in range(index,len(molecule.atoms)):
             dihedrals,atoms = molecule.index2dihedrals(idx)
