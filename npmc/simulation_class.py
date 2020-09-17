@@ -324,6 +324,14 @@ class Simulation(object):
         self.lmp.scatter_atoms("x",1,3,coords)
         self.get_coords()
 
+    def check_total_energy(self):
+        running_deltaE = self.initial_PE+self.deltaE
+        actual_totalPE = self.get_total_PE()
+        if not isclose(running_deltaE,actual_totalPE,abs_tol=0.001):
+            raise Exception('Total energy has deviated.')
+        if isclose(running_deltaE,actual_totalPE,abs_tol=1e-6):
+            self.deltaE = self.get_total_PE()-self.initial_PE
+
     def perform_mc_move(self):
         """Randomly selects one of the Monte Carlo moves included in initializeMoves, performs it, and accepts or rejects the move according to the Metropolis criteria.
         
