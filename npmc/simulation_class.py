@@ -85,7 +85,6 @@ class Simulation(object):
         """
         lmp.command("compute pair_pe all pe")
         lmp.command("compute mol_pe all pe dihedral")
-        lmp.command("compute imp_pe all pe improper")
         lmp.command("compute ang_pe all pe angle")
         lmp.command("compute bond_pe all pe bond")
         lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
@@ -104,7 +103,7 @@ class Simulation(object):
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
-        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
+        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]       
         if restart:
             for i,move in enumerate(self.moves):
                 move.set_acceptance_rate_restart(i,'Acceptance_Rate.txt')
@@ -215,7 +214,7 @@ class Simulation(object):
             self.exclude_type(self.excluded_types[0],self.excluded_types[1])
         self.update_neighbor_list()
 
-    def turn_off_atoms(self,atomIDs,ghost_atoms):
+    def turn_off_atoms(self,atomIDs):
         """Turns off short range interactions with specified atoms by excluding those atoms from the LAMMPS neighbor list.
 
         Parameters
@@ -224,19 +223,13 @@ class Simulation(object):
             A list of atom IDs of the atoms that will be turned off in the simulation
         """
         stratoms = ' '.join(map(str,map(int,atomIDs)))
-        self.lmp.command("neigh_modify exclude none")       
-        if len(ghost_atoms) > 0:
-            stratoms_ghost = ' '.join(map(str,map(int,ghost_atoms)))
-            self.lmp.command("group ghostatoms intersect all all")
-            self.lmp.command("group ghostatoms clear")
-            self.lmp.command("group ghostatoms id "+stratoms_ghost)
-            self.lmp.command("neigh_modify exclude group ghostatoms all")  
         self.lmp.command("group onatoms intersect all all")
         self.lmp.command("group onatoms clear")
         self.lmp.command("group onatoms id "+stratoms)
         self.lmp.command("group offatoms intersect all all")
         self.lmp.command("group offatoms clear")
         self.lmp.command("group offatoms subtract all onatoms")
+        self.lmp.command("neigh_modify exclude none")
         self.lmp.command("neigh_modify exclude group offatoms offatoms")
         self.update_neighbor_list()
         
@@ -345,14 +338,7 @@ class Simulation(object):
         if accepted:
             self.deltaE += energy
         else:  
-<<<<<<< HEAD
-            self.revert_coords(old_positions)
-            self.update_coords()
-        #print(self.initial_PE+self.deltaE)
-        #print(self.get_total_PE())
-=======
             self.revert_coords(old_positions)            
->>>>>>> parent of 78d11db... Update Regrowth PE Calc
         self.step+=1
         self.update_coords()
         self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
@@ -360,4 +346,3 @@ class Simulation(object):
         self.acceptance_file.flush()
         self.potential_file.flush()
         return accepted
-

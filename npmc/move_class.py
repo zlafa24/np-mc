@@ -154,7 +154,7 @@ class CBMCRegrowth(Move):
         energies = force_field.ff_function(trial_dih_angles)
         return trial_dih_angles,energies
     
-    def select_dih_angles_branched(self,molecule,dihedrals,atoms,keep_original=False):
+    def select_dih_angles_branched(self,molecule,dihedrals,atoms,keep_original):
         """Returns numtrials number of dihedral angles with probability given by the PDF given by the boltzmann distribution determined by the temperature, 
         the dihedral forcefields, and the angle forcefields.
         
@@ -263,22 +263,13 @@ class CBMCRegrowth(Move):
             rotations = thetas-theta0
             self.turn_off_molecule_atoms(molecule,index-1)
         else: 
-            theta_pairs,dih_energies = self.select_dih_angles_branched(molecule,dihedrals,atoms,keep_original)
+            theta_pairs,dih_energies = self.select_dih_angles_branched(molecule,dihedrals,atoms)
             theta0s = [molecule.getDihedralAngle(dihedral) for dihedral in dihedrals]
             rotations = [thetas-theta0s for thetas in theta_pairs]
-<<<<<<< HEAD
-        try:
-            ghost_atoms = list(map(molecule.getAtomsByMolIndex,np.arange(index+1,len(molecule.atoms))))[0][0]
-        except: 
-            ghost_atoms = []
-        self.simulation.turn_off_atoms([atom.atomID for atom in atoms],[atom.atomID for atom in ghost_atoms])  
-        initial_energy = self.simulation.get_pair_PE()            
-=======
             self.turn_off_molecule_atoms(molecule,index-1)
         self.simulation.update_coords()
         initial_energy = self.simulation.get_pair_PE()
         self.turn_off_molecule_atoms(molecule,index,atomIDs=[atom.atomID for atom in atoms])
->>>>>>> parent of 78d11db... Update Regrowth PE Calc
         energies = self.evaluate_energies(molecule,atoms,rotations)
         log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*(energies-initial_energy))
         log_norm_probs = -1./(self.kb*self.temp)*(energies-initial_energy)-log_rosen_weight
@@ -287,14 +278,9 @@ class CBMCRegrowth(Move):
         except ValueError as e:
             raise ValueError("Probabilities of trial rotations do not sum to 1")
         if keep_original:
-<<<<<<< HEAD
-            index = 0     
-        return rotations,log_rosen_weight,rotations[index],energies[index],dih_energies[index]
-=======
             index = 0
         selected_rotation = rotations[index]
         return rotations,log_rosen_weight,selected_rotation,energies[index],dih_energies[index]
->>>>>>> parent of 78d11db... Update Regrowth PE Calc
 
     def regrow(self,molecule,index,keep_original=False):
         """Each atom, or pair of atoms at a branch point, is regrown individually in a consecutive loop starting from the specified index continuing away from the anchor
@@ -344,8 +330,6 @@ class CBMCRegrowth(Move):
         """
         molecule = self.select_random_molecule()
         index = self.select_index(molecule) 
-        #initial_imp = self.simulation.lmp.extract_compute("imp_pe",0,0)
-        #initial_ang = self.simulation.lmp.extract_compute("ang_pe",0,0)
         log_Wo,initial_pair_energy,initial_dih_energy = self.regrow(molecule,index,keep_original=True)
         log_Wf,final_pair_energy,final_dih_energy = self.regrow(molecule,index)
         probability = min(1,np.exp(log_Wf-log_Wo))
@@ -353,12 +337,10 @@ class CBMCRegrowth(Move):
         if log_Wo==False or log_Wf==False:
             accepted=False
         self.simulation.update_coords()
-        #final_imp = self.simulation.lmp.extract_compute("imp_pe",0,0)
-        #final_ang = self.simulation.lmp.extract_compute("ang_pe",0,0)
         self.num_moves+=1
         if(accepted):
             self.num_accepted+=1
-        return accepted,final_pair_energy+final_dih_energy-initial_pair_energy-initial_dih_energy#final_pair_energy+final_dih_energy+final_ang+final_imp-initial_pair_energy-initial_dih_energy-initial_ang-initial_imp
+        return accepted,final_pair_energy+final_dih_energy-initial_pair_energy-initial_dih_energy
 
 
 class CBMCSwap(CBMCRegrowth):
@@ -681,7 +663,6 @@ def get_bond_angle(position1,position2,position3):
     vector2 = position2-position3
     angle = np.arccos(np.dot(vector1, vector2)/(np.linalg.norm(vector1)*np.linalg.norm(vector2)))
     return angle
-
 
 
 
