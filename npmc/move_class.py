@@ -261,15 +261,12 @@ class CBMCRegrowth(Move):
             thetas,dih_energies = self.select_dih_angles(molecule,dihedrals,keep_original)
             theta0 = molecule.getDihedralAngle(dihedrals[0])
             rotations = thetas-theta0
-            self.turn_off_molecule_atoms(molecule,index-1)
         else: 
             theta_pairs,dih_energies = self.select_dih_angles_branched(molecule,dihedrals,atoms)
             theta0s = [molecule.getDihedralAngle(dihedral) for dihedral in dihedrals]
             rotations = [thetas-theta0s for thetas in theta_pairs]
-            self.turn_off_molecule_atoms(molecule,index-1)
-        self.simulation.update_coords()
-        initial_energy = self.simulation.get_pair_PE()
-        self.turn_off_molecule_atoms(molecule,index,atomIDs=[atom.atomID for atom in atoms])
+        self.simulation.turn_off_atoms([atom.atomID for atom in atoms])  
+        initial_energy = self.simulation.get_pair_PE()            
         energies = self.evaluate_energies(molecule,atoms,rotations)
         log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*(energies-initial_energy))
         log_norm_probs = -1./(self.kb*self.temp)*(energies-initial_energy)-log_rosen_weight
@@ -279,8 +276,7 @@ class CBMCRegrowth(Move):
             raise ValueError("Probabilities of trial rotations do not sum to 1")
         if keep_original:
             index = 0
-        selected_rotation = rotations[index]
-        return rotations,log_rosen_weight,selected_rotation,energies[index],dih_energies[index]
+        return rotations,log_rosen_weight,rotations[index],energies[index],dih_energies[index]
 
     def regrow(self,molecule,index,keep_original=False):
         """Each atom, or pair of atoms at a branch point, is regrown individually in a consecutive loop starting from the specified index continuing away from the anchor
@@ -302,22 +298,20 @@ class CBMCRegrowth(Move):
             The log of the total Rosenbluth weight of all the regrowth steps.
         """
         total_log_rosen_weight = 0
+        total_pair_energy = 0
         total_dih_energy = 0
         for idx in range(index,len(molecule.atoms)):
             dihedrals,atoms = molecule.index2dihedrals(idx)
-            self.turn_off_molecule_atoms(molecule,idx,atomIDs=[atom.atomID for atom in atoms])
             try:
                 rotations,log_step_weight,selected_rotation,pair_energy,dih_energy = self.evaluate_trial_rotations(molecule,idx,keep_original)
             except ValueError as e:
                 return False,False,False
-            if idx == len(molecule.atoms)-1:
-                total_pair_energy = pair_energy
+            total_pair_energy += pair_energy
             total_dih_energy += dih_energy
             rotation = rotations[0] if keep_original else selected_rotation
             molecule.rotateDihedrals(atoms,rotation)
-            total_log_rosen_weight+=log_step_weight
+            total_log_rosen_weight+=log_step_weight     
         self.simulation.turn_on_all_atoms()
-        self.simulation.update_coords()
         return total_log_rosen_weight,total_pair_energy,total_dih_energy
 
     def move(self):
@@ -453,7 +447,7 @@ class CBMCSwap(CBMCRegrowth):
         self.swap_molecule_positions(mol1,mol2)
         log_Wf_chain1,final_pair_PE1,final_dih_PE1 = self.regrow(mol1,self.starting_index,keep_original=False)
         log_Wf_chain2,final_pair_PE2,final_dih_PE2 = self.regrow(mol2,self.starting_index,keep_original=False)
-        atomIDs = [atom.atomID for atom in mol1.atoms] + [atom.atomID for atom in mol2.atoms]
+        self.simulation.update_coords()
         self.simulation.turn_off_atoms(atomIDs)
         final_pair_PE = self.simulation.get_pair_PE()
         self.simulation.turn_on_all_atoms()
@@ -461,7 +455,6 @@ class CBMCSwap(CBMCRegrowth):
         accepted = probability>rnd.random()
         if not all([log_Wo_chain1,log_Wo_chain2,log_Wf_chain2,log_Wf_chain1]):
             accepted=False
-        self.simulation.update_coords()
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1

@@ -180,7 +180,6 @@ class Simulation(object):
     def get_pair_PE(self):
         """Compute the total pair potential energy from LAMMPS.
         """
-        #self.lmp.command("run 1 pre no post no")
         self.lmp.command("run 0 post no")
         energies = self.lmp.extract_compute("pair_total",0,0)
         return energies
@@ -324,6 +323,14 @@ class Simulation(object):
         self.lmp.scatter_atoms("x",1,3,coords)
         self.get_coords()
 
+    def check_total_energy(self):
+        running_deltaE = self.initial_PE+self.deltaE
+        actual_totalPE = self.get_total_PE()
+        if not isclose(running_deltaE,actual_totalPE,abs_tol=0.001):
+            raise Exception('Total energy has deviated.')
+        if isclose(running_deltaE,actual_totalPE,abs_tol=1e-6):
+            self.deltaE = self.get_total_PE()-self.initial_PE
+
     def perform_mc_move(self):
         """Randomly selects one of the Monte Carlo moves included in initializeMoves, performs it, and accepts or rejects the move according to the Metropolis criteria.
         
@@ -338,9 +345,9 @@ class Simulation(object):
         if accepted:
             self.deltaE += energy
         else:  
-            self.revert_coords(old_positions)            
+            self.revert_coords(old_positions)
+            self.update_coords()
         self.step+=1
-        self.update_coords()
         self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
