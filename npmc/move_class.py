@@ -154,7 +154,7 @@ class CBMCRegrowth(Move):
         energies = force_field.ff_function(trial_dih_angles)
         return trial_dih_angles,energies
     
-    def select_dih_angles_branched(self,molecule,dihedrals,atoms,keep_original):
+    def select_dih_angles_branched(self,molecule,dihedrals,atoms,keep_original=False):
         """Returns numtrials number of dihedral angles with probability given by the PDF given by the boltzmann distribution determined by the temperature, 
         the dihedral forcefields, and the angle forcefields.
         
@@ -262,10 +262,14 @@ class CBMCRegrowth(Move):
             theta0 = molecule.getDihedralAngle(dihedrals[0])
             rotations = thetas-theta0
         else: 
-            theta_pairs,dih_energies = self.select_dih_angles_branched(molecule,dihedrals,atoms)
+            theta_pairs,dih_energies = self.select_dih_angles_branched(molecule,dihedrals,atoms,keep_original)
             theta0s = [molecule.getDihedralAngle(dihedral) for dihedral in dihedrals]
             rotations = [thetas-theta0s for thetas in theta_pairs]
-        self.simulation.turn_off_atoms([atom.atomID for atom in atoms])  
+        try:
+            ghost_atoms = list(map(molecule.getAtomsByMolIndex,np.arange(index+1,len(molecule.atoms))))[0][0]
+        except: 
+            ghost_atoms = []
+        self.simulation.turn_off_atoms([atom.atomID for atom in atoms],[atom.atomID for atom in ghost_atoms])  
         initial_energy = self.simulation.get_pair_PE()            
         energies = self.evaluate_energies(molecule,atoms,rotations)
         log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*(energies-initial_energy))
@@ -275,7 +279,7 @@ class CBMCRegrowth(Move):
         except ValueError as e:
             raise ValueError("Probabilities of trial rotations do not sum to 1")
         if keep_original:
-            index = 0
+            index = 0     
         return rotations,log_rosen_weight,rotations[index],energies[index],dih_energies[index]
 
     def regrow(self,molecule,index,keep_original=False):
@@ -324,6 +328,8 @@ class CBMCRegrowth(Move):
         """
         molecule = self.select_random_molecule()
         index = self.select_index(molecule) 
+        #initial_imp = self.simulation.lmp.extract_compute("imp_pe",0,0)
+        #initial_ang = self.simulation.lmp.extract_compute("ang_pe",0,0)
         log_Wo,initial_pair_energy,initial_dih_energy = self.regrow(molecule,index,keep_original=True)
         log_Wf,final_pair_energy,final_dih_energy = self.regrow(molecule,index)
         probability = min(1,np.exp(log_Wf-log_Wo))
@@ -331,10 +337,12 @@ class CBMCRegrowth(Move):
         if log_Wo==False or log_Wf==False:
             accepted=False
         self.simulation.update_coords()
+        #final_imp = self.simulation.lmp.extract_compute("imp_pe",0,0)
+        #final_ang = self.simulation.lmp.extract_compute("ang_pe",0,0)
         self.num_moves+=1
         if(accepted):
             self.num_accepted+=1
-        return accepted,final_pair_energy+final_dih_energy-initial_pair_energy-initial_dih_energy
+        return accepted,final_pair_energy+final_dih_energy-initial_pair_energy-initial_dih_energy#final_pair_energy+final_dih_energy+final_ang+final_imp-initial_pair_energy-initial_dih_energy-initial_ang-initial_imp
 
 
 class CBMCSwap(CBMCRegrowth):
