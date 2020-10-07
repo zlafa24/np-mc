@@ -17,3 +17,7 @@ def harmonic(theta,parameters):
     (k,theta0) = parameters
     theta0 = np.radians(theta0)
     return k*(theta-theta0)**2
+
+def cvff(phi,parameters):
+    (K,d,n) = parameters
+    return K*(1+d*np.cos(n*phi))

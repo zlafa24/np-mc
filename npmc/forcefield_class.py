@@ -1,9 +1,11 @@
 import npmc.ff_functions as ff_functions
+from npmc.molecule_class import getAngle
 import numpy as np
 from scipy import integrate as si
 from scipy import optimize as so
 from math import *
 from functools import partial
+import copy
 import time
 import pdb
 import matplotlib.pyplot as plt
@@ -23,6 +25,29 @@ class ForceField(object):
     def __init__(self,ff_function,ff_parameters):
         self.ff_function = ff_function
         self.ff_parameters = ff_parameters
+
+class AngleForceField(ForceField):
+    """This class is used to represent bond angle force fields.  Currently the only force field supported is harmonic, 
+    but it can be extended to others by adding to the ff_functions module.
+
+    Parameters
+    ----------
+    settings_filename : str
+        A string containing the path to the file holding the settings file of the LAMMPS system.  This is the system.in.settings file created when using Moltemplate.
+    angle_type : int
+        The integer representing the bond angle type in the simulation.  This number is used to find the correct coeffs from the settings file.
+    """
+    def __init__(self,settings_filename,angle_type):
+        self.angle_type = angle_type
+        ff_type,ff_params = get_ff_params(settings_filename,angle_type,ff_style='angle')
+        ff_function = get_ff_function(settings_filename,angle_type,ff_style='angle')
+        super(AngleForceField,self).__init__(ff_function,ff_params) 
+
+    def __eq__(self,other):
+        if isinstance(other,self.__class__):
+            return all([self.angle_type==other.angle_type,self.ff_parameters==other.ff_parameters])
+        else:
+            return False
 
 class DihedralForceField(ForceField):
     """This class is used to represent dihedral force fields.  Currently the only force fields supported are OPLS and TraPPE-UA, 
@@ -72,54 +97,28 @@ class DihedralForceField(ForceField):
         norm_probs = unnorm_probs/(np.sum(unnorm_probs)*dtheta)
         return thetas,norm_probs
 
-            
-class AngleForceField(ForceField):
-    """This class is used to represent bond angle force fields.  Currently the only force field supported is harmonic, 
+class ImproperForceField(ForceField):
+    """This class is used to represent improper dihedral angle force fields.  Currently the only force field supported is cvff, 
     but it can be extended to others by adding to the ff_functions module.
 
     Parameters
     ----------
     settings_filename : str
         A string containing the path to the file holding the settings file of the LAMMPS system.  This is the system.in.settings file created when using Moltemplate.
-    angle_type : int
-        The integer representing the bond angle type in the simulation.  This number is used to find the correct coeffs from the settings file.
+    improper_type : int
+        The integer representing the improper type in the simulation.  This number is used to find the correct coeffs from the settings file.
     """
-    def __init__(self,settings_filename,angle_type):
-        self.angle_type = angle_type
-        ff_type,ff_params = get_ff_params(settings_filename,angle_type,ff_style='angle')
-        ff_function = get_ff_function(settings_filename,angle_type,ff_style='angle')
-        super(AngleForceField,self).__init__(ff_function,ff_params) 
+    def __init__(self,settings_filename,improper_type):
+        self.improper_type = improper_type
+        ff_type,ff_params = get_ff_params(settings_filename,improper_type,ff_style='improper')
+        ff_function = get_ff_function(settings_filename,improper_type,ff_style='improper')
+        super(ImproperForceField,self).__init__(ff_function,ff_params) 
 
     def __eq__(self,other):
         if isinstance(other,self.__class__):
-            return all([self.angle_type==other.angle_type,self.ff_parameters==other.ff_parameters])
+            return all([self.improper_type==other.improper_type,self.ff_parameters==other.ff_parameters])
         else:
             return False
-            
-    def get_pdf(self,temp):
-        """Calculates the probability distribution function for bond angles of the given type, based on energies determined from the associated force field function and force field
-        parameters.
-        
-        Parameters
-        ----------
-        temp : float
-            The temperature at which to calculated the PDF. 
-            
-        Returns
-        -------
-        thetas : Numpy array of floats
-            1x500 array of the bond angles in radians which corresponed to the returned probabilities.   
-        norm_probs : Numpy array of floats
-            1x500 array of the normalized probabilities of the returned bond angles.
-        """
-        kb = 0.0019872041
-        beta = 1./(kb*temp)
-        (thetas,dtheta) = np.linspace(0,2*pi,num=500,retstep=True)
-        energies = self.ff_function(thetas)
-        unnorm_probs = np.exp(-beta*energies)
-        norm_probs = unnorm_probs/(np.sum(unnorm_probs)*dtheta)
-        return thetas,norm_probs
-
 
 class BranchPDF():
     """This class is used to handle the PDF of energy at branch points. It currently handles only single split branches, using two dihedral force fields and one bond angle force field to generate the PDF.
@@ -139,9 +138,14 @@ class BranchPDF():
     write : Boolean
         A Boolean that determines whether the PDF is read from an already existing .pkl file.
     """
-    def __init__(self,dihFF1,dihFF2,angleFF,bond_angles,temp,read=False):
-        self.dihFF1 = dihFF1; self.dihFF2 = dihFF2; self.angleFF = angleFF
-        self.bond_angles = bond_angles
+    def __init__(self,angleFF,dihFF1,dihFF2,impFF,branch_angles,molecule,temp,read=False):
+        self.angleFF = angleFF; self.dihFF1 = dihFF1; self.dihFF2 = dihFF2; self.impFF = impFF
+        self.molecule = copy.deepcopy(molecule)
+        self.bond_angles = branch_angles[3]
+        self.dihedrals = branch_angles[1]
+        self.impropers = branch_angles[2]
+        self.angles = branch_angles[0]
+            
         kb = 0.0019872041
         self.beta = 1./(kb*temp)
         self.Q = si.dblquad(self.unnorm_prob, 0,2*pi, 0,2*pi)[0]
@@ -167,6 +171,8 @@ class BranchPDF():
         weights : Numpy array of floats 
             An "intervals x intervals" array of the probabilities of each interval in the PDF.
         """
+        initial_dihedrals = np.array([-1*self.molecule.getDihedralAngle(dihedral) for dihedral in self.dihedrals])
+        self.molecule.rotateDihedrals([self.molecule.getAtomByID(dihedral.atom4) for dihedral in self.dihedrals],initial_dihedrals)
         phis = np.linspace(0,2*pi,intervals+1)
         pdf = np.empty([intervals**2,4]); weights = np.empty(intervals**2)
         for i in range(intervals):
@@ -176,6 +182,7 @@ class BranchPDF():
                 weights[i*intervals+j] = si.dblquad(self.unnorm_prob,pdf[i*intervals+j,2],pdf[i*intervals+j,3],lambda x:pdf[i*intervals+j,0],lambda x:pdf[i*intervals+j,1])[0]
         weights = weights/np.sum(weights)
         self.write_pdf(pdf,True,weights)
+        self.molecule.rotateDihedrals([self.molecule.getAtomByID(dihedral.atom4) for dihedral in self.dihedrals],-initial_dihedrals)
         return pdf,weights
   
     def tabulate_pdf(self,intervals1,intervals2):
@@ -245,7 +252,7 @@ class BranchPDF():
         flatten_probs = np.sum(self.unnorm_prob(phi1,phi2))*dphi/self.Q
         return flatten_probs
     
-    def unnorm_prob(self,phi1,phi2):
+    def unnorm_prob(self,phi2,phi1):
         """Get the unnormalized probabilities for the phase space contained in phi1 and phi2.
         
         Parameters
@@ -260,8 +267,13 @@ class BranchPDF():
         unnorm_probs : Numpy array of floats
             1xN array of unnormalized probabilities for the dihedral angle phase space given by phi1 and phi2.
         """
-        theta = central_angle_Vincenty(phi1,phi2,self.bond_angles[0],self.bond_angles[1])
-        unnorm_probs = np.exp(-self.beta*(self.dihFF1.ff_function(phi1)+self.dihFF2.ff_function(phi2)+self.angleFF.ff_function(theta)))
+        self.molecule.rotateDihedrals([self.molecule.getAtomByID(dihedral.atom4) for dihedral in self.dihedrals],[phi1,phi2])
+        theta = getAngle(self.molecule.getAtomByID(self.angles[0].atom1),self.molecule.getAtomByID(self.angles[0].atom2),self.molecule.getAtomByID(self.angles[0].atom3))
+        if self.impFF is None: unnorm_probs = np.exp(-self.beta*(self.dihFF1.ff_function(phi1)+self.dihFF2.ff_function(phi2)+self.angleFF.ff_function(theta)))
+        else:           
+            phi3 = self.molecule.getDihedralAngle(self.impropers[0])
+            unnorm_probs = np.exp(-self.beta*(self.dihFF1.ff_function(phi1)+self.dihFF2.ff_function(phi2)+self.angleFF.ff_function(theta)+self.impFF.ff_function(phi3)))
+        self.molecule.rotateDihedrals([self.molecule.getAtomByID(dihedral.atom4) for dihedral in self.dihedrals],[-phi1,-phi2])  
         return unnorm_probs
        
     def get_upper_bracket(self,i,j,pdf,threshold):
@@ -400,6 +412,23 @@ def read_ff_coeffs(settings_filename,ff_style):
     params = [coeff for coeff in coeffs if coeff[0]==(ff_style+'_coeff')]
     return params
 
+def initialize_angle_ffs(settings_filename):
+    """Initiliaze the AngleForceFields found in settings_filename.
+    
+    Parameters
+    ----------
+    settings_filename : str
+        The name of the file containing the forcefield parameters (e.g. system.in.settings)
+        
+    Returns
+    -------
+    angle_ffs : list of AngleForceFields
+        A list of the AngleForceField objects for the bond angle force fields found in settings_filename.
+    """
+    coeffs = read_ff_coeffs(settings_filename,ff_style='angle')
+    angle_ffs = [AngleForceField(settings_filename,int(coeff[1])) for coeff in coeffs]
+    return angle_ffs
+
 def initialize_dihedral_ffs(settings_filename):
     """Initiliaze the DihedralForceFields found in settings_filename.
     
@@ -417,8 +446,8 @@ def initialize_dihedral_ffs(settings_filename):
     dihedral_ffs = [DihedralForceField(settings_filename,int(coeff[1])) for coeff in coeffs]
     return dihedral_ffs
 
-def initialize_angle_ffs(settings_filename):
-    """Initiliaze the AngleForceFields found in settings_filename.
+def initialize_improper_ffs(settings_filename):
+    """Initiliaze the ImproperForceFields found in settings_filename.
     
     Parameters
     ----------
@@ -427,14 +456,14 @@ def initialize_angle_ffs(settings_filename):
         
     Returns
     -------
-    angle_ffs : list of AngleForceFields
-        A list of the AngleForceField objects for the bond angle force fields found in settings_filename.
+    improper_ffs : list of ImproperForceFields
+        A list of the ImproperForceField objects for the improper force fields found in settings_filename.
     """
-    coeffs = read_ff_coeffs(settings_filename,ff_style='angle')
-    angle_ffs = [AngleForceField(settings_filename,int(coeff[1])) for coeff in coeffs]
-    return angle_ffs
+    coeffs = read_ff_coeffs(settings_filename,ff_style='improper')
+    improper_ffs = [ImproperForceField(settings_filename,int(coeff[1])) for coeff in coeffs]
+    return improper_ffs
     
-def initialize_branch_pdfs(molecules,dihedral_ffs,angle_ffs,T,read=False):
+def initialize_branch_pdfs(molecules,angle_ffs,dihedral_ffs,improper_ffs,T,read=False):
     """Initiliaze the PDF's for all the branch points in the ligands.
     
     Parameters
@@ -455,16 +484,19 @@ def initialize_branch_pdfs(molecules,dihedral_ffs,angle_ffs,T,read=False):
     branchPDFs : list of BranchPDFs
         A list of BranchPDFs corresponding to the branch points in all the ligands.
     """
-    branch_points = [branch_point for molecule in molecules for branch_point in molecule.findBranchPoints()]
+    branch_points = [(branch_angles,molecule) for molecule in molecules for branch_angles in molecule.findBranchPoints()]
     branchPDFs = []; known_types = []
     for branch_point in branch_points:
-        types = branch_point[0]
-        if types in known_types: continue
-        dihedral_ff1 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==types[0]][0]
-        dihedral_ff2 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==types[1]][0]           
-        angle_ff = [angle_ff for angle_ff in angle_ffs if angle_ff.angle_type==types[2]][0]
-        branchPDFs.append(BranchPDF(dihedral_ff1,dihedral_ff2,angle_ff,branch_point[1],T,read=read))
-        known_types.append(types)
+        branch_angles = branch_point[0]; molecule = branch_point[1]
+        ang_types = [angle.angleType for angle in branch_angles[0]]; dih_types = [dih.dihType for dih in branch_angles[1]]; imp_types = [imp.impType for imp in branch_angles[2]]
+        if (ang_types,dih_types,imp_types) in known_types: continue
+        angle_ff = [angle_ff for angle_ff in angle_ffs if angle_ff.angle_type==ang_types[0]][0]
+        dihedral_ff1 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==dih_types[0]][0]
+        dihedral_ff2 = [dihedral_ff for dihedral_ff in dihedral_ffs if dihedral_ff.dihedral_type==dih_types[1]][0]           
+        if len(imp_types) > 0: improper_ff = [improper_ff for improper_ff in improper_ffs if improper_ff.improper_type==imp_types[0]][0]
+        else: improper_ff = None
+        branchPDFs.append(BranchPDF(angle_ff,dihedral_ff1,dihedral_ff2,improper_ff,branch_angles,molecule,T,read=read))
+        known_types.append((ang_types,dih_types,imp_types))
     return branchPDFs
     
 def central_angle_Vincenty(phi1,phi2,lambda1,lambda2):

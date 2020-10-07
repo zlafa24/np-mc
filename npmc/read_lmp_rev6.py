@@ -106,9 +106,36 @@ def readDihedrals(filename):
             diheds[j,i]=int(record[i])
     return diheds
 
+def readImpropers(filename):
+    input = open(filename,"r")
+    print("reading file ".format(filename))
+    currentId=0
+    line = input.readline()
+    out = line.find("impropers")
+    while(out==-1):
+        line = input.readline()
+        out = line.find("impropers")
+    print(line)
+    if int(line.strip()[0]) > 0:
+        numwords = line.split()
+        numimps = int(numwords[0])
+        imps = np.zeros((numimps,6))
+        while(input.readline().find("Impropers")==-1):
+            continue
+        input.readline()
+        line=input.readline
+        for j in range(numimps):
+            line=input.readline()
+            record = line.split()
+            for i in range(6):
+                imps[j,i]=int(record[i])
+        return imps
+    else: return []
+
 def readAll(inputfile):
     atoms=readAtoms(inputfile)
     bonds=readBonds(inputfile)
     angles=readAngles(inputfile)
     diheds=readDihedrals(inputfile)
-    return (atoms,bonds,angles,diheds)
+    imps=readImpropers(inputfile)
+    return (atoms,bonds,angles,diheds,imps)

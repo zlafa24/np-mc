@@ -26,17 +26,18 @@ class Molecule(object):
         dihedrals : list of type Dihedral
             The Dihedral objects associated with this molecule
     """
-    def __init__(self,molID,atoms,bonds,angles,dihedrals):
+    def __init__(self,molID,atoms,bonds,angles,dihedrals,impropers):
         self.molID = molID
         self.atoms = atoms
         self.bonds = bonds
         self.angles = angles
         self.dihedrals = dihedrals
+        self.impropers = impropers
         self.graph = self.atomsAsGraph() if self.bonds is not None else None
 
     def __eq__(self,other):
         if isinstance(other,self.__class__):
-            return all([self.atoms==other.atoms,self.bonds==other.bonds,self.angles==other.angles,self.dihedrals==other.dihedrals])
+            return all([self.atoms==other.atoms,self.bonds==other.bonds,self.angles==other.angles,self.dihedrals==other.dihedrals,self.impropers==other.impropers])
         else:
             return False
             
@@ -94,13 +95,14 @@ class Molecule(object):
         successor_dict = dict(ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID))
         for node in self.graph:
             if len(self.graph[node])>2: 
-                branch_atoms = set(list(self.graph[node].keys())+[node]+[predecessor_dict[predecessor_dict[node]]])
-                dihedrals = [dihedral for dihedral in self.dihedrals if dihedral.atoms.issubset(branch_atoms)]
+                branch_atomIDs = list([predecessor_dict[predecessor_dict[node]]]+[predecessor_dict[node]]+[node]+successor_dict[node])
+                branch_dihedrals = [dihedral for dihedral in self.dihedrals if dihedral.atoms.issubset(set(branch_atomIDs))]
+                branch_impropers = [improper for improper in self.impropers if improper.atoms.issubset(set(branch_atomIDs))]
                 angle_atoms = list(self.graph[node].keys())+[node]; angle_atoms.remove(predecessor_dict[node])
-                angle_type = [angle.angleType for angle in self.angles if angle.atoms==set(angle_atoms)][0]
                 angle1 = getAngle(self.getAtomByID(predecessor_dict[node]),self.getAtomByID(node),self.getAtomByID(successor_dict[node][0]))
                 angle2 = getAngle(self.getAtomByID(predecessor_dict[node]),self.getAtomByID(node),self.getAtomByID(successor_dict[node][1]))
-                branch_points.append(([dihedrals[0].dihType,dihedrals[1].dihType,angle_type],[angle1,angle2]))
+                branch_angles = [angle for angle in self.angles if angle.atoms==set(angle_atoms)]
+                branch_points.append((branch_angles,branch_dihedrals,branch_impropers,[angle1,angle2]))
         return branch_points
         
     def getAtomByID(self,atomID):
@@ -267,8 +269,7 @@ class Molecule(object):
             if any(atom not in indexed_atoms for atom in dihedral_IDs): dihedrals_IDs.remove(dihedral_IDs)
             else: dihedrals.extend([dihedral for dihedral in self.dihedrals if set(dihedral_IDs) == dihedral.atoms])
         return dihedrals,atoms
-
-    
+   
     def getDihedralAngle(self,dihedral):
         """Calculates the dihedral angle of a given dihedral.
         
@@ -384,7 +385,7 @@ class Angle(object):
     atom3 : int
         The atom ID of the third atom associated with the angle, same as the one defined in LAMMPS input file.
     """
-    def __init__(self, angleID,angleType,atom1,atom2,atom3):
+    def __init__(self,angleID,angleType,atom1,atom2,atom3):
         self.angleID = int(angleID)
         self.angleType =int(angleType)
         self.atom1 = int(atom1)
@@ -430,6 +431,41 @@ class Dihedral(object):
     def __eq__(self,other):
         if isinstance(other,self.__class__):
             return other.dihID == self.dihID
+        else:
+            return False
+    def __neq__(self,other):
+        return not self.__eq__(other)
+    
+class Improper(object):
+    """The Improper object represents the improper dihedral angle between four connected atoms.
+
+    Parameters
+    ----------
+    impID : int
+        The unique integer identifier for the improper same as the one in the LAMMPS input file.
+    impType : int
+        The unique integer identifier for the improper type which corresponds to the dihedral type in the LAMMPS input file.
+    atom1 : int
+        The atom ID of the first atom in the improper.
+    atom2 : int
+        The atom ID of the second atom in the improper.
+    atom3 : int
+        The atom ID of the third atom in the improper.
+    atom4 : int
+        The atom ID of the fourth atom in the improper.
+    """
+    def __init__(self,impID,impType,atom1,atom2,atom3,atom4):
+        self.impID = int(impID)
+        self.impType = int(impType)
+        self.atom1 = int(atom1)
+        self.atom2 = int(atom2)
+        self.atom3 = int(atom3)
+        self.atom4 = int(atom4)
+        self.atoms = set([int(atom1),int(atom2),int(atom3),int(atom4)])
+    
+    def __eq__(self,other):
+        if isinstance(other,self.__class__):
+            return other.impID == self.impID
         else:
             return False
     def __neq__(self,other):
@@ -483,6 +519,22 @@ def loadDihedrals(filename):
     """
     dihedrals = rdlmp.readDihedrals(filename)
     return [Dihedral(dihedral[0],dihedral[1],dihedral[2],dihedral[3],dihedral[4],dihedral[5]) for dihedral in dihedrals]
+
+def loadImpropers(filename):
+    """This function loads the Impropers from a LAMMPS input file and turns them into a list of Improper objects.
+    
+    Parameters
+    ----------
+    filename : str
+        The filename of the LAMMPS input file which has the Dihedrals you wish to use.
+    
+    Returns
+    -------
+    Improper List
+        A list of Improper objects with the same value as the Impropers in the LAMMPS input file passed in.
+    """
+    impropers = rdlmp.readImpropers(filename)
+    return [Improper(improper[0],improper[1],improper[2],improper[3],improper[4],improper[5]) for improper in impropers]
 
 def getBondsFromAtoms(atoms,bonds):
     """Based on a list of atoms find all bonds in Bond list, bonds that contain these atoms.
@@ -544,13 +596,13 @@ def getDihedralsFromAtoms(atomlist,bondlist,dihedrals):
         A list of Atoms used to search through the Dihedral List.
     bondlist : Bond List
         A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible dihedral combinations of the Atoms in atoms.
-    angles : Angle List
-        A List of Angles which is searched through.
+    dihedrals : Dihedral List
+        A List of Dihedrals which is searched through.
 
     Returns
     -------
-    anglelist : Angle List
-        A list of Angles that are associated with the Atoms in atoms.
+    dihedrallist : Dihedral List
+        A list of Dihedrals that are associated with the Atoms in atoms.
     """
     mol_graph = molecule2graph(atomlist,bondlist)
     dihedral_combos=[]
@@ -563,6 +615,35 @@ def getDihedralsFromAtoms(atomlist,bondlist,dihedrals):
         if([dihedral.atom1,dihedral.atom2,dihedral.atom3,dihedral.atom4] in dihedral_combos):
             dihedral_list.append(dihedral)
     return dihedral_list
+
+def getImpropersFromAtoms(atomlist,bondlist,impropers):
+    """Given a list of Atoms find all the Improper objects in impropers which contains these atoms.
+
+    Parameters
+    ----------
+    atomlist : Atom List
+        A list of Atoms used to search through the Improper List.
+    bondlist : Bond List
+        A List of Bond objects used to get connectivity of atoms.  The connectivity is used to find the possible improper combinations of the Atoms in atoms.
+    impropers : Improper List
+        A List of Impropers which is searched through.
+
+    Returns
+    -------
+    improperlist : Improper List
+        A list of Impropers that are associated with the Atoms in atoms.
+    """
+    #mol_graph = molecule2graph(atomlist,bondlist)
+    #improper_combos=[]
+    #Get possible angles by getting subgraphs with only 2 steps
+    #for atom1,atom2 in permutations(mol_graph.__iter__(),r=2):
+    #    if(ntwkx.shortest_path_length(mol_graph,source=atom1,target=atom2)==3):
+    #        improper_combos.append(ntwkx.shortest_path(mol_graph,source=atom1,target=atom2))      
+    improper_list=[]
+    for improper in impropers:
+        if improper.atoms.issubset([atom.atomID for atom in atomlist]):
+            improper_list.append(improper)
+    return improper_list
 
 def groupAtomsByMol(atoms):
     """Group atoms by their associated molecular ID
@@ -646,6 +727,28 @@ def groupDihedralsByMol(mol_dict,bond_dict,dihedrals):
         dihedral_dict[molID]=getDihedralsFromAtoms(mol_dict[molID],bond_dict[molID],dihedrals)
     return dihedral_dict
 
+def groupImpropersByMol(mol_dict,bond_dict,impropers):
+    """Group impropers by theri associated molecule ID
+
+    Parameters
+    ----------
+    mol_dict : Atom List Dictionary
+        A dictionary of Atom Lists indexed by their associated molecule ID's
+    bond_dict : Bond List Dictionary
+        A dictionary of Bond Lists indexed by their associated molecule ID's
+    impropers : Improper List
+        A list of impropers to by grouped by molecule ID.
+
+    Returns
+    -------
+    improper_dict : Improper List Dictionary
+        A dictionary of Improper Lists indexed by their associated molecule ID.
+    """
+    improper_dict={}
+    for molID in mol_dict:
+       improper_dict[molID]=getImpropersFromAtoms(mol_dict[molID],bond_dict[molID],impropers)
+    return improper_dict
+
 def set_anchor_atoms(molecules,anchortype):
     """For every molecule in molecules set the anchot atom to the atom with atom type anchortype.
 
@@ -700,6 +803,7 @@ def constructMolecules(filename):
     bonds = loadBonds(filename)
     angles = loadAngles(filename)
     dihedrals = loadDihedrals(filename)
+    impropers = loadImpropers(filename)
 
     print("Grouping Atoms by Molecule")
     atom_dict = groupAtomsByMol(atoms)
@@ -709,10 +813,12 @@ def constructMolecules(filename):
     angle_dict = groupAnglesByMol(atom_dict,bond_dict,angles)
     print("Grouping Dihedrals by ID")
     dihedral_dict = groupDihedralsByMol(atom_dict,bond_dict,dihedrals)
+    print("Grouping Impropers by ID")
+    improper_dict = groupImpropersByMol(atom_dict,bond_dict,impropers)
     print("Assembling Molecules")
     molecules = {}
     for molID in atom_dict:
-        molecules[molID]=Molecule(molID,atom_dict[molID],bond_dict[molID],angle_dict[molID],dihedral_dict[molID])
+        molecules[molID]=Molecule(molID,atom_dict[molID],bond_dict[molID],angle_dict[molID],dihedral_dict[molID],improper_dict[molID])
     return molecules
 
 

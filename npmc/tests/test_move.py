@@ -98,15 +98,15 @@ class TestCBMCRegrowth(unittest.TestCase):
         
     def test_turn_off_molecule_atoms_for_2_mHexo_system_returns_correct_energy_after_turning_off_hydrogen(self):
         self.cbmc_move_b.turn_off_molecule_atoms(self.cbmc_move_b.simulation.molecules[1],7,[8,9])
-        self.assertAlmostEqual(76.61306714690555-0.1989949557284083,self.cbmc_move_b.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 mHexo system using turn_off_molecule_atoms is not the expected value.")
+        self.assertAlmostEqual(157.3177818467294-2.726749134750375,self.cbmc_move_b.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 mHexo system using turn_off_molecule_atoms is not the expected value.")
 
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],3)
-        self.assertAlmostEqual(-1.5304852264093083+1.1598537654671954,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
+        self.assertAlmostEqual(-1.6710847+1.1598538,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off hydrogen in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
 
     def test_turn_off_molecule_atoms_for_2_MeOH_system_returns_correct_energy_after_turning_off_hydrogen_and_oxygen(self):
         self.cbmc_move.turn_off_molecule_atoms(self.cbmc_move.simulation.molecules[1],2)
-        self.assertAlmostEqual(-1.4003427987446782+0.012018654633924264,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off atoms in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
+        self.assertAlmostEqual(-1.4003423+0.0120187,self.cbmc_move.simulation.get_pair_PE(),places=5,msg="Energy obtained after turning off atoms in 2 MeOH system using turn_off_molecule_atoms is not the expected value.")
 
     @mock.patch.object(mvc.CBMCRegrowth,'evaluate_energies')
     def test_evaluate_trial_rotations_raises_exception_when_probs_do_not_sum_to_1(self,mock_method):
@@ -116,12 +116,12 @@ class TestCBMCRegrowth(unittest.TestCase):
     @mock.patch.object(mvc.CBMCRegrowth,'evaluate_trial_rotations')
     def test_regrow_returns_False_when_evaluate_trial_rotations_raises_ValueError(self,mock_method):
         mock_method.side_effect = ValueError('Probabilities do not sum to 1')
-        total_log_rosen_weight,total_pair_energy,total_dih_energy = self.cbmc_move.regrow(self.simulation.molecules[1],4)
+        total_log_rosen_weight,total_pair_energy,total_dih_energy,branch_pdfs = self.cbmc_move.regrow(self.simulation.molecules[1],4)
         self.assertFalse(total_log_rosen_weight,msg="regrow doesn't return False when evaluate_trial_rotations raises a ValueError exception")
 
     @mock.patch.object(mvc.CBMCRegrowth,'regrow')
     def test_move_returns_False_when_regrow_returns_False(self,mock_method):
-        mock_method.return_value = False,False,False
+        mock_method.return_value = False,False,False,[]
         accepted,energy = self.cbmc_move.move()
         self.assertFalse(accepted,msg="CBMCRegrowth move method does not return False when regrow method returns False")
 
@@ -233,7 +233,7 @@ class TestCBMCSwap(unittest.TestCase):
 
     @mock.patch.object(mvc.CBMCSwap,'regrow')
     def test_move_returns_False_when_regrow_returns_False(self,mock_method):
-        mock_method.return_value = 1,1,1
+        mock_method.return_value = 1,1,1,[]
         accepted,energy = self.swap_move.move()
         self.assertTrue(accepted,msg="CBMCSwap move method does not return True when ratio of regrow weights is 1")
 
