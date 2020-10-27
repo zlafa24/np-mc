@@ -163,6 +163,20 @@ def checkProgress(cwd,slurm_file,jobID,sheetID=os.environ['SIMLOG_SHEETID']):
     rates4 = acc_data[:,8]
     basicPlot(steps,[energies],'Simulation Time (# of MC steps)','Potential Energy (kcal/mol)','Total Potential Energy','test_nrg')
     basicPlot(steps,[rates1,rates2,rates3,rates4],'Simulation Time (# of MC steps)','Acceptance Ratio (# accepted / total)','Acceptance Rate by Move Type','test_rates',['Regrowth','Trans.','Swap','Rot.'])
+            
+def checkProgress_basic(cwd,energy_file='Potential_Energy.txt',acc_file='Acceptance_Rate.txt'):
+    
+    energy_data = np.genfromtxt(energy_file,skip_header=1,usecols=[0,1])
+    acc_data = np.genfromtxt(acc_file,skip_header=1,usecols=range(9))
+    
+    steps = energy_data[:,0]
+    energies = energy_data[:,1]
+    rates1 = acc_data[:,2]
+    rates2 = acc_data[:,4]
+    rates3 = acc_data[:,6]
+    rates4 = acc_data[:,8]
+    basicPlot(steps,[energies],'Simulation Time (# of MC steps)','Potential Energy (kcal/mol)','Total Potential Energy','test_nrg')
+    basicPlot(steps,[rates1,rates2,rates3,rates4],'Simulation Time (# of MC steps)','Acceptance Ratio (# accepted / total)','Acceptance Rate by Move Type','test_rates',['Regrowth','Trans.','Swap','Rot.'])            
        
 def pushEnd(cwd,slurm_file,jobID,sheetID=os.environ['SIMLOG_SHEETID']):
     

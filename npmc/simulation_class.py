@@ -354,8 +354,8 @@ class Simulation(object):
         else:  
             self.revert_coords(old_positions)
             self.update_coords()
-        print(self.initial_PE+self.deltaE)
-        print(self.get_total_PE())
+        #print(self.initial_PE+self.deltaE)
+        #print(self.get_total_PE())
         self.step+=1
         self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
