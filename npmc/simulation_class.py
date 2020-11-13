@@ -44,7 +44,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,read_pdf=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,read_pdf=False,legacy=False):
         rnd.seed(seed)
         np.random.seed(seed)
         dname = os.path.dirname(os.path.abspath(init_file))
@@ -69,7 +69,7 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart)
+        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart,legacy)
         self.initialize_data_files(restart)
         self.step = 0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
@@ -98,14 +98,19 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart=False):
+    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart=False,legacy=False):
         """Initializes the Monte Carlo moves used in the simulation.
         """
+        translate_move_legacy = mvc.TranslationMove_Legacy(self,max_disp,[nptype])
+        rotation_move_legacy = mvc.RotationMove_Legacy(self,anchortype,max_angle)
+        cbmc_move_legacy = mvc.CBMCRegrowth_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
+        swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
         translate_move = mvc.TranslationMove(self,max_disp,[nptype])
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
+        if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
         self.moves = [self.moves[i] for i in self.move_idxs]
         if restart:
             for i,move in enumerate(self.moves):
@@ -241,7 +246,7 @@ class Simulation(object):
         self.lmp.command("neigh_modify exclude group offatoms offatoms")
         self.update_neighbor_list()
         
-    def legacy_turn_off_atoms(self,atomIDs):
+    def turn_off_atoms_legacy(self,atomIDs):
         """Turns off short range interactions with specified atoms by excluding those atoms from the LAMMPS neighbor list.
 
         Parameters
@@ -360,6 +365,27 @@ class Simulation(object):
         #print(self.get_total_PE())
         self.step+=1
         self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
+        self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
+        self.acceptance_file.flush()
+        self.potential_file.flush()
+        return accepted
+    
+    def perform_mc_move_legacy(self):
+        """Randomly selects one of the Monte Carlo moves included in initializeMoves, performs it, and accepts or rejects the move according to the Metropolis criteria.
+        
+        Returns
+        --------
+        accepted : Boolean
+            A Boolean for whether the move was accepted or not.
+        """
+        move = rnd.choice(self.moves)
+        old_positions = np.copy([atom.position for atom in self.atomlist])
+        accepted = move.move()
+        if not accepted: self.revert_coords(old_positions)
+        self.step+=1
+        self.update_coords()
+        new_energy = self.get_total_PE()
+        self.potential_file.write(str(self.step)+'\t'+str(new_energy)+'\t'+str(move.move_name)+'\t'+str(accepted)+'\n') 
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
         self.potential_file.flush()
