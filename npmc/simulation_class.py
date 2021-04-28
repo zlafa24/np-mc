@@ -79,6 +79,7 @@ class Simulation(object):
         """Initialize the LAMMPS groups that one wishes to use in the simulation.
         """
         lmp.command("group silver type 1")
+        lmp.command("group sulfur type 5")
         lmp.command("group adsorbate type 2 3 4 5 6")
 
     def initializeComputes(self,lmp):
@@ -144,10 +145,12 @@ class Simulation(object):
         max_iter : int, optional
             The maximum allowed iterations in the minimization procedure.
         """
+        self.lmp.command("fix fxfrcS sulfur setforce 0. 0. 0.")
         self.lmp.command('timestep 0.5')
         self.lmp.command(f'min_style {style}')
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
         self.get_coords()
+        self.lmp.command("unfix fxfrcS")
 
     def dump_group(self,group_name,filename):
         """Dumps the atoms of the specified group to an XYZ file specified by filename
