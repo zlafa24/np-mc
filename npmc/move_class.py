@@ -71,7 +71,7 @@ class CBMCRegrowth(Move):
         self.anchortype = anchortype   
         self.type1_numatoms,self.type2_numatoms = type_lengths
         
-        self.set_anchor_atoms()      
+        #self.set_anchor_atoms()      
         pdf_molecules = self.select_molecule_of_each_type()
         self.angle_ffs = ffc.initialize_angle_ffs(simulation.init_file+'.settings')
         self.dihedral_ffs = ffc.initialize_dihedral_ffs(simulation.init_file+'.settings')
@@ -90,15 +90,27 @@ class CBMCRegrowth(Move):
         eligible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchortype in [atom.atomType for atom in molecule.atoms])]
         return rnd.choice(eligible_molecules)
 
+    def get_site_ID(self,anchorAtom):
+        
+        sites = np.genfromtxt(self.surfsites_file,skip_header=2)
+        #print(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1))
+        siteID = np.nonzero(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1) < 0.1)[0]
+        #print(sites[siteID],anchorAtom.position)
+        
+        return siteID
+
     def set_anchor_atoms(self):
         """For every molecule in the Move's associated simulation the anchor atom is set to the anchortype associated with the CBMCRegrowth instance.  
         Any molecule that does not have an atom of type anchortype is skipped.
         """
+            
         for key,molecule in self.simulation.molecules.items():
-            anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==self.anchortype]
+            anchorAtoms = [atom for atom in molecule.atoms if atom.atomType==self.anchortype]
+            anchorIDs = [atom.atomID for atom in anchorAtoms] 
             if len(anchorIDs)>0:
-                molecule.setAnchorAtom(anchorIDs[0])
-
+                siteID = self.get_site_ID(anchorAtoms[0])
+                molecule.setAnchorAtom(anchorIDs[0],siteID)
+    
     def select_index(self,molecule):
         """Selects a random index of a molecule ranging from 3 to the final index.  The index selection starts at 3 as the dihedral rotation does not move any atoms with 
         index less than 3.
@@ -520,11 +532,12 @@ class TranslationMove(Move):
     stationary_types : int or list
         The type or types of atoms that will not be translated; usually the nanoparticle atom types.
     """
-    def __init__(self,simulation,max_disp,stationary_types):
+    def __init__(self,simulation,surfsites_file,max_disp,stationary_types):
         super(TranslationMove,self).__init__(simulation)
         self.max_disp = max_disp
         self.stationary_types = set(stationary_types)
-        self.move_name = "Translation"
+        self.move_name = "Translation"       
+        self.sites = np.genfromtxt(surfsites_file,skip_header=2)
 
     def translate(self,molecule,displacement):
         """Move the atoms in the specified molecule by the given displacement.
@@ -551,18 +564,29 @@ class TranslationMove(Move):
         eligible_molecules = [molecule for key,molecule in self.molecules.items() if not (self.stationary_types.intersection([atom.atomType for atom in molecule.atoms]))]
         return rnd.choice(eligible_molecules)
 
-    def get_random_move(self):
+    def get_random_move(self,mol):
         """
         Returns
         -------
         move : Numpy array of floats
             A 1x3 array of a random vector displacement in Cartesian coordinates with a magnitude between zero and the specified maximum displacement.
         """
+        occupied_sites = [molecule.siteID for key,molecule in self.molecules.items() if not (self.stationary_types.intersection([atom.atomType for atom in molecule.atoms]))]
+        same_face_sites = np.nonzero(self.sites[:,1] == self.sites[mol.siteID,1])[0]
+        #eligible_sites = same_face_sites[np.in1d(same_face_sites,occupied_sites,invert=True)]
+        rand_siteID = np.random.choice(same_face_sites)
+        if np.isin(rand_siteID,occupied_sites): occupied = True
+        else: occupied = False
+        displacement = self.sites[rand_siteID,:][1:4] - mol.anchorAtom.position
+        return displacement,rand_siteID,occupied
+        
+        '''
         theta = 2*pi*rnd.random()
         phi = acos(2*rnd.random()-1)
         r = self.max_disp*rnd.random()
         move = np.array([r*sin(phi)*cos(theta),r*sin(phi)*cos(theta),r*cos(phi)])
         return move
+        '''
 
     def move(self):
         """A translation move is performed on a random molecule with a random displacement, and it is accepted according to the Metropolis criteria.
@@ -572,19 +596,26 @@ class TranslationMove(Move):
         accepted : Boolean
             A Boolean that indicates whether or not the translation move was accepted.
         """
+        
         molecule = self.get_random_molecule()
-        self.simulation.turn_off_atoms([atom.atomID for atom in molecule.atoms],[])
-        old_energy = self.simulation.get_total_PE()  
-        displacement = self.get_random_move()
-        self.translate(molecule,displacement)
-        new_energy = self.simulation.get_total_PE()
-        self.simulation.turn_on_all_atoms()
-        probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
-        accepted = probability>rnd.random()
-        self.num_moves+=1
-        if accepted:
-            self.num_accepted+=1
-        return accepted,new_energy-old_energy        
+     
+        displacement,rand_siteID,occupied = self.get_random_move(molecule)
+        if occupied: 
+            self.num_moves+=1
+            return False,None
+        else:
+            self.simulation.turn_off_atoms([atom.atomID for atom in molecule.atoms],[])
+            old_energy = self.simulation.get_total_PE()    
+            self.translate(molecule,displacement)       
+            new_energy = self.simulation.get_total_PE()
+            self.simulation.turn_on_all_atoms()
+            probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
+            accepted = probability>rnd.random()
+            self.num_moves+=1
+            if accepted:
+                molecule.siteID = rand_siteID
+                self.num_accepted+=1
+            return accepted,new_energy-old_energy        
 
 class RotationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
@@ -749,7 +780,7 @@ class CBMCRegrowth_Legacy(Move_Legacy):
         self.anchortype = anchortype   
         self.type1_numatoms,self.type2_numatoms = type_lengths
         
-        self.set_anchor_atoms()      
+        #self.set_anchor_atoms()      
         pdf_molecules = self.select_molecule_of_each_type()
         self.dihedral_ffs = ffc.initialize_dihedral_ffs(simulation.init_file+'.settings')
         self.angle_ffs = ffc.initialize_angle_ffs(simulation.init_file+'.settings')    
@@ -773,7 +804,7 @@ class CBMCRegrowth_Legacy(Move_Legacy):
         for key,molecule in self.simulation.molecules.items():
             anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==self.anchortype]
             if len(anchorIDs)>0:
-                molecule.setAnchorAtom(anchorIDs[0])
+                molecule.setAnchorAtom(anchorIDs[0],anchorIDs[0])
 
     def select_index(self,molecule):
         """Selects a random index of a molecule ranging from 3 to the final index.  The index selection starts at 3 as the dihedral rotation does not move any atoms with 
