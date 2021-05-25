@@ -112,7 +112,7 @@ class Simulation(object):
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
-        if legacy: self.moves = [translate_move_legacy] #self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
+        if legacy: self.moves = self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
         self.moves = [self.moves[i] for i in self.move_idxs]
         if restart:
             for i,move in enumerate(self.moves):
