@@ -56,7 +56,7 @@ class Molecule(object):
         com = np.mean(positions,axis=0)
         return com
 
-    def setAnchorAtom(self,atomID):
+    def setAnchorAtom(self,atomID,siteID):
         """Sets the anchor atom of the molecule: the atom of the molecule that is anchored to the nanoparticle.  Setting this is important when using the CBMC regrowth move.
         
         Parameters
@@ -67,6 +67,7 @@ class Molecule(object):
         atom = self.getAtomByID(atomID)
         if(atom!=None):
             self.anchorAtom = atom
+            self.siteID = siteID
             return True
         else:
             return False
@@ -749,20 +750,7 @@ def groupImpropersByMol(mol_dict,bond_dict,impropers):
        improper_dict[molID]=getImpropersFromAtoms(mol_dict[molID],bond_dict[molID],impropers)
     return improper_dict
 
-def set_anchor_atoms(molecules,anchortype):
-    """For every molecule in molecules set the anchot atom to the atom with atom type anchortype.
 
-    Parameters
-    ----------
-    molecules : list of Molecule
-    A list of Molecule objects that will have their anchor atoms set to the atom with type anchortype.
-    anchortype : int
-    The atom type of the atom to set as the anchor for each Molecule in molecules.
-    """
-    for key, molecule in molecules.items():
-        anchorIDs = [atom.atomID for atom in molecule.atoms if atom.atomType==anchortype]
-        if len(anchorIDs)>0:
-            molecule.setAnchorAtom(anchorIDs[0])
 
 def molecule2graph(atomlist,bondlist):
     """Converts the Atom list and Bond list of a molecule to a graph data object
@@ -785,7 +773,33 @@ def molecule2graph(atomlist,bondlist):
     molecule_graph.add_edges_from([(bond.atom1,bond.atom2) for bond in bondlist])
     return molecule_graph
 
-def constructMolecules(filename):
+def get_site_ID(surfsites_file,anchorAtom):
+        
+    sites = np.genfromtxt(surfsites_file,skip_header=2)
+    #print(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1))
+    siteID = np.nonzero(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1) < 0.1)[0][0]
+    #print(sites[siteID],anchorAtom.position)
+        
+    return siteID
+    
+def set_anchor_atoms(molecules,surfsites_file,anchortype):
+    """For every molecule in molecules set the anchot atom to the atom with atom type anchortype.
+
+    Parameters
+    ----------
+    molecules : list of Molecule
+    A list of Molecule objects that will have their anchor atoms set to the atom with type anchortype.
+    anchortype : int
+    The atom type of the atom to set as the anchor for each Molecule in molecules.
+    """
+    for key,molecule in molecules.items():
+        anchorAtoms = [atom for atom in molecule.atoms if atom.atomType==anchortype]
+        anchorIDs = [atom.atomID for atom in anchorAtoms] 
+        if len(anchorIDs)>0:
+            siteID = get_site_ID(surfsites_file,anchorAtoms[0])
+            molecule.setAnchorAtom(anchorIDs[0],siteID)
+
+def constructMolecules(filename,surfsites_file,anchortype):
     """From a LAMMPS input file construct a list of Molecule objects based on the molecules in the LAMMPS input file.
 
     Parameters
@@ -819,6 +833,7 @@ def constructMolecules(filename):
     molecules = {}
     for molID in atom_dict:
         molecules[molID]=Molecule(molID,atom_dict[molID],bond_dict[molID],angle_dict[molID],dihedral_dict[molID],improper_dict[molID])
+    set_anchor_atoms(molecules,surfsites_file,anchortype)
     return molecules
 
 

@@ -44,7 +44,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,read_pdf=False,legacy=False):
+    def __init__(self,init_file,datafile,surfsites_file,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,read_pdf=False,legacy=False):
         rnd.seed(seed)
         np.random.seed(seed)
         dname = os.path.dirname(os.path.abspath(init_file))
@@ -53,7 +53,7 @@ class Simulation(object):
         os.chdir(dname)
         self.temp = temp
         self.numtrials = numtrials
-        self.molecules = mol.constructMolecules(datafile)
+        self.molecules = mol.constructMolecules(datafile,surfsites_file,anchortype)
         self.atomlist = self.get_atoms()
         self.move_idxs = moves
         
@@ -64,8 +64,9 @@ class Simulation(object):
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
+        self.surfsites_file = os.path.abspath(surfsites_file)
         self.exclude=False
-        
+              
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
@@ -79,6 +80,7 @@ class Simulation(object):
         """Initialize the LAMMPS groups that one wishes to use in the simulation.
         """
         lmp.command("group silver type 1")
+        lmp.command("group sulfur type 5")
         lmp.command("group adsorbate type 2 3 4 5 6")
 
     def initializeComputes(self,lmp):
@@ -105,12 +107,12 @@ class Simulation(object):
         rotation_move_legacy = mvc.RotationMove_Legacy(self,anchortype,max_angle)
         cbmc_move_legacy = mvc.CBMCRegrowth_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
-        translate_move = mvc.TranslationMove(self,max_disp,[nptype])
+        translate_move = mvc.TranslationMove(self,self.surfsites_file,max_disp,[nptype])
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
-        if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
+        if legacy: self.moves = self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
         self.moves = [self.moves[i] for i in self.move_idxs]
         if restart:
             for i,move in enumerate(self.moves):
@@ -144,10 +146,12 @@ class Simulation(object):
         max_iter : int, optional
             The maximum allowed iterations in the minimization procedure.
         """
+        self.lmp.command("fix fxfrcS sulfur setforce 0. 0. 0.")
         self.lmp.command('timestep 0.5')
         self.lmp.command(f'min_style {style}')
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
         self.get_coords()
+        self.lmp.command("unfix fxfrcS")
 
     def dump_group(self,group_name,filename):
         """Dumps the atoms of the specified group to an XYZ file specified by filename
@@ -361,8 +365,6 @@ class Simulation(object):
         else:  
             self.revert_coords(old_positions)
             self.update_coords()
-        #print(self.initial_PE+self.deltaE)
-        #print(self.get_total_PE())
         self.step+=1
         self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
