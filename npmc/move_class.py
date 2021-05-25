@@ -572,7 +572,7 @@ class TranslationMove(Move):
             A 1x3 array of a random vector displacement in Cartesian coordinates with a magnitude between zero and the specified maximum displacement.
         """
         occupied_sites = [molecule.siteID for key,molecule in self.molecules.items() if not (self.stationary_types.intersection([atom.atomType for atom in molecule.atoms]))]
-        same_face_sites = np.nonzero(self.sites[:,1] == self.sites[mol.siteID,1])[0]
+        same_face_sites = np.nonzero(self.sites[:,0] == self.sites[mol.siteID,0])[0]
         #eligible_sites = same_face_sites[np.in1d(same_face_sites,occupied_sites,invert=True)]
         rand_siteID = np.random.choice(same_face_sites)
         if np.isin(rand_siteID,occupied_sites): occupied = True
@@ -598,7 +598,6 @@ class TranslationMove(Move):
         """
         
         molecule = self.get_random_molecule()
-     
         displacement,rand_siteID,occupied = self.get_random_move(molecule)
         if occupied: 
             self.num_moves+=1
@@ -1214,8 +1213,11 @@ class TranslationMove_Legacy(Move_Legacy):
         """
         old_energy = self.simulation.get_total_PE()
         molecule = self.get_random_molecule()
-        displacement = self.get_random_move()
+        in_pos = np.copy(molecule.atoms[0].position)
+        displacement = self.get_random_move()        
+        print(displacement,np.linalg.norm(displacement))
         self.translate(molecule,displacement)
+        print(molecule.atoms[0].position-in_pos)
         new_energy = self.simulation.get_total_PE()
         probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
         accepted = probability>rnd.random()
