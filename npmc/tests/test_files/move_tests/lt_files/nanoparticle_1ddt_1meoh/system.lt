@@ -2,7 +2,7 @@ import "ddt.lt"
 import "silver.lt"
 import "meoh.lt"
 
-silver = new SILVER [2445]
+silver = new SILVER [1946]
 ddts = new DDT [1]
 meohs = new MEOH [1]
 

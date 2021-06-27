@@ -44,7 +44,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,surfsites_file,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,read_pdf=False,legacy=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,np_edge_len=25.96,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,read_pdf=False,legacy=False):
         rnd.seed(seed)
         np.random.seed(seed)
         dname = os.path.dirname(os.path.abspath(init_file))
@@ -52,8 +52,10 @@ class Simulation(object):
         print(f'Directory name is {dname}')
         os.chdir(dname)
         self.temp = temp
+        self.np_edge_len = np_edge_len
+        self.max_disp = max_disp
         self.numtrials = numtrials
-        self.molecules = mol.constructMolecules(datafile,surfsites_file,anchortype)
+        self.molecules,self.faces = mol.constructMolecules(datafile,np_edge_len,anchortype)
         self.atomlist = self.get_atoms()
         self.move_idxs = moves
         
@@ -64,7 +66,6 @@ class Simulation(object):
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
-        self.surfsites_file = os.path.abspath(surfsites_file)
         self.exclude=False
               
         self.initializeGroups(self.lmp)
@@ -82,6 +83,7 @@ class Simulation(object):
         lmp.command("group silver type 1")
         lmp.command("group sulfur type 5")
         lmp.command("group adsorbate type 2 3 4 5 6")
+        self.lmp.command("group empty empty")
 
     def initializeComputes(self,lmp):
         """Initializes the LAMMPS computes that one  wishes to use in the simulation.
@@ -107,12 +109,12 @@ class Simulation(object):
         rotation_move_legacy = mvc.RotationMove_Legacy(self,anchortype,max_angle)
         cbmc_move_legacy = mvc.CBMCRegrowth_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
-        translate_move = mvc.TranslationMove(self,self.surfsites_file,max_disp,[nptype])
+        translate_move = mvc.TranslationMove(self,max_disp,10.0,[nptype],self.faces)
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
-        if legacy: self.moves = self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
+        if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
         self.moves = [self.moves[i] for i in self.move_idxs]
         if restart:
             for i,move in enumerate(self.moves):
@@ -234,7 +236,7 @@ class Simulation(object):
             A list of atom IDs of the atoms that will be turned off in the simulation
         """
         stratoms = ' '.join(map(str,map(int,atomIDs)))
-        self.lmp.command("neigh_modify exclude none")       
+        self.lmp.command("neigh_modify exclude none")
         if len(ghost_atoms) > 0:
             stratoms_ghost = ' '.join(map(str,map(int,ghost_atoms)))
             self.lmp.command("group ghostatoms intersect all all")
@@ -250,6 +252,7 @@ class Simulation(object):
         self.lmp.command("neigh_modify exclude group offatoms offatoms")
         self.update_neighbor_list()
         
+    
     def turn_off_atoms_legacy(self,atomIDs):
         """Turns off short range interactions with specified atoms by excluding those atoms from the LAMMPS neighbor list.
 
@@ -359,14 +362,14 @@ class Simulation(object):
         """
         move = rnd.choice(self.moves)
         old_positions = np.copy([atom.position for atom in self.atomlist])
-        accepted,energy = move.move()
+        accepted,energy,links = move.move()
         if accepted:
             self.deltaE += energy
         else:  
             self.revert_coords(old_positions)
             self.update_coords()
         self.step+=1
-        self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
+        self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\t{links}\n')
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
         self.potential_file.flush()

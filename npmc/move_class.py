@@ -5,6 +5,7 @@ import random as rnd
 from math import *
 import os
 import scipy.special as scm
+import scipy.spatial.distance as ssd
 import time
 
 class Move(object):
@@ -224,7 +225,7 @@ class CBMCRegrowth(Move):
         atoms = map(molecule.getAtomsByMolIndex,indices_to_turn_off)
         atomIDs_off = [atom.atomID for atom_lists in atoms for atom in atom_lists[0]]
         atomIDs_off = [atomID for atomID in atomIDs_off if atomID not in atomIDs]
-        self.simulation.legacy_turn_off_atoms(atomIDs_off)
+        self.simulation.turn_off_atoms_legacy(atomIDs_off)
     
     def get_branch_point_energy(self,molecule,branch_pdf_full):
         
@@ -532,12 +533,13 @@ class TranslationMove(Move):
     stationary_types : int or list
         The type or types of atoms that will not be translated; usually the nanoparticle atom types.
     """
-    def __init__(self,simulation,surfsites_file,max_disp,stationary_types):
+    def __init__(self,simulation,max_disp,cutoff,stationary_types,faces):
         super(TranslationMove,self).__init__(simulation)
         self.max_disp = max_disp
+        self.cutoff = cutoff
+        self.faces = faces
         self.stationary_types = set(stationary_types)
         self.move_name = "Translation"       
-        self.sites = np.genfromtxt(surfsites_file,skip_header=2)
 
     def translate(self,molecule,displacement):
         """Move the atoms in the specified molecule by the given displacement.
@@ -564,57 +566,91 @@ class TranslationMove(Move):
         eligible_molecules = [molecule for key,molecule in self.molecules.items() if not (self.stationary_types.intersection([atom.atomType for atom in molecule.atoms]))]
         return rnd.choice(eligible_molecules)
 
-    def get_random_move(self,mol):
+    def get_random_move(self,anchor_pos):
         """
         Returns
         -------
         move : Numpy array of floats
             A 1x3 array of a random vector displacement in Cartesian coordinates with a magnitude between zero and the specified maximum displacement.
         """
-        occupied_sites = [molecule.siteID for key,molecule in self.molecules.items() if not (self.stationary_types.intersection([atom.atomType for atom in molecule.atoms]))]
-        same_face_sites = np.nonzero(self.sites[:,0] == self.sites[mol.siteID,0])[0]
-        #eligible_sites = same_face_sites[np.in1d(same_face_sites,occupied_sites,invert=True)]
-        rand_siteID = np.random.choice(same_face_sites)
-        if np.isin(rand_siteID,occupied_sites): occupied = True
-        else: occupied = False
-        displacement = self.sites[rand_siteID,:][1:4] - mol.anchorAtom.position
-        return displacement,rand_siteID,occupied
-        
-        '''
-        theta = 2*pi*rnd.random()
-        phi = acos(2*rnd.random()-1)
-        r = self.max_disp*rnd.random()
-        move = np.array([r*sin(phi)*cos(theta),r*sin(phi)*cos(theta),r*cos(phi)])
-        return move
-        '''
 
+        dists_to_face = np.abs(np.add(np.sum(np.multiply(self.faces[:,:3],anchor_pos),axis=1),self.faces[:,3])) / np.linalg.norm(self.faces[:,:3],axis=1)
+        nearest_face = self.faces[np.argmin(dists_to_face),:]
+        trans_plane = np.array([nearest_face[0],nearest_face[1],nearest_face[2],np.sum(np.multiply(nearest_face[:3],anchor_pos))])
+              
+        new_anchor_pos = anchor_pos + np.array([self.max_disp,self.max_disp,self.max_disp])
+        while np.linalg.norm(anchor_pos-new_anchor_pos) > self.max_disp:
+            dim1 = np.argmax(np.abs(trans_plane[:3]))
+            dim2 = (dim1+1)%3; dim3 = (dim1+2)%3 
+            new_anchor_pos[dim2] = anchor_pos[dim2] + self.max_disp * rnd.uniform(-1,1)
+            new_anchor_pos[dim3] = anchor_pos[dim3] + self.max_disp * rnd.uniform(-1,1)
+            new_anchor_pos[dim1] = (trans_plane[3]-trans_plane[dim2]*new_anchor_pos[dim2]-trans_plane[dim3]*new_anchor_pos[dim3]) / trans_plane[dim1]
+             
+        return anchor_pos-new_anchor_pos
+    
     def move(self):
-        """A translation move is performed on a random molecule with a random displacement, and it is accepted according to the Metropolis criteria.
+       
+        eligible_mols = np.array([molecule for key,molecule in self.simulation.molecules.items() if not self.stationary_types.intersection([atom.atomType for atom in molecule.atoms])])
+        all_positions = [np.array([atom.position for atom in molecule.atoms]) for molecule in eligible_mols]
+        random_mol = rnd.choice(eligible_mols)
+        displacement = self.get_random_move(random_mol.anchorAtom.position)
+        linked_mols = [random_mol]
+        attempted_mols = [random_mol]
+        probabilities = []
+        frt = 1./(self.kb*self.temp) * rnd.random()
         
-        Returns
-        -------
-        accepted : Boolean
-            A Boolean that indicates whether or not the translation move was accepted.
-        """
+        for linked_mol in linked_mols:
+            linked_mol_positions = np.array([atom.position for atom in linked_mol.atoms])
+            min_distances = np.array([np.amin(ssd.cdist(linked_mol_positions,mol_positions)) for mol_positions in all_positions])
+            nearby_mols = eligible_mols[np.nonzero((min_distances > 0.0) & (min_distances < self.cutoff))]
+            linkable_mols = [mol for mol in nearby_mols if mol.molID not in [mol.molID for mol in attempted_mols]] 
+            attempted_mols.extend(linkable_mols)
+            
+            for linkable_mol in linkable_mols:               
+                on_atoms = np.concatenate(([atom.atomID for atom in linked_mol.atoms],[atom.atomID for atom in linkable_mol.atoms]),axis=0)
+                ghost_atoms = np.array([atom.atomID for atom in self.simulation.atomlist if atom.molID not in [linked_mol.molID,linkable_mol.molID]])
+                self.simulation.turn_off_atoms(on_atoms,ghost_atoms)
+                
+                self.simulation.lmp.command('group molatoms intersect all all')
+                self.simulation.lmp.command('group molatoms clear')
+                self.simulation.lmp.command(f'group molatoms id {" ".join(map(str,[atom.atomID for atom in linked_mol.atoms]))}')
+                self.simulation.lmp.command('neigh_modify exclude group molatoms molatoms')
+                
+                self.simulation.lmp.command('group molatoms2 intersect all all')
+                self.simulation.lmp.command('group molatoms2 clear')
+                self.simulation.lmp.command(f'group molatoms2 id {" ".join(map(str,[atom.atomID for atom in linkable_mol.atoms]))}')
+                self.simulation.lmp.command('neigh_modify exclude group molatoms2 molatoms2')
+                
+                E_c = self.simulation.get_pair_PE()# - E_mol1
+                self.simulation.turn_on_all_atoms()
+                
+                 
+                probability = max(0,1-np.exp(frt*E_c))
+                if E_c > -1.0: probability = 0.0
+                linked = probability > rnd.random()
+                #print(E_c,probability)
+                if linked: 
+                    linked_mols.append(linkable_mol)
+                    #if len(linked_mols) > max_cluster_size: return False
+                    #E_cr,E_Ir = self.virtual_move(linked_mol,linkable_mol,-displacement)
+                    probabilities.append(probability)
+                    #reverse_probabilities.append(max(0,1-np.exp((self.kb*self.temp)*(E_cr-E_Ir))))
+                    #print(probability,max(0,1-np.exp((self.kb*self.temp)*(E_cr-E_Ir))))
         
-        molecule = self.get_random_molecule()
-        displacement,rand_siteID,occupied = self.get_random_move(molecule)
-        if occupied: 
-            self.num_moves+=1
-            return False,None
-        else:
-            self.simulation.turn_off_atoms([atom.atomID for atom in molecule.atoms],[])
-            old_energy = self.simulation.get_total_PE()    
-            self.translate(molecule,displacement)       
-            new_energy = self.simulation.get_total_PE()
-            self.simulation.turn_on_all_atoms()
-            probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
-            accepted = probability>rnd.random()
-            self.num_moves+=1
-            if accepted:
-                molecule.siteID = rand_siteID
-                self.num_accepted+=1
-            return accepted,new_energy-old_energy        
+        old_energy = self.simulation.get_total_PE() 
+        for mol in linked_mols:
+            self.translate(mol,displacement)
+        new_energy = self.simulation.get_total_PE()
+        #print(min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy))))
+        probability = min(1,np.exp((frt-(1./(self.kb*self.temp)))*(new_energy-old_energy)))# * np.prod(reverse_probabilities) / np.prod(probabilities))
+        accepted = probability>rnd.random()
+        self.num_moves+=1
+        #print(accepted,len(linked_mols),probability)
+        if accepted:
+            self.num_accepted+=1
+            #print('accepted',len(linked_mols))
+        #print(len(linked_mols))
+        return accepted,new_energy-old_energy,len(linked_mols)
 
 class RotationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
@@ -1213,18 +1249,15 @@ class TranslationMove_Legacy(Move_Legacy):
         """
         old_energy = self.simulation.get_total_PE()
         molecule = self.get_random_molecule()
-        in_pos = np.copy(molecule.atoms[0].position)
-        displacement = self.get_random_move()        
-        print(displacement,np.linalg.norm(displacement))
+        displacement = self.get_random_move()
         self.translate(molecule,displacement)
-        print(molecule.atoms[0].position-in_pos)
         new_energy = self.simulation.get_total_PE()
         probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
         accepted = probability>rnd.random()
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted        
+        return accepted
 
 class RotationMove_Legacy(Move_Legacy):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 

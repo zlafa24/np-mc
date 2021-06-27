@@ -31,7 +31,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.dump_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/regrow.xyz')
         self.temp = 298.15
         self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
-        self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp)
+        self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp,anchortype=5)
         self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2,(5,5))
         self.cbmc_move_b = mvc.CBMCRegrowth(self.sim_branched,5,(10,10),read_pdf=True)
 
@@ -132,21 +132,19 @@ class TestCBMCRegrowth(unittest.TestCase):
         os.chdir(script_path)
         self.cbmc_move.simulation.turn_on_all_atoms()
 
-
-
 class TestTranslationMove(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/two_meohs')
+        self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files/nanoparticle_1ddt_1meoh')
         self.init_file = os.path.abspath(self.lt_directory+'/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
         self.temp = 298.15
-        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
-        self.translate_move = mvc.TranslationMove(self.simulation,0.5,[])
+        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp,type_lengths=(5,13),anchortype=4)
+        self.translate_move = mvc.TranslationMove(self.simulation,self.simulation.max_disp,10.0,[1],self.simulation.faces)
 
     def test_translate_translates_molecule_by_specified_move(self):
-        molecule = self.simulation.molecules[1]
+        molecule = self.simulation.molecules[-1]
         old_positions = np.copy([atom.position for atom in molecule.atoms])
         move = np.array([1,1,1])
         self.translate_move.translate(molecule,move)
@@ -155,24 +153,38 @@ class TestTranslationMove(unittest.TestCase):
         new_positions = [atom.position for atom in molecule.atoms]
         np.testing.assert_allclose(new_positions,old_positions+move,err_msg="translate method of Translate class does not translate molecule as specified by passed in move.")
 
+    def test_displacement_parallel_to_surface(self):
+        molecule = self.simulation.molecules[1948]
+        vertex1 = np.array([21.00609,0.00000,-12.98248]); vertex2 = np.array([0.00000,12.98248,-21.00609]); vertex3 = np.array([0.00000,-12.98248,-21.00609])
+        v1 = vertex3-vertex1; v2 = vertex2-vertex1
+        cp = np.cross(v1,v2)
+        displacement = self.translate_move.get_random_move(molecule.anchorAtom.position)
+        self.assertAlmostEqual(np.dot(cp,displacement),0.0)
+        
+    def test_displacement_less_than_max_displacement(self):
+        molecule = self.simulation.molecules[1948]
+        displacement = self.translate_move.get_random_move(molecule.anchorAtom.position)
+        self.assertLess(np.linalg.norm(displacement),self.simulation.max_disp)
+        
     def tearDown(self):
         os.chdir(script_path)
 
 class TestCBMCSwap(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        self.temp = 298.15
+        
         self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files')
         self.init_file = os.path.abspath(self.lt_directory+'/nanoparticle_1ddt_1meoh/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/nanoparticle_1ddt_1meoh/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/nanoparticle_1ddt_1meoh/regrow.xyz')
-        self.temp = 298.15
-        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
+        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp,anchortype=4)
         self.swap_move = mvc.CBMCSwap(self.simulation,anchortype=4,type_lengths=(5,13))
         
         self.init_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/system.in')
         self.data_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/system.data')
         self.dump_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/regrow.xyz')
-        self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp)
+        self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp,anchortype=5)
         self.swap_move_b = mvc.CBMCSwap(self.sim_branched,anchortype=5,type_lengths=(10,10),read_pdf=True)
 
     def test_cbmcswap_is_child_of_cbmcregrowth(self):

@@ -4,7 +4,7 @@ related to molecules.  This includes Bond, Angle, and Dihedral classes as well a
 
 import npmc.read_lmp_rev6 as rdlmp
 import npmc.atom_class as atm
-from itertools import groupby,permutations
+from itertools import groupby,permutations,combinations
 import networkx as ntwkx
 import numpy as np
 from math import *
@@ -56,7 +56,7 @@ class Molecule(object):
         com = np.mean(positions,axis=0)
         return com
 
-    def setAnchorAtom(self,atomID,siteID):
+    def setAnchorAtom(self,atomID):
         """Sets the anchor atom of the molecule: the atom of the molecule that is anchored to the nanoparticle.  Setting this is important when using the CBMC regrowth move.
         
         Parameters
@@ -67,7 +67,6 @@ class Molecule(object):
         atom = self.getAtomByID(atomID)
         if(atom!=None):
             self.anchorAtom = atom
-            self.siteID = siteID
             return True
         else:
             return False
@@ -95,7 +94,7 @@ class Molecule(object):
         predecessor_dict = dict(ntwkx.bfs_predecessors(self.graph,source=self.anchorAtom.atomID))
         successor_dict = dict(ntwkx.bfs_successors(self.graph,source=self.anchorAtom.atomID))
         for node in self.graph:
-            if len(self.graph[node])>2: 
+            if len(self.graph[node])>2:
                 branch_atomIDs = list([predecessor_dict[predecessor_dict[node]]]+[predecessor_dict[node]]+[node]+successor_dict[node])
                 branch_dihedrals = [dihedral for dihedral in self.dihedrals if dihedral.atoms.issubset(set(branch_atomIDs))]
                 branch_impropers = [improper for improper in self.impropers if improper.atoms.issubset(set(branch_atomIDs))]
@@ -772,17 +771,8 @@ def molecule2graph(atomlist,bondlist):
         molecule_graph.add_node(atom.atomID)
     molecule_graph.add_edges_from([(bond.atom1,bond.atom2) for bond in bondlist])
     return molecule_graph
-
-def get_site_ID(surfsites_file,anchorAtom):
-        
-    sites = np.genfromtxt(surfsites_file,skip_header=2)
-    #print(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1))
-    siteID = np.nonzero(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1) < 0.1)[0][0]
-    #print(sites[siteID],anchorAtom.position)
-        
-    return siteID
     
-def set_anchor_atoms(molecules,surfsites_file,anchortype):
+def set_anchor_atoms(molecules,anchortype):
     """For every molecule in molecules set the anchot atom to the atom with atom type anchortype.
 
     Parameters
@@ -796,10 +786,9 @@ def set_anchor_atoms(molecules,surfsites_file,anchortype):
         anchorAtoms = [atom for atom in molecule.atoms if atom.atomType==anchortype]
         anchorIDs = [atom.atomID for atom in anchorAtoms] 
         if len(anchorIDs)>0:
-            siteID = get_site_ID(surfsites_file,anchorAtoms[0])
-            molecule.setAnchorAtom(anchorIDs[0],siteID)
+            molecule.setAnchorAtom(anchorIDs[0])
 
-def constructMolecules(filename,surfsites_file,anchortype):
+def constructMolecules(filename,np_edge_len,anchortype):
     """From a LAMMPS input file construct a list of Molecule objects based on the molecules in the LAMMPS input file.
 
     Parameters
@@ -814,11 +803,13 @@ def constructMolecules(filename,surfsites_file,anchortype):
     """
     print("Loading Data File:")
     atoms = atm.loadAtoms(filename)
+    silvers = [atom for atom in atoms if atom.atomType==1]
+    faces = getSurfaces(silvers,np_edge_len)
     bonds = loadBonds(filename)
     angles = loadAngles(filename)
     dihedrals = loadDihedrals(filename)
-    impropers = loadImpropers(filename)
-
+    impropers = loadImpropers(filename)     
+    
     print("Grouping Atoms by Molecule")
     atom_dict = groupAtomsByMol(atoms)
     print("Grouping Bonds by Molecule")
@@ -833,8 +824,36 @@ def constructMolecules(filename,surfsites_file,anchortype):
     molecules = {}
     for molID in atom_dict:
         molecules[molID]=Molecule(molID,atom_dict[molID],bond_dict[molID],angle_dict[molID],dihedral_dict[molID],improper_dict[molID])
-    set_anchor_atoms(molecules,surfsites_file,anchortype)
-    return molecules
+    set_anchor_atoms(molecules,anchortype)
+    return molecules,faces
+
+def getSurfaces(silvers,np_edge_len):
+    
+    if len(silvers) == 0: return []
+    num_Ag = len(silvers)
+    nns = np.empty(num_Ag)
+    for i in range(num_Ag):
+        dists = np.sqrt(np.sum(np.square(np.array([atom.position for atom in silvers])-silvers[i].position),axis=1))
+        nn_idxs = np.nonzero(dists < 1.01*np.min(dists[np.nonzero(dists)]))
+        nns[i] = len(dists[nn_idxs])
+    vertex_idxs = np.nonzero(nns == np.min(nns))[0]
+    
+    face = 0
+    faces = np.empty([20,4])
+    for combo in list(combinations(vertex_idxs,3)):
+        Ag1 = silvers[combo[0]].position
+        Ag2 = silvers[combo[1]].position
+        Ag3 = silvers[combo[2]].position
+        
+        if np.sqrt(np.sum(np.square(Ag1-Ag2))) > 1.01*np_edge_len or np.sqrt(np.sum(np.square(Ag1-Ag3))) > 1.01*np_edge_len or np.sqrt(np.sum(np.square(Ag2-Ag3))) > 1.01*np_edge_len:
+            continue
+        else:
+            v1 = Ag3-Ag2; v2 = Ag2-Ag1
+            faces[face,:3] = np.cross(v1,v2)
+            faces[face,3] = np.dot(faces[face,:3],Ag3)
+            face += 1
+
+    return faces
 
 
 def rot_quat(vector,theta,rot_axis):
