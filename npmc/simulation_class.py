@@ -362,7 +362,7 @@ class Simulation(object):
         """
         move = rnd.choice(self.moves)
         old_positions = np.copy([atom.position for atom in self.atomlist])
-        accepted,energy,links = move.move()
+        accepted,energy = move.move()
         if accepted:
             self.deltaE += energy
         else:  

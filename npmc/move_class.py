@@ -650,7 +650,7 @@ class TranslationMove(Move):
             self.num_accepted+=1
             #print('accepted',len(linked_mols))
         #print(len(linked_mols))
-        return accepted,new_energy-old_energy,len(linked_mols)
+        return accepted,new_energy-old_energy
 
 class RotationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
