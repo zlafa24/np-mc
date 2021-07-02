@@ -96,6 +96,9 @@ class Simulation(object):
         lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
         lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
         lmp.command("compute pair_total all pair lj/cut/coul/debye")
+        lmp.command("compute pair_pes all pair/local eng")
+        lmp.command("compute pair_id1 all property/local patom1")
+        lmp.command("compute pair_id2 all property/local patom2")
 
     def initializeFixes(self,lmp):
         """Initializes the LAMMPS fixes one wishes to use in the simulation.
@@ -203,7 +206,30 @@ class Simulation(object):
         """
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("thermo_pe",0,0)
+    
+    def get_paired_PE(self,compute_id='pair_pes',style=2,typ=1):
+                      
+        energies_raw = self.lmp.extract_compute(compute_id,style,typ)                        
+        nrows = self.lmp.extract_compute(compute_id,style,4)
+        energies = np.ctypeslib.as_array(energies_raw,shape=(nrows,))     
+        return energies    
 
+    def get_pair_ids(self,compute_id,style=2,typ=1):
+        
+        ids_raw = self.lmp.extract_compute(compute_id,style,typ)                      
+        nrows = self.lmp.extract_compute(compute_id,style,4)
+        pair_ids = np.ctypeslib.as_array(ids_raw,shape=(nrows,)).astype(int)
+        return pair_ids
+
+    def get_pairedPE_IDs(self,computeid1='pair_id1',computeid2='pair_id2',computeid3='pair_pes',style=2,typ=1):
+        
+        self.lmp.command("run 0 post no")
+        ids = np.stack((self.get_pair_ids(computeid1),self.get_pair_ids(computeid2)),axis=1)
+        energies = self.get_paired_PE()
+        ids = ids[ids[:,1].argsort()]; energies = energies[ids[:,1].argsort()]
+        sorted_idxs = ids[:,0].argsort(kind='mergesort')
+        return ids[sorted_idxs],energies[sorted_idxs]
+       
     def assignAtomTypes(self):
         """Assign element names to the atom types in the simulation.
         """
@@ -299,7 +325,10 @@ class Simulation(object):
         """Updates the atom positions for each instance of the atom class with the atom positions from LAMMPS.
         """
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
-        coords = self.lmp.gather_atoms("x",1,3)
+        #print(self.lmp.numpy.extract_atom("x"))
+        #print('test')
+        coords = self.lmp.gather("x",1,3)
+        #print(len(np.asarray(coords)),np.asarray(coords))
         for idx,i in zip(indxs,range(len(self.atomlist))):
             self.atomlist[idx].position[0]=float(coords[i*3])
             self.atomlist[idx].position[1]=float(coords[i*3+1])
@@ -362,14 +391,14 @@ class Simulation(object):
         """
         move = rnd.choice(self.moves)
         old_positions = np.copy([atom.position for atom in self.atomlist])
-        accepted,energy = move.move()
+        accepted,energy,links = move.move()
         if accepted:
             self.deltaE += energy
         else:  
             self.revert_coords(old_positions)
             self.update_coords()
         self.step+=1
-        self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
+        self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\t{links}\n')
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
         self.potential_file.flush()

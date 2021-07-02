@@ -6,7 +6,6 @@ from math import *
 import os
 import scipy.special as scm
 import scipy.spatial.distance as ssd
-import time
 
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
@@ -385,7 +384,7 @@ class CBMCRegrowth(Move):
         self.num_moves+=1
         if(accepted):
             self.num_accepted+=1
-        return accepted,final_pair_energy+final_dih_energy+final_bp_energy-initial_pair_energy-initial_dih_energy-initial_bp_energy
+        return accepted,final_pair_energy+final_dih_energy+final_bp_energy-initial_pair_energy-initial_dih_energy-initial_bp_energy,0
 
 class CBMCSwap(CBMCRegrowth):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the CBMCRegrowth class.  
@@ -519,7 +518,7 @@ class CBMCSwap(CBMCRegrowth):
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,final_pair_PE+final_dih_PE1+final_dih_PE2+ final_bp_PE1+ final_bp_PE2-initial_pair_PE-initial_dih_PE1-initial_dih_PE2-initial_bp_PE1-initial_bp_PE2
+        return accepted,final_pair_PE+final_dih_PE1+final_dih_PE2+ final_bp_PE1+ final_bp_PE2-initial_pair_PE-initial_dih_PE1-initial_dih_PE2-initial_bp_PE1-initial_bp_PE2,0
 
 
 class TranslationMove(Move):
@@ -588,6 +587,12 @@ class TranslationMove(Move):
              
         return anchor_pos-new_anchor_pos
     
+    def get_uniq_pair_idxs(self,pair_ids,num_sets):
+    
+        uniq_arr,uniq_idxs,num_uniq = np.unique(pair_ids,axis=0,return_index=True,return_counts=True)
+        uniq_idxs = uniq_idxs[num_uniq==num_sets-1]
+        return uniq_idxs
+        
     def move(self):
        
         eligible_mols = np.array([molecule for key,molecule in self.simulation.molecules.items() if not self.stationary_types.intersection([atom.atomType for atom in molecule.atoms])])
@@ -596,8 +601,7 @@ class TranslationMove(Move):
         displacement = self.get_random_move(random_mol.anchorAtom.position)
         linked_mols = [random_mol]
         attempted_mols = [random_mol]
-        probabilities = []
-        frt = 1./(self.kb*self.temp) * rnd.random()
+        frt = 1./(self.kb*self.temp) * rnd.uniform(0.0,0.2)
         
         for linked_mol in linked_mols:
             linked_mol_positions = np.array([atom.position for atom in linked_mol.atoms])
@@ -621,36 +625,50 @@ class TranslationMove(Move):
                 self.simulation.lmp.command(f'group molatoms2 id {" ".join(map(str,[atom.atomID for atom in linkable_mol.atoms]))}')
                 self.simulation.lmp.command('neigh_modify exclude group molatoms2 molatoms2')
                 
-                E_c = self.simulation.get_pair_PE()# - E_mol1
+                E_c = self.simulation.get_pair_PE()
                 self.simulation.turn_on_all_atoms()
-                
+                #print(stop)
                  
                 probability = max(0,1-np.exp(frt*E_c))
                 if E_c > -1.0: probability = 0.0
                 linked = probability > rnd.random()
                 #print(E_c,probability)
-                if linked: 
-                    linked_mols.append(linkable_mol)
-                    #if len(linked_mols) > max_cluster_size: return False
-                    #E_cr,E_Ir = self.virtual_move(linked_mol,linkable_mol,-displacement)
-                    probabilities.append(probability)
-                    #reverse_probabilities.append(max(0,1-np.exp((self.kb*self.temp)*(E_cr-E_Ir))))
-                    #print(probability,max(0,1-np.exp((self.kb*self.temp)*(E_cr-E_Ir))))
+                if linked: linked_mols.append(linkable_mol)
+
+        self.simulation.turn_off_atoms([atom.atomID for mol in linked_mols for atom in mol.atoms],[])
         
-        old_energy = self.simulation.get_total_PE() 
+        old_energy = self.simulation.get_total_PE()
+        old_ids,old_energies = self.simulation.get_pairedPE_IDs()      
         for mol in linked_mols:
             self.translate(mol,displacement)
         new_energy = self.simulation.get_total_PE()
-        #print(min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy))))
-        probability = min(1,np.exp((frt-(1./(self.kb*self.temp)))*(new_energy-old_energy)))# * np.prod(reverse_probabilities) / np.prod(probabilities))
+        new_ids,new_energies = self.simulation.get_pairedPE_IDs()
+        
+        old_uniq_idxs = self.get_uniq_pair_idxs(np.vstack((old_ids,old_ids,new_ids)),3)      
+        new_uniq_idxs = self.get_uniq_pair_idxs(np.vstack((new_ids,new_ids,old_ids)),3)
+        
+        shared_energies = np.delete(new_energies,new_uniq_idxs) - np.delete(old_energies,old_uniq_idxs)
+        old_uniq_nrgs = old_energies[old_uniq_idxs]; new_uniq_nrgs = new_energies[new_uniq_idxs]
+        #print(new_energy-old_energy)
+        #print(np.sum(shared_energies)+np.sum(new_uniq_nrgs)-np.sum(old_uniq_nrgs))
+        neg_energy = np.sum(shared_energies[np.nonzero(shared_energies < 0)]) + np.sum(new_uniq_nrgs[np.nonzero(new_uniq_nrgs < 0)]) + np.sum(old_uniq_nrgs[np.nonzero(old_uniq_nrgs < 0)])
+
+        
+        
+        self.simulation.turn_on_all_atoms()
+        #print(len(old_energies),len(new_energies))
+        probability = min(1,np.exp(((frt*(neg_energy))-(1./(self.kb*self.temp)))*(new_energy-old_energy)))
+        #print(frt-(1./(self.kb*self.temp)),-1./(self.kb*self.temp))
+        #print(min(1,np.exp((-1./(self.kb*self.temp))*(new_energy-old_energy))),probability)
         accepted = probability>rnd.random()
         self.num_moves+=1
         #print(accepted,len(linked_mols),probability)
         if accepted:
             self.num_accepted+=1
-            #print('accepted',len(linked_mols))
+            #print(min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy))),probability)
+            print('accepted',len(linked_mols))
         #print(len(linked_mols))
-        return accepted,new_energy-old_energy
+        return accepted,new_energy-old_energy,len(linked_mols)
 
 class RotationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
@@ -751,7 +769,7 @@ class RotationMove(Move):
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,new_energy-old_energy
+        return accepted,new_energy-old_energy,0
 
 class Move_Legacy(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  

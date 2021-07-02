@@ -17,13 +17,13 @@ class TestSimulationInitializations(unittest.TestCase):
 
     def setUp(self):
         self.current_folder = script_path
-        self.data_folder =  os.path.abspath(script_path+"/test_files/simulation_tests/lt_files/nanoparticle_1ddt_1meoh/")
+        self.data_folder =  os.path.abspath(script_path+"/test_files/move_tests/lt_files/nanoparticle_1ddt_1meoh/")
         self.init_file = self.data_folder+"/system.in"
         self.data_file = self.data_folder+"/system.data"
         self.dumpfile =  self.data_folder+"/regrow.xyz" 
         self.test_potential_file = os.path.abspath(script_path+"/test_files/simulation_tests/Potential_Energy.txt")
-        self.silver_expected_coords = np.loadtxt(self.current_folder+"/test_files/simulation_tests/expected_silver.xyz",skiprows=2)
-        self.adsorbate_expected_coords =  np.loadtxt(self.current_folder+"/test_files/simulation_tests/expected_adsorbate.xyz",skiprows=2)
+        self.silver_expected_coords = np.loadtxt(self.data_folder+"/expected_silver.xyz",skiprows=2)
+        self.adsorbate_expected_coords =  np.loadtxt(self.data_folder+"/expected_adsorbate.xyz",skiprows=2)
         self.temp = 298.15
         self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
 
@@ -100,52 +100,52 @@ class TestSimulationTurningOffAtoms(unittest.TestCase):
     
     def test_turn_off_one_hydrogen_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_Energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([5])
+        self.sim.turn_off_atoms_legacy([5])
         self.assertAlmostEqual(-1.6710847,self.sim.getVdwlPE(),places=4,msg="Turning off a hydrogen atom in 2 MeOH system does not result in correct Vdwl Energy")
 
     def test_turn_off_one_hydrogen_in_two_MeOHs_separated_by_5A_check_coulombic_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([5])
+        self.sim.turn_off_atoms_legacy([5])
         self.assertAlmostEqual(1.1598538,self.sim.getCoulPE(),places=4,msg="Turning off a hydrogen atom in 2 MeOH system does not result in correct coulombic energy")
 
     def test_turn_off_one_hydrogen_and_oxygen_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([4,5])
+        self.sim.turn_off_atoms_legacy([4,5])
         self.assertAlmostEqual(-1.4003423,self.sim.getVdwlPE(),places=4,msg="Turning off oxygen and hydrogen in a 2 MeOH system does not result in a correct Van der waals Energy")
 
     def test_turn_off_one_hydrogen_and_oxygen_in_two_MeOHs_separated_by_5A_check_coulombic_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([4,5])
+        self.sim.turn_off_atoms_legacy([4,5])
         self.assertAlmostEqual(0.0120187,self.sim.getCoulPE(),places=4,msg="Turning off a oxygen and hydrogen in a 2 MeOH system does not result in a correct coulombic energy")
 
     def test_turn_off_one_hydrogen_one_oxygen_and_one_carbon_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([3,4,5])
+        self.sim.turn_off_atoms_legacy([3,4,5])
         self.assertAlmostEqual(-1.0801268,self.sim.getVdwlPE(),places=4,msg="Turning off a carbon, oxygen, and a hydrogen in a 2 MeOH system does not result in a correct Van der Waals Energy")
 
     def test_turn_off_one_hydrogen_one_oxygen_and_one_carbon_in_two_MeOHs_separated_by_5A_check_coulombic_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([3,4,5])
+        self.sim.turn_off_atoms_legacy([3,4,5])
         self.assertAlmostEqual(0,self.sim.getCoulPE(),places=4,msg="Turning off a carbon, oxygen, and a hydrogen in a 2 MeOH system does not result in correct coulombic Energy")
 
     def test_turn_off_one_hydrogen_one_oxygen_and_two_carbon_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([2,3,4,5])
+        self.sim.turn_off_atoms_legacy([2,3,4,5])
         self.assertAlmostEqual(-0.7862932,self.sim.getVdwlPE(),places=4,msg="Turning off two carbons, an oxygen, and a hydrogen in a 2 MeOH system does not result in the correct Van der Waals energy")
 
     def test_turn_off_one_hydrogen_one_oxygen_and_two_carbon_in_two_MeOHs_separated_by_5A_check_coulombic_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([2,3,4,5])
+        self.sim.turn_off_atoms_legacy([2,3,4,5])
         self.assertAlmostEqual(0,self.sim.getCoulPE(),places=4,msg="Turning off two carbons, an oxygen, and a hydrogen in a 2 MeOH system does not result in the correct coulombic energy")
 
     def test_turn_off_one_MeOH_molecule_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([1,2,3,4,5])
+        self.sim.turn_off_atoms_legacy([1,2,3,4,5])
         self.assertAlmostEqual(-0.1406,self.sim.getVdwlPE(),places=4,msg="Turning off one MeOH in a 2 MeOH does not result in the correct Van der Waals energy")
 
     def test_turn_off_one_MeOH_molecule_in_two_MeOHs_separated_by_5A_check_coulombic_energy(self):
         self.sim.turn_on_all_atoms()
-        self.sim.legacy_turn_off_atoms([1,2,3,4,5])
+        self.sim.turn_off_atoms_legacy([1,2,3,4,5])
         self.assertAlmostEqual(0,self.sim.getCoulPE(),places=4,msg="Turning off one MeOH in a 2 MeOH does not result in the correct coulombic energy")
 
     @classmethod
@@ -178,6 +178,7 @@ class TestUpdatingCoordinates(unittest.TestCase):
         np.testing.assert_array_almost_equal(atom_coords,self.two_meoh_init_coords,err_msg = "get_atoms does not return Atom objects with the correct coordinates.")
 
     def test_get_coords_updates_atomlist_after_displacement_in_simulation(self):
+        self.sim.get_coords()
         self.sim.lmp.command("group test id 6:10")
         self.sim.lmp.command("displace_atoms test move 0 5 0")
         self.sim.get_coords()
