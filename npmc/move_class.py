@@ -666,7 +666,7 @@ class TranslationMove(Move):
         if accepted:
             self.num_accepted+=1
             #print(min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy))),probability)
-            print('accepted',len(linked_mols))
+            #print('accepted',len(linked_mols))
         #print(len(linked_mols))
         return accepted,new_energy-old_energy,len(linked_mols)
 

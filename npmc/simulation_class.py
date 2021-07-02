@@ -349,7 +349,7 @@ class Simulation(object):
         """Updates the atom positions in LAMMPS with the atom positions from each instance of the atom class.
         """
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
-        coords = self.lmp.gather_atoms("x",1,3)
+        coords = self.lmp.gather("x",1,3)
         for idx,i in zip(indxs,range(len(self.atomlist))):
             coords[i*3]=self.atomlist[idx].position[0]
             coords[i*3+1]=self.atomlist[idx].position[1]
@@ -365,7 +365,7 @@ class Simulation(object):
             An Nx3 array with each row representing an atom and the columns containing the x, y and z coordinates, respectively.         
         """
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
-        coords = self.lmp.gather_atoms("x",1,3)
+        coords = self.lmp.gather("x",1,3)
         for idx,i in zip(indxs,range(len(old_positions))):
             coords[i*3]=old_positions[idx][0]
             coords[i*3+1]=old_positions[idx][1]
