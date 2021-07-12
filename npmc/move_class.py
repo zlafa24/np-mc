@@ -576,6 +576,8 @@ class TranslationMove(Move):
         dists_to_face = np.abs(np.add(np.sum(np.multiply(self.faces[:,:3],anchor_pos),axis=1),self.faces[:,3])) / np.linalg.norm(self.faces[:,:3],axis=1)
         nearest_face = self.faces[np.argmin(dists_to_face),:]
         trans_plane = np.array([nearest_face[0],nearest_face[1],nearest_face[2],np.sum(np.multiply(nearest_face[:3],anchor_pos))])
+        unit_normal = trans_plane[:3] / np.linalg.norm(trans_plane[:3])
+        vertical_shift = unit_normal * rnd.uniform(-0.25,0.25)
               
         new_anchor_pos = anchor_pos + np.array([self.max_disp,self.max_disp,self.max_disp])
         while np.linalg.norm(anchor_pos-new_anchor_pos) > self.max_disp:
@@ -585,7 +587,7 @@ class TranslationMove(Move):
             new_anchor_pos[dim3] = anchor_pos[dim3] + self.max_disp * rnd.uniform(-1,1)
             new_anchor_pos[dim1] = (trans_plane[3]-trans_plane[dim2]*new_anchor_pos[dim2]-trans_plane[dim3]*new_anchor_pos[dim3]) / trans_plane[dim1]
              
-        return anchor_pos-new_anchor_pos
+        return new_anchor_pos-anchor_pos+vertical_shift
     
     def get_uniq_pair_idxs(self,pair_ids,num_sets):
     
