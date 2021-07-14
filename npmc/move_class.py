@@ -6,6 +6,7 @@ from math import *
 import os
 import scipy.special as scm
 import scipy.spatial.distance as ssd
+import time
 
 class Move(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  
@@ -838,8 +839,9 @@ class CBMCRegrowth_Legacy(Move_Legacy):
         #self.set_anchor_atoms()      
         pdf_molecules = self.select_molecule_of_each_type()
         self.dihedral_ffs = ffc.initialize_dihedral_ffs(simulation.init_file+'.settings')
-        self.angle_ffs = ffc.initialize_angle_ffs(simulation.init_file+'.settings')    
-        self.branch_pdfs = ffc.initialize_branch_pdfs(pdf_molecules,self.dihedral_ffs,self.angle_ffs,self.temp,read_pdf)    
+        self.angle_ffs = ffc.initialize_angle_ffs(simulation.init_file+'.settings')   
+        self.improper_ffs = ffc.initialize_improper_ffs(simulation.init_file+'.settings') 
+        self.branch_pdfs = ffc.initialize_branch_pdfs(pdf_molecules,self.angle_ffs,self.dihedral_ffs,self.improper_ffs,self.temp,read_pdf)
 
     def select_random_molecule(self):
         """Selects a random eligible molecule (one with an anchor atom set) from the molecules provided by the Simulation object that the CBMCRegrowth object was passed 
