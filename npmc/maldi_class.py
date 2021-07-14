@@ -22,9 +22,9 @@ class MALDISpectrum(object):
         The number of ligands that compose a MALDI fragment.
     """
 
-    def __init__(self,data_file,anchor_type,numsamples,nn_distance,graph_index,ligands_per_fragment,type_lengths):
+    def __init__(self,data_file,np_edge_len,anchor_type,numsamples,nn_distance,graph_index,ligands_per_fragment,type_lengths):
         self.data_file = data_file
-        self.molecules = mlc.constructMolecules(self.data_file)
+        self.molecules,faces = mlc.constructMolecules(self.data_file,np_edge_len,anchor_type)
         self.anchor_type = anchor_type
         mlc.set_anchor_atoms(self.molecules,self.anchor_type)
         self.eligible_molecules = [molecule for key,molecule in self.molecules.items() if (self.anchor_type in [atom.atomType for atom in molecule.atoms])] 

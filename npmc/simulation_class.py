@@ -44,7 +44,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,np_edge_len=25.96,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,read_pdf=False,legacy=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,np_edge_len=25.96,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,cluster=True,read_pdf=False,legacy=False):
         rnd.seed(seed)
         np.random.seed(seed)
         dname = os.path.dirname(os.path.abspath(init_file))
@@ -71,7 +71,7 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart,legacy)
+        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,restart,cluster,read_pdf,legacy)
         self.initialize_data_files(restart)
         self.step = 0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
@@ -105,14 +105,14 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,read_pdf,restart=False,legacy=False):
+    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,restart,cluster,read_pdf,legacy):
         """Initializes the Monte Carlo moves used in the simulation.
         """
         translate_move_legacy = mvc.TranslationMove_Legacy(self,max_disp,[nptype])
         rotation_move_legacy = mvc.RotationMove_Legacy(self,anchortype,max_angle)
         cbmc_move_legacy = mvc.CBMCRegrowth_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
-        translate_move = mvc.TranslationMove(self,max_disp,10.0,[nptype],self.faces)
+        translate_move = mvc.TranslationMove(self,max_disp,10.0,[nptype],self.faces,cluster)
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)

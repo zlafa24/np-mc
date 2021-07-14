@@ -533,12 +533,13 @@ class TranslationMove(Move):
     stationary_types : int or list
         The type or types of atoms that will not be translated; usually the nanoparticle atom types.
     """
-    def __init__(self,simulation,max_disp,cutoff,stationary_types,faces):
+    def __init__(self,simulation,max_disp,cutoff,stationary_types,faces,cluster):
         super(TranslationMove,self).__init__(simulation)
         self.max_disp = max_disp
         self.cutoff = cutoff
         self.faces = faces
         self.stationary_types = set(stationary_types)
+        self.cluster = cluster
         self.move_name = "Translation"       
 
     def translate(self,molecule,displacement):
@@ -595,9 +596,9 @@ class TranslationMove(Move):
         uniq_arr,uniq_idxs,num_uniq = np.unique(pair_ids,axis=0,return_index=True,return_counts=True)
         uniq_idxs = uniq_idxs[num_uniq==num_sets-1]
         return uniq_idxs
+    
+    def cluster_move(self):
         
-    def move(self):
-       
         eligible_mols = np.array([molecule for key,molecule in self.simulation.molecules.items() if not self.stationary_types.intersection([atom.atomType for atom in molecule.atoms])])
         all_positions = [np.array([atom.position for atom in molecule.atoms]) for molecule in eligible_mols]
         random_mol = rnd.choice(eligible_mols)
@@ -630,48 +631,56 @@ class TranslationMove(Move):
                 
                 E_c = self.simulation.get_pair_PE()
                 self.simulation.turn_on_all_atoms()
-                #print(stop)
                  
                 probability = max(0,1-np.exp(frt*E_c))
                 if E_c > -1.0: probability = 0.0
                 linked = probability > rnd.random()
-                #print(E_c,probability)
                 if linked: linked_mols.append(linkable_mol)
 
-        self.simulation.turn_off_atoms([atom.atomID for mol in linked_mols for atom in mol.atoms],[])
-        
+        self.simulation.turn_off_atoms([atom.atomID for mol in linked_mols for atom in mol.atoms],[])       
         old_energy = self.simulation.get_total_PE()
         old_ids,old_energies = self.simulation.get_pairedPE_IDs()      
         for mol in linked_mols:
             self.translate(mol,displacement)
         new_energy = self.simulation.get_total_PE()
-        new_ids,new_energies = self.simulation.get_pairedPE_IDs()
+        new_ids,new_energies = self.simulation.get_pairedPE_IDs() 
         
         old_uniq_idxs = self.get_uniq_pair_idxs(np.vstack((old_ids,old_ids,new_ids)),3)      
-        new_uniq_idxs = self.get_uniq_pair_idxs(np.vstack((new_ids,new_ids,old_ids)),3)
-        
+        new_uniq_idxs = self.get_uniq_pair_idxs(np.vstack((new_ids,new_ids,old_ids)),3)      
         shared_energies = np.delete(new_energies,new_uniq_idxs) - np.delete(old_energies,old_uniq_idxs)
         old_uniq_nrgs = old_energies[old_uniq_idxs]; new_uniq_nrgs = new_energies[new_uniq_idxs]
-        #print(new_energy-old_energy)
-        #print(np.sum(shared_energies)+np.sum(new_uniq_nrgs)-np.sum(old_uniq_nrgs))
         neg_energy = np.sum(shared_energies[np.nonzero(shared_energies < 0)]) + np.sum(new_uniq_nrgs[np.nonzero(new_uniq_nrgs < 0)]) + np.sum(old_uniq_nrgs[np.nonzero(old_uniq_nrgs < 0)])
 
-        
-        
         self.simulation.turn_on_all_atoms()
-        #print(len(old_energies),len(new_energies))
         probability = min(1,np.exp(((frt*(neg_energy))-(1./(self.kb*self.temp)))*(new_energy-old_energy)))
-        #print(frt-(1./(self.kb*self.temp)),-1./(self.kb*self.temp))
-        #print(min(1,np.exp((-1./(self.kb*self.temp))*(new_energy-old_energy))),probability)
         accepted = probability>rnd.random()
         self.num_moves+=1
-        #print(accepted,len(linked_mols),probability)
         if accepted:
             self.num_accepted+=1
-            #print(min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy))),probability)
-            #print('accepted',len(linked_mols))
-        #print(len(linked_mols))
         return accepted,new_energy-old_energy,len(linked_mols)
+    
+    def move(self):
+        
+        if self.cluster: accepted,energy,links = self.cluster_move()
+        else:
+            eligible_mols = np.array([molecule for key,molecule in self.simulation.molecules.items() if not self.stationary_types.intersection([atom.atomType for atom in molecule.atoms])])
+            random_mol = rnd.choice(eligible_mols)
+            displacement = self.get_random_move(random_mol.anchorAtom.position)
+ 
+            self.simulation.turn_off_atoms([atom.atomID for atom in random_mol.atoms],[])       
+            old_energy = self.simulation.get_total_PE()     
+            self.translate(random_mol,displacement)
+            new_energy = self.simulation.get_total_PE()   
+            self.simulation.turn_on_all_atoms()
+            
+            probability = min(1,np.exp((-1./(self.kb*self.temp))*(new_energy-old_energy)))
+            accepted = probability>rnd.random()
+            self.num_moves+=1
+            if accepted:
+                self.num_accepted+=1
+            energy = new_energy-old_energy
+            links = 0
+        return accepted,energy,links
 
 class RotationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
