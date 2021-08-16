@@ -44,7 +44,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,np_edge_len=25.96,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[0,1,2,3],seed=None,restart=False,cluster=True,read_pdf=False,legacy=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,np_edge_len=25.96,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[1,1,1,1],seed=None,restart=False,cluster=True,read_pdf=False,legacy=False):
         rnd.seed(seed)
         np.random.seed(seed)
         dname = os.path.dirname(os.path.abspath(init_file))
@@ -57,7 +57,7 @@ class Simulation(object):
         self.numtrials = numtrials
         self.molecules,self.faces = mol.constructMolecules(datafile,np_edge_len,anchortype)
         self.atomlist = self.get_atoms()
-        self.move_idxs = moves
+        self.move_weights = moves
         
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
         self.lmp.file(os.path.abspath(init_file))
@@ -118,7 +118,6 @@ class Simulation(object):
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
         if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
-        self.moves = [self.moves[i] for i in self.move_idxs]
         if restart:
             for i,move in enumerate(self.moves):
                 move.set_acceptance_rate_restart(i,'Acceptance_Rate.txt')
@@ -389,7 +388,7 @@ class Simulation(object):
         accepted : Boolean
             A Boolean for whether the move was accepted or not.
         """
-        move = rnd.choice(self.moves)
+        move = rnd.choices(self.moves,weights=self.move_weights)[0]
         old_positions = np.copy([atom.position for atom in self.atomlist])
         accepted,energy,links = move.move()
         if accepted:
