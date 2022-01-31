@@ -44,18 +44,22 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,np_edge_len=25.96,type_lengths=(5,13),nptype=1,anchortype=2,max_disp=1.0,max_angle=0.1745,numtrials=5,moves=[1,1,1,1],seed=None,restart=False,cluster=True,read_pdf=False,legacy=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=4,max_disp=1.0,max_angle=0.1745,numtrials=5,numtrials_jump=10,moves=[1,1,1,1,1],
+        lattice_const=4.08,np_edge_len=25.96,jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
+                     
         rnd.seed(seed)
         np.random.seed(seed)
         dname = os.path.dirname(os.path.abspath(init_file))
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
         os.chdir(dname)
-        self.temp = temp
-        self.np_edge_len = np_edge_len
-        self.max_disp = max_disp
         self.numtrials = numtrials
-        self.molecules,self.faces = mol.constructMolecules(datafile,np_edge_len,anchortype)
+        self.numtrials_jump = numtrials_jump
+        self.temp = temp
+        self.max_disp = max_disp
+        self.lattice_const = lattice_const
+        self.np_edge_len = np_edge_len    
+        self.molecules,self.faces,self.surface_sites = mol.constructMolecules(datafile,anchortype,lattice_const,np_edge_len)
         self.atomlist = self.get_atoms()
         self.move_weights = moves
         
@@ -71,7 +75,7 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,restart,cluster,read_pdf,legacy)
+        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,jump_dists,numtrials,restart,cluster,read_pdf,legacy)
         self.initialize_data_files(restart)
         self.step = 0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
@@ -112,11 +116,12 @@ class Simulation(object):
         rotation_move_legacy = mvc.RotationMove_Legacy(self,anchortype,max_angle)
         cbmc_move_legacy = mvc.CBMCRegrowth_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
-        translate_move = mvc.TranslationMove(self,max_disp,10.0,[nptype],self.faces,cluster)
+        translate_move = mvc.TranslationMove(self,max_disp,[nptype],cluster)
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
-        self.moves = [cbmc_move,translate_move,swap_move,rotation_move]
+        jump_move = mvc.CBMCJump(self,anchortype,type_lengths,jump_dists,numtrials,read_pdf)
+        self.moves = [cbmc_move,translate_move,swap_move,rotation_move,jump_move]
         if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
         if restart:
             for i,move in enumerate(self.moves):
@@ -198,6 +203,9 @@ class Simulation(object):
         """
         self.lmp.command("run 0 post no")
         energies = self.lmp.extract_compute("pair_total",0,0)
+        if isnan(energies):
+            if self.lmp.extract_compute("lj_pe",0,0) == float('inf'):
+                return float('inf')
         return energies
     
     def get_total_PE(self):

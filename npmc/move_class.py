@@ -143,6 +143,20 @@ class CBMCRegrowth(Move):
             if len(molecule.atoms)==self.type2_numatoms and len(type2_molecule)<1: type2_molecule.append(molecule)
             if len(type1_molecule)==1 and len(type2_molecule)==1: break
         return type1_molecule+type2_molecule
+    
+    def align_mol_to_positions(self,mol,positions):
+        """Aligns the atoms in mol to positions.
+        
+        Parameters
+        ----------
+        mol : Molecule
+            A Molecule object to be aligned.
+        positions : Numpy array of floats
+            An array of the desired Cartesian coordinates for the atoms in mol.
+        """
+        for i,position in enumerate(positions):
+            move = position-mol.getAtomByMolIndex(i).position
+            mol.move_atoms_by_index(move,i)
 
     def select_dih_angles(self,molecule,dihedrals,keep_original=False):
         """Returns numtrials number of dihedral angles with probability given by the PDF given by the boltzmann distribution determined by the temperature 
@@ -410,7 +424,7 @@ class CBMCSwap(CBMCRegrowth):
         self.type1_numatoms,self.type2_numatoms = type_lengths
         self.move_name="CBMCSwap"
 
-            
+    
     def select_random_molecules(self):
         """Selects a random eligible molecule, one with an anchor atom set, from the molecules provided by the Simulation object that the CBMCSwap object was passed 
         at initialization.
@@ -428,20 +442,6 @@ class CBMCSwap(CBMCRegrowth):
         random_mol_type2 = rnd.choice(type2_molecules)
         if random_mol_type1 == random_mol_type2: type2_molecules.remove(random_mol_type1); random_mol_type2 = rnd.choice(type2_molecules)
         return random_mol_type1,random_mol_type2
-
-    def align_mol_to_positions(self,mol,positions):
-        """Aligns the atoms in mol to positions.
-        
-        Parameters
-        ----------
-        mol : Molecule
-            A Molecule object to be aligned.
-        positions : Numpy array of floats
-            An array of the desired Cartesian coordinates for the atoms in mol.
-        """
-        for i,position in enumerate(positions):
-            move = position-mol.getAtomByMolIndex(i).position
-            mol.move_atoms_by_index(move,i)
         
     def rotate_partial_molecule(self,mol,angle):
         """Rotates the atoms in mol from self.starting_index+1 to the end of the molecule, away from the anchor atom, by the given angle.
@@ -477,8 +477,7 @@ class CBMCSwap(CBMCRegrowth):
             if len(mol.atoms) > self.starting_index:
                 self.rotate_partial_molecule(mol,angles[i])
         self.simulation.update_coords()
-
-
+        
     def move(self,mol1=None,mol2=None):
         """A CBMC swap move is performed on a random molecule starting from a random index, and it is accepted according to the Metropolis criteria using the Rosenbluth weights.
         
@@ -521,6 +520,194 @@ class CBMCSwap(CBMCRegrowth):
             self.num_accepted+=1
         return accepted,final_pair_PE+final_dih_PE1+final_dih_PE2+ final_bp_PE1+ final_bp_PE2-initial_pair_PE-initial_dih_PE1-initial_dih_PE2-initial_bp_PE1-initial_bp_PE2,0
 
+class CBMCJump(CBMCRegrowth):
+    """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the CBMCRegrowth class.  
+
+    Parameters
+    ----------
+    anchortype : int
+        The type number in the LAMMPS file used for the atom type of the anchor atom in each molecule.        
+    type_lengths : list of type int
+        A list with length equal to the number of ligands types and containing the number of atoms in each ligand.    
+    numtrials : int
+        The number of trial placements used at each step of the regrowth move.  Default is 5 trials.
+    read_pdf : Boolean, optional
+        A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
+        and then written to a .pkl file.
+    starting_index : int, optional
+        An integer representing the index at which regrowth begins, indexed from the anchor atom.
+    """
+    def __init__(self,simulation,anchortype,type_lengths,jump_dists,numtrials=5,read_pdf=False,starting_index=3):
+        super(CBMCJump,self).__init__(simulation,anchortype,type_lengths,numtrials,read_pdf)
+        self.min_dist = jump_dists[0]; self.max_dist = jump_dists[1]
+        self.starting_index=starting_index
+        self.type1_numatoms,self.type2_numatoms = type_lengths
+        self.move_name="CBMCJump"   
+    
+    def select_random_sites(self):
+        site_idxs = range(len(self.simulation.surface_sites[:,0]))
+        random_idxs = rnd.choices(site_idxs,k=self.simulation.numtrials_jump)
+        return self.simulation.surface_sites[random_idxs,:]
+    
+    def get_tetrahedron(self,origin,vertices):
+        """
+        Given a list of the xyz coordinates of the vertices of a tetrahedron, 
+        return tetrahedron coordinate system
+        """
+        mat = (np.array(vertices) - origin).T
+        tetra = np.linalg.inv(mat)
+        return tetra
+
+    def check_inside_tetra(self,position,tetra,origin):
+        """
+        Takes a single point or array of points, as well as tetra and origin objects returned by 
+        the Tetrahedron function.
+        Returns a boolean or boolean array indicating whether the point is inside the tetrahedron.
+        """
+        newp = np.matmul(tetra, (position-origin).T).T
+        return np.all(newp>=0, axis=-1) & np.all(newp <=1, axis=-1) & (np.sum(newp, axis=-1) <=1)
+    
+    def select_random_jump_positions(self):
+        delta_r = self.max_dist
+        a = 1 - self.min_dist/delta_r
+        faces = rnd.choices(list(self.simulation.faces),k=self.simulation.numtrials_jump)
+        #faces = [self.simulation.faces[7].faceID]
+        positions = np.empty(shape=(self.simulation.numtrials_jump,3))
+        for i,face in enumerate([self.simulation.faces[face] for face in faces]):
+            cos_angle = np.dot(face.normal,face.vertices[0])/(np.linalg.norm(face.normal)*np.linalg.norm(face.vertices[0]))
+            valid_position = False
+            while valid_position == False:
+                super_vertices = face.vertices + (delta_r/cos_angle)*face.vertices/np.linalg.norm(face.vertices,axis=1)[:,None]
+                tetra = self.get_tetrahedron(np.array([0.0,0.0,0.0]),super_vertices)
+                A = rnd.random(); B = rnd.random(); C = rnd.random()
+                if A+B >= 1: A = 1-A; B = 1-B
+                surface_position = super_vertices[0,:] + A*(super_vertices[1,:]-super_vertices[0,:]) + B*(super_vertices[2,:]-super_vertices[0,:])
+                surface_position = surface_position - a*delta_r*C*face.normal/np.linalg.norm(face.normal)
+                if self.check_inside_tetra(surface_position,tetra,np.array([0.0,0.0,0.0])):
+                    positions[i,:] = surface_position
+                    valid_position = True
+        return positions
+
+    def get_site_for_mol(self,mol):
+        dists = np.array([[np.linalg.norm(site[:3]-mol.anchorAtom.position)] for site in self.simulation.surface_sites])
+        site = self.simulation.surface_sites[np.argmin(np.array(dists))]
+        return site
+    
+    def check_site_occupation(self,site):
+        dists_molIDs = np.array([[np.linalg.norm(site[:3]-mol.anchorAtom.position),mol.molID] for key,mol in self.simulation.molecules.items() if len(mol.atoms) > 1])
+        dists_molIDs = np.array(dists_molIDs)
+        occupying_molIDs = dists_molIDs[np.nonzero(dists_molIDs[:,0] < self.simulation.hollow_radius),1].flatten()
+        if len(occupying_molIDs) > 0: return True
+        else: return False
+    
+    def move_molecule_new_site(self,mol,mol_site,new_site):
+
+        self.align_mol_to_positions(mol,[new_site[:3]+(mol.anchorAtom.position-mol_site[:3])])
+        mol.align_to_vector(new_site[3:])
+        self.simulation.update_coords()  
+    
+    def regrow_anchor_site(self,mol,index=0,keep_original=False):
+         
+        atoms = [atom.atomID for atom in mol.atoms]
+        mol_site = self.get_site_for_mol(mol) 
+        self.simulation.turn_off_atoms(atoms[:index],atoms[index:])
+        sites = self.select_random_sites()
+        if keep_original: sites[0,:] = mol_site
+        
+        positions = np.copy(np.array([mol.getAtomByMolIndex(i).position for i in range(len(atoms))]))
+        energies = np.empty(len(sites))
+        for i in range(len(sites)):
+            self.move_molecule_new_site(mol,mol_site,sites[i,:])
+            self.simulation.update_coords()
+            energies[i]=self.simulation.get_pair_PE()
+            self.align_mol_to_positions(mol,positions)
+        log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*energies)
+        log_norm_probs = -1./(self.kb*self.temp)*energies-log_rosen_weight
+
+        try:
+            choice = np.random.choice(np.arange(len(sites)),p=np.exp(log_norm_probs))
+        except ValueError as e:
+            raise ValueError("Probabilities of trial rotations do not sum to 1")
+        if not keep_original:
+            self.move_molecule_new_site(mol,mol_site,sites[choice,:])
+        self.simulation.turn_on_all_atoms()
+        self.simulation.update_coords()
+        return log_rosen_weight
+    
+    def rotate_molecule(self,mol,new_position):
+
+        mol_vector = mol.get_com()-mol.anchorAtom.position
+        axis = np.cross(mol.anchorAtom.position,new_position)
+        angle = np.arccos(np.dot(mol.anchorAtom.position,new_position)/(np.linalg.norm(mol.anchorAtom.position)*np.linalg.norm(new_position)))
+        new_vector = molc.rot_quat(mol_vector,angle,axis)
+        mol.align_to_vector(new_vector)
+    
+    def regrow_anchor_position(self,mol,index=0,keep_original=False):
+               
+        atoms = [atom.atomID for atom in mol.atoms]
+        self.simulation.turn_off_atoms(atoms[:index],atoms[index:])
+        original_anchorPos = np.copy(mol.anchorAtom.position)
+        trial_positions = self.select_random_jump_positions()          
+        energies = np.empty(len(trial_positions))   
+        for i in range(len(trial_positions)):
+            if not keep_original or i != 0:
+                self.rotate_molecule(mol,trial_positions[i,:])
+                mol.move_atoms(trial_positions[i,:]-mol.anchorAtom.position)
+                self.simulation.update_coords()
+                energies[i]=self.simulation.get_pair_PE()
+                self.rotate_molecule(mol,original_anchorPos)
+                mol.move_atoms(original_anchorPos-mol.anchorAtom.position)
+            else:
+                energies[i]=self.simulation.get_pair_PE()
+        log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*energies)
+        log_norm_probs = -1./(self.kb*self.temp)*energies-log_rosen_weight
+
+        try:
+            choice = np.random.choice(np.arange(len(trial_positions)),p=np.exp(log_norm_probs))
+        except ValueError as e:
+            raise ValueError("Probabilities of trial rotations do not sum to 1")
+        if not keep_original:
+            self.rotate_molecule(mol,trial_positions[choice,:])
+            mol.move_atoms(trial_positions[choice,:]-mol.anchorAtom.position)  
+        self.simulation.turn_on_all_atoms()
+        self.simulation.update_coords()
+        return log_rosen_weight
+
+    def move(self):
+        """A CBMC swap move is performed on a random molecule starting from a random index, and it is accepted according to the Metropolis criteria using the Rosenbluth weights.
+        
+        Returns
+        -------
+        accepted : Boolean
+            A Boolean that indicates whether or not the swap move was accepted.
+        """     
+        mol = self.select_random_molecule()
+        atomIDs = [atom.atomID for atom in mol.atoms] 
+
+        self.simulation.turn_off_atoms(atomIDs,[])
+        initial_pair_PE = self.simulation.get_pair_PE()
+        self.simulation.turn_on_all_atoms()
+        log_Wo_anchor = self.regrow_anchor_position(mol,self.starting_index,keep_original=True)
+        log_Wo_chain,init_pair_PE,initial_dih_PE,branch_pdfs = self.regrow(mol,self.starting_index,keep_original=True)     
+        initial_bp_PE = np.sum([self.get_branch_point_energy(mol,branch_pdf) for branch_pdf in branch_pdfs])    
+
+        log_Wf_anchor = self.regrow_anchor_position(mol,self.starting_index,keep_original=False)
+        log_Wf_chain,fin_pair_PE,final_dih_PE,branch_pdfs = self.regrow(mol,self.starting_index,keep_original=False)      
+        self.simulation.update_coords()
+        
+        final_bp_PE = np.sum([self.get_branch_point_energy(mol,branch_pdf) for branch_pdf in branch_pdfs])
+        self.simulation.turn_off_atoms(atomIDs,[])
+        final_pair_PE = self.simulation.get_pair_PE()
+        self.simulation.turn_on_all_atoms()
+        
+        probability = min(1,np.exp(log_Wf_chain+log_Wf_anchor-log_Wo_chain-log_Wo_anchor))    
+        accepted = probability>rnd.random()
+        if not all([log_Wo_chain,log_Wf_chain]):
+            accepted=False
+        self.num_moves+=1
+        if accepted:
+            self.num_accepted+=1
+        return accepted,final_pair_PE+final_dih_PE+final_bp_PE-initial_pair_PE-initial_dih_PE-initial_bp_PE,0
 
 class TranslationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
@@ -533,14 +720,14 @@ class TranslationMove(Move):
     stationary_types : int or list
         The type or types of atoms that will not be translated; usually the nanoparticle atom types.
     """
-    def __init__(self,simulation,max_disp,cutoff,stationary_types,faces,cluster):
+    def __init__(self,simulation,max_disp,stationary_types,cluster,cluster_cutoff=10.0):
         super(TranslationMove,self).__init__(simulation)
         self.max_disp = max_disp
-        self.cutoff = cutoff
-        self.faces = faces
+        self.cutoff = cluster_cutoff
         self.stationary_types = set(stationary_types)
         self.cluster = cluster
-        self.move_name = "Translation"       
+        self.faces = np.array([np.append(face.normal,face.d) for key,face in self.simulation.faces.items()])
+        self.move_name = "Translation"
 
     def translate(self,molecule,displacement):
         """Move the atoms in the specified molecule by the given displacement.

@@ -311,6 +311,7 @@ class Molecule(object):
             raise ValueError("Alignment vector passed in must have a non-zero magnitude.")
         anchor_position = self.anchorAtom.position
         axis_rotation = np.cross(molecule_vector,vector)
+        if np.isclose(np.linalg.norm(axis_rotation),0): return
         angle = acos(np.dot(molecule_vector/np.linalg.norm(molecule_vector),vector/np.linalg.norm(vector)))
         rotate_atoms = [atom for atom in self.atoms if not (atom.atomID==self.anchorAtom.atomID)]
         for atom in rotate_atoms:
@@ -463,6 +464,21 @@ class Improper(object):
         self.atom4 = int(atom4)
         self.atoms = set([int(atom1),int(atom2),int(atom3),int(atom4)])
     
+    def __eq__(self,other):
+        if isinstance(other,self.__class__):
+            return other.impID == self.impID
+        else:
+            return False
+    def __neq__(self,other):
+        return not self.__eq__(other)
+
+class Face(object): 
+    def __init__(self,faceID,normal,d,vertices):
+        self.faceID = faceID
+        self.normal = normal
+        self.d = d
+        self.vertices = vertices
+   
     def __eq__(self,other):
         if isinstance(other,self.__class__):
             return other.impID == self.impID
@@ -788,7 +804,7 @@ def set_anchor_atoms(molecules,anchortype):
         if len(anchorIDs)>0:
             molecule.setAnchorAtom(anchorIDs[0])
 
-def constructMolecules(filename,np_edge_len,anchortype):
+def constructMolecules(filename,anchortype,lattice_const,np_edge_len):
     """From a LAMMPS input file construct a list of Molecule objects based on the molecules in the LAMMPS input file.
 
     Parameters
@@ -804,7 +820,7 @@ def constructMolecules(filename,np_edge_len,anchortype):
     print("Loading Data File:")
     atoms = atm.loadAtoms(filename)
     silvers = [atom for atom in atoms if atom.atomType==1]
-    faces = getSurfaces(silvers,np_edge_len)
+    faces,surface_sites = getSurfaces(silvers,np_edge_len,lattice_const)
     bonds = loadBonds(filename)
     angles = loadAngles(filename)
     dihedrals = loadDihedrals(filename)
@@ -825,9 +841,17 @@ def constructMolecules(filename,np_edge_len,anchortype):
     for molID in atom_dict:
         molecules[molID]=Molecule(molID,atom_dict[molID],bond_dict[molID],angle_dict[molID],dihedral_dict[molID],improper_dict[molID])
     set_anchor_atoms(molecules,anchortype)
-    return molecules,faces
+    return molecules,faces,surface_sites
 
-def getSurfaces(silvers,np_edge_len):
+def getSurfaces(silvers,np_edge_len,lattice_const=4.08,vert_site_dist=1.126):
+    
+    min_Ag_dist = (lattice_const**2/2)**0.5
+    hollow_center = min_Ag_dist/3**0.5
+    hollow_height = 0.5*3**0.5*min_Ag_dist
+    
+    np_pos = np.empty(shape=(len(silvers),3))
+    for i in range(len(silvers)):
+        np_pos[i,:] = silvers[i].position
     
     if len(silvers) == 0: return []
     num_Ag = len(silvers)
@@ -838,22 +862,49 @@ def getSurfaces(silvers,np_edge_len):
         nns[i] = len(dists[nn_idxs])
     vertex_idxs = np.nonzero(nns == np.min(nns))[0]
     
-    face = 0
-    faces = np.empty([20,4])
+    faceID = 1
+    faces = {}
+    surface_sites_all = np.empty((0,6))
     for combo in list(combinations(vertex_idxs,3)):
         Ag1 = silvers[combo[0]].position
         Ag2 = silvers[combo[1]].position
         Ag3 = silvers[combo[2]].position
         
-        if np.sqrt(np.sum(np.square(Ag1-Ag2))) > 1.01*np_edge_len or np.sqrt(np.sum(np.square(Ag1-Ag3))) > 1.01*np_edge_len or np.sqrt(np.sum(np.square(Ag2-Ag3))) > 1.01*np_edge_len:
+        if np.linalg.norm(Ag1-Ag2) > 1.01*np_edge_len or np.linalg.norm(Ag1-Ag3) > 1.01*np_edge_len or np.linalg.norm(Ag2-Ag3) > 1.01*np_edge_len:
             continue
         else:
-            v1 = Ag3-Ag2; v2 = Ag2-Ag1
-            faces[face,:3] = np.cross(v1,v2)
-            faces[face,3] = np.dot(faces[face,:3],Ag3)
-            face += 1
-
-    return faces
+            v1 = Ag3-Ag1; v2 = Ag2-Ag1
+            print(v1,v2)
+            cp = np.cross(v1,v2); d = np.dot(cp,Ag3)
+            print(Ag3,cp,d)
+            surface_sites = np_pos[np.nonzero(np.abs(cp[0]*np_pos[:,0]+cp[1]*np_pos[:,1]+cp[2]*np_pos[:,2]-d) / np.sqrt(cp[0]**2+cp[1]**2+cp[2]**2) < 1.0)[0],:]              
+            if np.sum(np.sign(surface_sites[0,:]*cp)) < 0:
+                surf_norm = -1.0*cp/np.linalg.norm(cp)            
+            else:
+                surf_norm = cp/np.linalg.norm(cp)  
+            faces[faceID] = Face(faceID,surf_norm,np.dot(cp/np.linalg.norm(cp),Ag3),np.array([Ag1,Ag2,Ag3]))
+            faceID += 1
+            
+            surface_sites = surface_sites + vert_site_dist*surf_norm
+                
+            hor_shift = hollow_center * ((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3)
+            surface_sites = surface_sites + hor_shift
+            
+            new_vert1 = Ag1+hor_shift; new_vert2 = Ag2+hor_shift
+            dists_from_bottom = np.linalg.norm(np.cross(new_vert1-new_vert2,surface_sites-new_vert2)/np.linalg.norm(new_vert1-new_vert2),axis=1)
+            surface_sites = surface_sites[np.nonzero(dists_from_bottom > 1.01*vert_site_dist)[0],:]
+            
+            hor_shift_2 = 2*(hollow_height-hollow_center) * ((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3)
+            surface_sites_2 = surface_sites + hor_shift_2          
+    
+            new_vert3 = Ag1+hor_shift_2+hor_shift-(hollow_height*((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3))
+            new_vert4 = Ag2+hor_shift_2+hor_shift-(hollow_height*((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3))
+            dists_from_bottom_2 = np.linalg.norm(np.cross(new_vert3-new_vert4,surface_sites_2-new_vert4)/np.linalg.norm(new_vert3-new_vert4),axis=1)
+            surface_sites_2 = surface_sites_2[np.nonzero(dists_from_bottom_2 > 1.01*vert_site_dist)[0],:]
+            
+            surface_sites_all = np.append(surface_sites_all,np.hstack((surface_sites,np.repeat(surf_norm[None,:],len(surface_sites[:,0]),axis=0))),axis=0)
+            surface_sites_all = np.append(surface_sites_all,np.hstack((surface_sites_2,np.repeat(surf_norm[None,:],len(surface_sites_2[:,0]),axis=0))),axis=0)
+    return faces,surface_sites_all
 
 
 def rot_quat(vector,theta,rot_axis):
