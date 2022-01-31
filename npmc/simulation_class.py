@@ -109,7 +109,7 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,numtrials,restart,cluster,read_pdf,legacy):
+    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,jump_dists,numtrials,restart,cluster,read_pdf,legacy):
         """Initializes the Monte Carlo moves used in the simulation.
         """
         translate_move_legacy = mvc.TranslationMove_Legacy(self,max_disp,[nptype])

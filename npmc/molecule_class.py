@@ -874,9 +874,7 @@ def getSurfaces(silvers,np_edge_len,lattice_const=4.08,vert_site_dist=1.126):
             continue
         else:
             v1 = Ag3-Ag1; v2 = Ag2-Ag1
-            print(v1,v2)
             cp = np.cross(v1,v2); d = np.dot(cp,Ag3)
-            print(Ag3,cp,d)
             surface_sites = np_pos[np.nonzero(np.abs(cp[0]*np_pos[:,0]+cp[1]*np_pos[:,1]+cp[2]*np_pos[:,2]-d) / np.sqrt(cp[0]**2+cp[1]**2+cp[2]**2) < 1.0)[0],:]              
             if np.sum(np.sign(surface_sites[0,:]*cp)) < 0:
                 surf_norm = -1.0*cp/np.linalg.norm(cp)            
