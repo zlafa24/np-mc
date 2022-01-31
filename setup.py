@@ -18,7 +18,6 @@ setup(name='npmc',
             'pytest',
             ],
         install_requires=[
-            'zlib',
             'matplotlib',
             'futures',
             'mock',
