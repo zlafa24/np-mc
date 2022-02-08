@@ -100,6 +100,7 @@ class Simulation(object):
         lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
         lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
         lmp.command("compute pair_total all pair lj/cut/coul/debye")
+        lmp.command("compute morse_pe all pair morse")
         lmp.command("compute pair_pes all pair/local eng")
         lmp.command("compute pair_id1 all property/local patom1")
         lmp.command("compute pair_id2 all property/local patom2")
@@ -202,7 +203,7 @@ class Simulation(object):
         """Compute the total pair potential energy from LAMMPS.
         """
         self.lmp.command("run 0 post no")
-        energies = self.lmp.extract_compute("pair_total",0,0)
+        energies = self.lmp.extract_compute("pair_total",0,0)+self.lmp.extract_compute("morse_pe",0,0)
         if isnan(energies):
             if self.lmp.extract_compute("lj_pe",0,0) == float('inf'):
                 return float('inf')
