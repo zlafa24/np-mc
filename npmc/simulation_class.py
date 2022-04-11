@@ -1,25 +1,21 @@
 """This module contains the simulation class and associated functions which are meant to encapsulate a LAMMPS simulation.
 """
-from lammps import lammps, PyLammps
+from lammps import lammps
 import npmc.molecule_class as mol
 import npmc.atom_class as atm
 import npmc.move_class as mvc
-import npmc.forcefield_class as ffc
 import os
 import numpy as np
 import random as rnd
-from math import *
-from subprocess import check_output
-import time    
-
+from subprocess import check_output   
 
 class Simulation(object):
-    """This class encapsulates a LAMMPS simulation including its associated molecules and computes and fixes.
+    """This class encapsulates a LAMMPS simulation including its associated molecules, computes and fixes.
 
     Parameters
     ----------
     init_file : str
-        The file name of the initialization LAMMPS file. This file contains all the force field parameters computes and fixes that one wishes to specify for the LAMMPS simulation.    
+        The filename of the initialization LAMMPS file. This file contains the force field parameters, computes, and fixes for the LAMMPS simulation.    
     datafile : str
         The LAMMPS data file which contains the coordinates of the atoms and bond, angle, and dihedral information.    
     dumpfile : str
@@ -44,8 +40,8 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=4,max_disp=1.0,max_angle=0.1745,numtrials=5,numtrials_jump=10,moves=[1,1,1,1,1],
-        lattice_const=4.08,np_edge_len=25.96,jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[1,10,1,10,1],
+            jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
                      
         rnd.seed(seed)
         np.random.seed(seed)
@@ -53,13 +49,13 @@ class Simulation(object):
         print(f'Configuration file is {init_file}')
         print(f'Directory name is {dname}')
         os.chdir(dname)
+        
         self.numtrials = numtrials
         self.numtrials_jump = numtrials_jump
         self.temp = temp
         self.max_disp = max_disp
-        self.lattice_const = lattice_const
-        self.np_edge_len = np_edge_len    
-        self.molecules,self.faces,self.surface_sites = mol.constructMolecules(datafile,anchortype,lattice_const,np_edge_len)
+        self.molecules,np_atoms = mol.constructMolecules(datafile,anchortype)
+        self.faces = mol.getNanoparticleFaces(np_atoms)
         self.atomlist = self.get_atoms()
         self.move_weights = moves
         
@@ -70,6 +66,7 @@ class Simulation(object):
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
+        self.init_styles_file = self.init_file + '.init'
         self.exclude=False
               
         self.initializeGroups(self.lmp)
@@ -92,18 +89,23 @@ class Simulation(object):
     def initializeComputes(self,lmp):
         """Initializes the LAMMPS computes that one  wishes to use in the simulation.
         """
-        lmp.command("compute pair_pe all pe")
-        lmp.command("compute mol_pe all pe dihedral")
-        lmp.command("compute imp_pe all pe improper")
-        lmp.command("compute ang_pe all pe angle")
-        lmp.command("compute bond_pe all pe bond")
-        lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
-        lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
-        lmp.command("compute pair_total all pair lj/cut/coul/debye")
-        lmp.command("compute morse_pe all pair morse")
-        lmp.command("compute pair_pes all pair/local eng")
-        lmp.command("compute pair_id1 all property/local patom1")
-        lmp.command("compute pair_id2 all property/local patom2")
+        self.all_pair_computes = []
+        with open(self.init_styles_file) as file:
+            lmp.command("compute pair_pe all pe")
+            lmp.command("compute mol_pe all pe dihedral")
+            lmp.command("compute imp_pe all pe improper")
+            lmp.command("compute ang_pe all pe angle")
+            lmp.command("compute bond_pe all pe bond")
+            lmp.command("compute coul_pe all pair lj/cut/coul/debye ecoul")
+            lmp.command("compute lj_pe all pair lj/cut/coul/debye evdwl")
+            lmp.command("compute lj_coul_pe all pair lj/cut/coul/debye")
+            self.all_pair_computes.append('lj_coul_pe')
+            if 'morse' in file.read():
+                lmp.command("compute morse_pe all pair morse")
+                self.all_pair_computes.append('morse_pe')
+            lmp.command("compute pair_pes all pair/local eng")
+            lmp.command("compute pair_id1 all property/local patom1")
+            lmp.command("compute pair_id2 all property/local patom2")
 
     def initializeFixes(self,lmp):
         """Initializes the LAMMPS fixes one wishes to use in the simulation.
@@ -192,22 +194,34 @@ class Simulation(object):
         """
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("lj_pe",0,0)
+
+    def getAngPE(self):
+        """Compute the angle potential energy from LAMMPS.
+        """
+        self.lmp.command("run 0 post no")
+        return self.lmp.extract_compute("ang_pe",0,0)
     
     def getDihPE(self):
-        """Compute the Van Der Waals potential energy from LAMMPS.
+        """Compute the dihedral potential energy from LAMMPS.
         """
         self.lmp.command("run 0 post no")
         return self.lmp.extract_compute("mol_pe",0,0)
+    
+    def getImpPE(self):
+        """Compute the improper dihedral potential energy from LAMMPS.
+        """
+        self.lmp.command("run 0 post no")
+        return self.lmp.extract_compute("imp_pe",0,0)
 
     def get_pair_PE(self):
         """Compute the total pair potential energy from LAMMPS.
         """
         self.lmp.command("run 0 post no")
-        energies = self.lmp.extract_compute("pair_total",0,0)+self.lmp.extract_compute("morse_pe",0,0)
-        if isnan(energies):
+        energy = np.sum([self.lmp.extract_compute(f'{pair_compute}',0,0) for pair_compute in self.all_pair_computes])
+        if np.isnan(energy):
             if self.lmp.extract_compute("lj_pe",0,0) == float('inf'):
                 return float('inf')
-        return energies
+        return energy
     
     def get_total_PE(self):
         """Compute the total potential energy from LAMMPS.
@@ -245,7 +259,7 @@ class Simulation(object):
         atomtypes =np.unique([atom.atomType for atom in atoms])
         atom_type_dict={}
         for atom_type in atomtypes:
-            atom_type_dict[atom_type]=raw_input("Enter element name for atom type "+str(atom_type)+": ")
+            atom_type_dict[atom_type]=input("Enter element name for atom type "+str(atom_type)+": ")
         self.atom_type_dict=atom_type_dict
 
     def update_neighbor_list(self):
@@ -384,9 +398,9 @@ class Simulation(object):
     def check_total_energy(self):
         running_deltaE = self.initial_PE+self.deltaE
         actual_totalPE = self.get_total_PE()
-        if not isclose(running_deltaE,actual_totalPE,abs_tol=0.001):
+        if not np.isclose(running_deltaE,actual_totalPE,abs_tol=0.001):
             raise Exception('Total energy has deviated.')
-        if isclose(running_deltaE,actual_totalPE,abs_tol=1e-6):
+        if np.isclose(running_deltaE,actual_totalPE,abs_tol=1e-6):
             self.deltaE = self.get_total_PE()-self.initial_PE
 
     def perform_mc_move(self):
@@ -399,14 +413,14 @@ class Simulation(object):
         """
         move = rnd.choices(self.moves,weights=self.move_weights)[0]
         old_positions = np.copy([atom.position for atom in self.atomlist])
-        accepted,energy,links = move.move()
+        accepted,energy = move.move()
         if accepted:
             self.deltaE += energy
         else:  
             self.revert_coords(old_positions)
             self.update_coords()
         self.step+=1
-        self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\t{links}\n')
+        self.potential_file.write(f'{self.step}\t{self.initial_PE+self.deltaE}\t{move.move_name}\t{accepted}\n')
         self.acceptance_file.write(str(self.step)+"\t"+"\t".join([str(mc_move.num_moves)+"\t"+str(mc_move.get_acceptance_rate()) for mc_move in self.moves])+"\n")
         self.acceptance_file.flush()
         self.potential_file.flush()

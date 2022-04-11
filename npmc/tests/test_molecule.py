@@ -1,12 +1,11 @@
-import sys, os
+import os
 import unittest
 import pickle
-from math import *
-#sys.path.insert(0,os.path.abspath('../src'))
+import numpy as np
+from math import atan2
+import npmc.molecule_class as molc
 
-from npmc.molecule_class import *
-
-script_dir = os.path.dirname(os.path.realpath(__file__))
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 def plotDihedral(molecule,dihedral):
         positions = [molecule.getAtomByID(atomID).position for atomID in (dihedral.atom1,dihedral.atom2,dihedral.atom3,dihedral.atom4)]
@@ -14,97 +13,98 @@ def plotDihedral(molecule,dihedral):
 
 class TestMoleculeLoadFunctions(unittest.TestCase):
     def setUp(self):
-        self.bond = Bond(1,1,1,4)
-        self.meoh_file = os.path.abspath(script_dir+"/test_files/meoh.data")
-        self.bond_list = [Bond(1,1,1,4),
-                        Bond(2,2,1,2),
-                        Bond(3,3,2,3),
-                        Bond(4,4,3,5)]
-        self.angle_list = [Angle(1,1,2,1,4),
-                        Angle(2,2,1,2,3),
-                        Angle(3,3,2,3,5)]
-        self.dihedral_list = [Dihedral(1,1,3,2,1,4),
-                            Dihedral(2,2,1,2,3,5)]
+        self.bond = molc.Bond(1,1,1,4)
+        self.meoh_file = os.path.abspath(script_path+"/test_files/meoh.data")
+        self.bond_list = [molc.Bond(1,1,1,4),
+                        molc.Bond(2,2,1,2),
+                        molc.Bond(3,3,2,3),
+                        molc.Bond(4,4,3,5)]
+        self.angle_list = [molc.Angle(1,1,2,1,4),
+                        molc.Angle(2,2,1,2,3),
+                        molc.Angle(3,3,2,3,5)]
+        self.dihedral_list = [molc.Dihedral(1,1,3,2,1,4),
+                            molc.Dihedral(2,2,1,2,3,5)]
 
     def test_loadBonds(self):
-        self.assertSequenceEqual(loadBonds(self.meoh_file),self.bond_list,msg="Bond list from loadBonds does not match expected Bond list")
+        self.assertSequenceEqual(molc.loadBonds(self.meoh_file),self.bond_list,msg="Bond list from loadBonds does not match expected Bond list")
 
     def test_loadAngles(self):
-        self.assertSequenceEqual(loadAngles(self.meoh_file),self.angle_list,msg="Angle List from loadAngles does not match expected Angle List")
+        self.assertSequenceEqual(molc.loadAngles(self.meoh_file),self.angle_list,msg="Angle List from loadAngles does not match expected Angle List")
 
     def test_loadDihedrals(self):
-        self.assertSequenceEqual(loadDihedrals(self.meoh_file),self.dihedral_list,msg = "Dihedral List from loadDihedrals does not match expected Dihedral List")
+        self.assertSequenceEqual(molc.loadDihedrals(self.meoh_file),self.dihedral_list,msg = "Dihedral List from loadDihedrals does not match expected Dihedral List")
     
 
 class TestMoleculeGroupByFunctions(unittest.TestCase):
     def setUp(self): 
-        self.three_meoh_file = os.path.abspath(script_dir+'/test_files/molecule_tests/three_meoh.data')
-        self.atoms = pickle.load(open(script_dir+'/test_files/molecule_tests/atoms.pickle','rb'))
-        self.bonds = pickle.load(open(script_dir+'/test_files/molecule_tests/bonds.pickle','rb'))
-        self.angles = pickle.load(open(script_dir+'/test_files/molecule_tests/angles.pickle','rb'))
-        self.dihedrals = pickle.load(open(script_dir+'/test_files/molecule_tests/dihedrals.pickle','rb'))
-        self.atom_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/atom_dict.pickle','rb'))
-        self.bond_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/bond_dict.pickle','rb'))
-        self.angle_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/angle_dict.pickle','rb'))
-        self.dih_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/dih_dict.pickle','rb'))
-        self.mol_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/molecule_dict.pickle','rb'))
+        self.three_meoh_file = os.path.abspath(script_path+'/test_files/molecule_tests/three_meoh.data')
+        with open(script_path+'/test_files/molecule_tests/atoms.pickle','rb') as file: self.atoms = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/bonds.pickle','rb') as file: self.bonds = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/angles.pickle','rb') as file: self.angles = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/dihedrals.pickle','rb') as file: self.dihedrals = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/atom_dict.pickle','rb') as file: self.atom_dict = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/bond_dict.pickle','rb') as file: self.bond_dict = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/angle_dict.pickle','rb') as file: self.angle_dict = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/dih_dict.pickle','rb') as file: self.dih_dict = pickle.load(file)
+        with open(script_path+'/test_files/molecule_tests/molecule_dict.pickle','rb') as file: self.mol_dict = pickle.load(file)
 
     def test_getBondsFromAtoms_returns_expected_output(self):
-        self.assertSequenceEqual(getBondsFromAtoms(self.atom_dict[2],self.bonds),self.bond_dict[2],msg="Bond List obtained by getBondsFromAtoms does not correspond with the expected output")
+        self.assertSequenceEqual(molc.getBondsFromAtoms(self.atom_dict[2],self.bonds),self.bond_dict[2],msg="Bond List obtained by getBondsFromAtoms does not correspond with the expected output")
 
     def test_getAnglesFromAtoms_returns_expected_output(self):
-        self.assertSequenceEqual(getAnglesFromAtoms(self.atom_dict[2],self.bond_dict[2],self.angles),self.angle_dict[2],msg="Angle List obtained by getAnglesFromAtoms does not correspond to expected to ouput")
+        self.assertSequenceEqual(molc.getAnglesFromAtoms(self.atom_dict[2],self.bond_dict[2],self.angles),self.angle_dict[2],msg="Angle List obtained by getAnglesFromAtoms does not correspond to expected to ouput")
 
     def test_getDihedralsFromAtoms_returns_expected_output(self):
-        self.assertSequenceEqual(getDihedralsFromAtoms(self.atom_dict[2],self.bond_dict[2],self.dihedrals),self.dih_dict[2],msg="Dihedral List obtained by getDihedralsFromAtoms does not correspond to expected output")
+        self.assertSequenceEqual(molc.getDihedralsFromAtoms(self.atom_dict[2],self.bond_dict[2],self.dihedrals),self.dih_dict[2],msg="Dihedral List obtained by getDihedralsFromAtoms does not correspond to expected output")
 
     def test_groupAtomsByMol_returns_expected_output(self):
-        self.assertDictEqual(groupAtomsByMol(self.atoms),self.atom_dict,msg="Dictionary of Atom List constructed by groupAtomsByMol does not match expected Atom List Dictionary")
+        self.assertDictEqual(molc.groupAtomsByMol(self.atoms),self.atom_dict,msg="Dictionary of Atom List constructed by groupAtomsByMol does not match expected Atom List Dictionary")
 
     def test_groupBondsByMol_returns_expected_output(self):
-        self.assertDictEqual(groupBondsByMol(self.atom_dict,self.bonds),self.bond_dict,msg="Bond List Dictionary produced by groupBondsByMol doesn't match correct results")
+        self.assertDictEqual(molc.groupBondsByMol(self.atom_dict,self.bonds),self.bond_dict,msg="Bond List Dictionary produced by groupBondsByMol doesn't match correct results")
 
     def test_groupAnglesByMol_returns_expected_output(self):
-        self.assertDictEqual(groupAnglesByMol(self.atom_dict,self.bond_dict,self.angles),self.angle_dict,msg="Angle List Dictionary from groupAnglesByMol returns different result from correct result")
+        self.assertDictEqual(molc.groupAnglesByMol(self.atom_dict,self.bond_dict,self.angles),self.angle_dict,msg="Angle List Dictionary from groupAnglesByMol returns different result from correct result")
 
     def test_groupDihedralsByMol_returns_expected_output(self):
-        self.assertDictEqual(groupDihedralsByMol(self.atom_dict,self.bond_dict,self.dihedrals),self.dih_dict,msg="Dihedral List Dictionary from groupDihedralsByMol returns different result from the correct one.")
+        self.assertDictEqual(molc.groupDihedralsByMol(self.atom_dict,self.bond_dict,self.dihedrals),self.dih_dict,msg="Dihedral List Dictionary from groupDihedralsByMol returns different result from the correct one.")
 
     def test_constructMolecule_correctly_constructs_molecule_from_3_meoh(self):
-        self.assertDictEqual(constructMolecules(self.three_meoh_file),self.mol_dict,msg="constructMolecule doesn't produce correct Molecule Dictionary")
+        molecules,np_atoms = molc.constructMolecules(self.three_meoh_file,4)
+        self.assertDictEqual(molecules,self.mol_dict,msg="constructMolecule doesn't produce correct Molecule Dictionary")
 
 class TestQuaternionRotation(unittest.TestCase):
     def setUp(self):
         self.longMessage=True
-        self.theta1 = pi/3.
-        self.axis1 = [0,cos(pi/3),sin(pi/3)]
+        self.theta1 = np.pi/3.
+        self.axis1 = [0,np.cos(np.pi/3),np.sin(np.pi/3)]
         self.vector1 = [1,-1,2]
-        self.theta2 = pi/4
+        self.theta2 = np.pi/4
         self.axis2 = [0,0,1] 
         self.vector2 = [0,1,0]
-        self.theta3=pi/2
+        self.theta3=np.pi/2
         self.axis3=[-0.5066642,0.0,-0.4932]
         self.vector3=[-0.629,0,2.364]
 
     """Based on worked example by the Institute of Mathematical Sciences (http://www.imsc.res.in/~knr/131129workshop/writeup_knr.pdf)"""
     def test_rot_quat_returns_expected_result_from_IMS_Example1(self):
-        np.testing.assert_almost_equal(rot_quat(self.vector1,self.theta1,self.axis1),[(10.+4*sqrt(3))/8.,(1+2*sqrt(3))/8.,(14-3*sqrt(3))/8.],decimal=3,err_msg="rot_quat produced a differemt vector then a proven worked example")
+        np.testing.assert_almost_equal(molc.rot_quat(self.vector1,self.theta1,self.axis1),[(10.+4*np.sqrt(3))/8.,(1+2*np.sqrt(3))/8.,(14-3*np.sqrt(3))/8.],decimal=3,err_msg="rot_quat produced a differemt vector then a proven worked example")
 
     def test_rot_quat_returns_expected_result_from_rotating_y_unit_vector_about_z_axis(self):
-        np.testing.assert_almost_equal(rot_quat(self.vector2,self.theta2,self.axis2),[-1./sqrt(2),1./sqrt(2),0],decimal=3,err_msg="rot_quat produced a differemt vector then the expected result of rotating yhat about the z axis 45 degrees")
+        np.testing.assert_almost_equal(molc.rot_quat(self.vector2,self.theta2,self.axis2),[-1./np.sqrt(2),1./np.sqrt(2),0],decimal=3,err_msg="rot_quat produced a differemt vector then the expected result of rotating yhat about the z axis 45 degrees")
 
     def test_rot_quat_returns_expected_value_when_rotates_dihedral_pi_2_degrees(self):
-        np.testing.assert_almost_equal(rot_quat(self.vector3,self.theta3,self.axis3),[0.8586349,2.1326423,0.8358948],decimal=3,err_msg="rot_quat failed to provide the right coordinates from rotating example dihedral 90 degrees clockwise")
+        np.testing.assert_almost_equal(molc.rot_quat(self.vector3,self.theta3,self.axis3),[0.8586349,2.1326423,0.8358948],decimal=3,err_msg="rot_quat failed to provide the right coordinates from rotating example dihedral 90 degrees clockwise")
 
 class TestMoleculeClassMethods(unittest.TestCase):
     
     def assertAlmostEqualAngles(self,theta1,theta2,places,msg):
-        angle_diff = atan2(sin(theta2-theta1),cos(theta2-theta1))
+        angle_diff = atan2(np.sin(theta2-theta1),np.cos(theta2-theta1))
         self.assertAlmostEqual(angle_diff,0.0,places=places,msg=msg)
 
     def setUp(self):
         self.longMessage = True
-        self.mol_dict = pickle.load(open(script_dir+'/test_files/molecule_tests/molecule_dict.pickle','rb'))
+        with open(script_path+'/test_files/molecule_tests/molecule_dict.pickle','rb') as file: self.mol_dict = pickle.load(file)
         self.anchorAtom = self.mol_dict[1].atoms[0]
         self.atom1 = self.mol_dict[1].getAtomByID(self.mol_dict[1].dihedrals[0].atom1)
         self.atom2 = self.mol_dict[1].getAtomByID(self.mol_dict[1].dihedrals[0].atom2)
@@ -119,20 +119,20 @@ class TestMoleculeClassMethods(unittest.TestCase):
         self.assertEqual(self.mol_dict[1].anchorAtom,self.anchorAtom,msg="Incorrect atom is set as anchor Atom")
 
     def test_getDihedralAngle_when_atoms_are_trans_in_same_plane_returns_pi(self):
-        self.assertAlmostEqual(self.mol_dict[1].getDihedralAngle(self.mol_dict[1].dihedrals[0]),pi,places=3,msg="getDihedralAngle does not return pi even though atoms are all in the same plane")
+        self.assertAlmostEqual(self.mol_dict[1].getDihedralAngle(self.mol_dict[1].dihedrals[0]),np.pi,places=3,msg="getDihedralAngle does not return pi even though atoms are all in the same plane")
 
     def test_getDihedralAngle_returns_expected_result_when_dihedral_rotated_with_rot_quat_pi_div_2_radians(self):
         vector = self.atom4.position - self.atom3.position
         axis = self.atom3.position-self.atom2.position
-        theta = -pi/2
-        self.atom4.position = rot_quat(vector,theta,axis)+self.atom3.position
-        self.assertAlmostEqual(self.mol_dict[1].getDihedralAngle(self.mol_dict[1].dihedrals[0]),pi/2,places=2,msg = "Rotation of dihedral using rot_quat to rotate dihedral 180 degrees counterclockwise does not produce correct result when calculated with getDihedralAngle")
+        theta = -np.pi/2
+        self.atom4.position = molc.rot_quat(vector,theta,axis)+self.atom3.position
+        self.assertAlmostEqual(self.mol_dict[1].getDihedralAngle(self.mol_dict[1].dihedrals[0]),np.pi/2,places=2,msg = "Rotation of dihedral using rot_quat to rotate dihedral 180 degrees counterclockwise does not produce correct result when calculated with getDihedralAngle")
 
     def test_getDihedralAngle_returns_expected_result_when_dihedral_rotated_with_rot_quat_plus_pi_radians(self):
         vector = self.atom4.position - self.atom3.position
         axis = self.atom3.position-self.atom2.position
-        theta = pi
-        self.atom4.position = rot_quat(vector,theta,axis)+self.atom3.position
+        theta = np.pi
+        self.atom4.position = molc.rot_quat(vector,theta,axis)+self.atom3.position
         self.assertAlmostEqualAngles(self.mol_dict[1].getDihedralAngle(self.mol_dict[1].dihedrals[0]) , 0 , places=2 , msg = "Rotation of dihedral using rot_quat to rotate dihedral 180 degreees clockwise does not produce correct result when calculated with getDihedralAngle")
     
     def test_getAtomByMolIndex_returns_correct_atom_when_passed_valid_index(self):
@@ -144,7 +144,7 @@ class TestMoleculeClassMethods(unittest.TestCase):
 
     def test_rotateDihedrals_correctly_rotates_test_MeOH_and_returns_correct_coords_after_pi_div_2_rotation(self):
         self.mol_dict[1].setAnchorAtom(1)
-        self.mol_dict[1].rotateDihedrals([self.mol_dict[1].getAtomByMolIndex(3)],pi/2)
+        self.mol_dict[1].rotateDihedrals([self.mol_dict[1].getAtomByMolIndex(3)],np.pi/2)
         actual_coords = np.array([self.mol_dict[1].getAtomByMolIndex(0).position,
                                 self.mol_dict[1].getAtomByMolIndex(1).position,
                                 self.mol_dict[1].getAtomByMolIndex(2).position,
@@ -161,7 +161,6 @@ class TestMoleculeClassMethods(unittest.TestCase):
     def test_align_to_vector_returns_correct_coords_when_aligning_MeOH_to_z_unit_vector(self):
         molecule = self.mol_dict[1]
         molecule.setAnchorAtom(1)
-        old_vector = np.copy(molecule.get_com()-molecule.anchorAtom.position)
         vector = np.array([0,-1,0])
         molecule.align_to_vector(vector)
         new_vector = np.copy(molecule.get_com()-molecule.anchorAtom.position)

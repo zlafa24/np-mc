@@ -1,23 +1,19 @@
-import os,sys
-#sys.path.insert(0,os.path.abspath('../src'))
-
+import os
 import npmc.forcefield_class as ffc
 import numpy as np
 import unittest
 import pickle
-from math import *
-import sys
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
 class TestDihedralForceField(unittest.TestCase):
     def setUp(self):
         self.longMessage=True
-        self.dih4_params = pickle.load(open(script_path+"/test_files/forcefield_tests/dihedral_type4_params.pickle",'rb'))
-        self.dih4_ff_output = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_type4_ff_function_output.pickle','rb'))
-        self.dih_coeffs = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_coefficients.pickle','rb'))
-        self.two_meoh_params = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_forcefields_parameters.pickle','rb'))
-        self.dihedral_4_pdf = pickle.load(open(script_path+'/test_files/forcefield_tests/dihedral_type4_pdf.pickle','rb'))
+        with open(script_path+"/test_files/forcefield_tests/dihedral_type4_params.pickle",'rb') as file: self.dih4_params = pickle.load(file)
+        with open(script_path+'/test_files/forcefield_tests/dihedral_type4_ff_function_output.pickle','rb') as file: self.dih4_ff_output = pickle.load(file)
+        with open(script_path+'/test_files/forcefield_tests/dihedral_coefficients.pickle','rb') as file: self.dih_coeffs = pickle.load(file)
+        with open(script_path+'/test_files/forcefield_tests/dihedral_forcefields_parameters.pickle','rb') as file: self.two_meoh_params = pickle.load(file)
+        with open(script_path+'/test_files/forcefield_tests/dihedral_type4_pdf.pickle','rb') as file: self.dihedral_4_pdf = pickle.load(file)
         self.two_meoh_settings_file = script_path+'/test_files/forcefield_tests/lt_files/two_meohs/system.in.settings'
         
 
@@ -29,7 +25,7 @@ class TestDihedralForceField(unittest.TestCase):
 
     def test_get_ff_function_returns_correct_forcefield_function(self):
         ff_function = ffc.get_ff_function(self.two_meoh_settings_file,4,'dihedral')
-        thetas = np.linspace(0,2*pi,num=100)
+        thetas = np.linspace(0,2*np.pi,num=100)
         test_result = np.array([ff_function(theta) for theta in thetas])
         np.testing.assert_array_almost_equal(test_result,self.dih4_ff_output,decimal=6,err_msg="The output of the returned function of get_ff_function does not correspond to the expected results.")
 

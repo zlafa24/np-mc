@@ -1,12 +1,5 @@
-import os,sys
-#sys.path.insert(0,os.path.abspath('../src'))
-
-import numpy as np
-import networkx as ntwkx
+import os
 import unittest
-import pickle
-from math import *
-import sys
 import npmc.maldi_class as mldi
 import npmc.molecule_class as mlc
 

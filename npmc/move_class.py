@@ -172,6 +172,7 @@ class CBMCRegrowth(Move):
         trial_dih_angles : Numpy array of floats
             An array of the selected dihedral angles in radians.
         """
+        '''
         try: dihedral = dihedrals[0]
         except: dihedral = dihedrals 
         force_field = [ff for ff in self.dihedral_ffs if ff.dihedral_type==dihedral.dihType][0]
@@ -180,6 +181,21 @@ class CBMCRegrowth(Move):
         trial_dih_angles = np.random.choice(thetas,size=self.numtrials,p=ff_pdf*dtheta)
         if keep_original: trial_dih_angles[0] = molecule.getDihedralAngle(dihedral)
         energies = force_field.ff_function(trial_dih_angles)
+        return trial_dih_angles,energies
+        '''
+        theta0s = [molecule.getDihedralAngle(dihedral) for dihedral in dihedrals]
+        shifts = np.array([theta0s[0]-theta0 for theta0 in theta0s]) % (2*np.pi)
+        force_fields = [[ff for ff in self.dihedral_ffs if ff.dihedral_type==dihedral.dihType][0] for dihedral in dihedrals]
+        if len(dihedrals) == 1:
+            thetas,ff_pdf = force_fields[0].get_pdf(self.temp)
+        else:
+            thetas,ff_pdf = ffc.get_combined_pdf(force_fields,self.temp,shifts)
+        dtheta = thetas[1]-thetas[0]
+        trial_dih_angles = np.random.choice(thetas,size=self.numtrials,p=ff_pdf*dtheta)
+        if keep_original: trial_dih_angles[0] = molecule.getDihedralAngle(dihedrals[0])
+        energies = np.zeros(len(trial_dih_angles))
+        for i,force_field in enumerate(force_fields):
+            energies += force_field.ff_function(trial_dih_angles-shifts[i])
         return trial_dih_angles,energies
     
     def select_dih_angles_branched(self,molecule,dihedrals,atoms,keep_original=False):
@@ -399,7 +415,7 @@ class CBMCRegrowth(Move):
         self.num_moves+=1
         if(accepted):
             self.num_accepted+=1
-        return accepted,final_pair_energy+final_dih_energy+final_bp_energy-initial_pair_energy-initial_dih_energy-initial_bp_energy,0
+        return accepted,final_pair_energy+final_dih_energy+final_bp_energy-initial_pair_energy-initial_dih_energy-initial_bp_energy
 
 class CBMCSwap(CBMCRegrowth):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the CBMCRegrowth class.  
@@ -518,7 +534,7 @@ class CBMCSwap(CBMCRegrowth):
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,final_pair_PE+final_dih_PE1+final_dih_PE2+ final_bp_PE1+ final_bp_PE2-initial_pair_PE-initial_dih_PE1-initial_dih_PE2-initial_bp_PE1-initial_bp_PE2,0
+        return accepted,final_pair_PE+final_dih_PE1+final_dih_PE2+ final_bp_PE1+ final_bp_PE2-initial_pair_PE-initial_dih_PE1-initial_dih_PE2-initial_bp_PE1-initial_bp_PE2
 
 class CBMCJump(CBMCRegrowth):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the CBMCRegrowth class.  
@@ -544,11 +560,6 @@ class CBMCJump(CBMCRegrowth):
         self.type1_numatoms,self.type2_numatoms = type_lengths
         self.move_name="CBMCJump"   
     
-    def select_random_sites(self):
-        site_idxs = range(len(self.simulation.surface_sites[:,0]))
-        random_idxs = rnd.choices(site_idxs,k=self.simulation.numtrials_jump)
-        return self.simulation.surface_sites[random_idxs,:]
-    
     def get_tetrahedron(self,origin,vertices):
         """
         Given a list of the xyz coordinates of the vertices of a tetrahedron, 
@@ -571,7 +582,6 @@ class CBMCJump(CBMCRegrowth):
         delta_r = self.max_dist
         a = 1 - self.min_dist/delta_r
         faces = rnd.choices(list(self.simulation.faces),k=self.simulation.numtrials_jump)
-        #faces = [self.simulation.faces[7].faceID]
         positions = np.empty(shape=(self.simulation.numtrials_jump,3))
         for i,face in enumerate([self.simulation.faces[face] for face in faces]):
             cos_angle = np.dot(face.normal,face.vertices[0])/(np.linalg.norm(face.normal)*np.linalg.norm(face.vertices[0]))
@@ -587,52 +597,6 @@ class CBMCJump(CBMCRegrowth):
                     positions[i,:] = surface_position
                     valid_position = True
         return positions
-
-    def get_site_for_mol(self,mol):
-        dists = np.array([[np.linalg.norm(site[:3]-mol.anchorAtom.position)] for site in self.simulation.surface_sites])
-        site = self.simulation.surface_sites[np.argmin(np.array(dists))]
-        return site
-    
-    def check_site_occupation(self,site):
-        dists_molIDs = np.array([[np.linalg.norm(site[:3]-mol.anchorAtom.position),mol.molID] for key,mol in self.simulation.molecules.items() if len(mol.atoms) > 1])
-        dists_molIDs = np.array(dists_molIDs)
-        occupying_molIDs = dists_molIDs[np.nonzero(dists_molIDs[:,0] < self.simulation.hollow_radius),1].flatten()
-        if len(occupying_molIDs) > 0: return True
-        else: return False
-    
-    def move_molecule_new_site(self,mol,mol_site,new_site):
-
-        self.align_mol_to_positions(mol,[new_site[:3]+(mol.anchorAtom.position-mol_site[:3])])
-        mol.align_to_vector(new_site[3:])
-        self.simulation.update_coords()  
-    
-    def regrow_anchor_site(self,mol,index=0,keep_original=False):
-         
-        atoms = [atom.atomID for atom in mol.atoms]
-        mol_site = self.get_site_for_mol(mol) 
-        self.simulation.turn_off_atoms(atoms[:index],atoms[index:])
-        sites = self.select_random_sites()
-        if keep_original: sites[0,:] = mol_site
-        
-        positions = np.copy(np.array([mol.getAtomByMolIndex(i).position for i in range(len(atoms))]))
-        energies = np.empty(len(sites))
-        for i in range(len(sites)):
-            self.move_molecule_new_site(mol,mol_site,sites[i,:])
-            self.simulation.update_coords()
-            energies[i]=self.simulation.get_pair_PE()
-            self.align_mol_to_positions(mol,positions)
-        log_rosen_weight = scm.logsumexp(-1./(self.kb*self.temp)*energies)
-        log_norm_probs = -1./(self.kb*self.temp)*energies-log_rosen_weight
-
-        try:
-            choice = np.random.choice(np.arange(len(sites)),p=np.exp(log_norm_probs))
-        except ValueError as e:
-            raise ValueError("Probabilities of trial rotations do not sum to 1")
-        if not keep_original:
-            self.move_molecule_new_site(mol,mol_site,sites[choice,:])
-        self.simulation.turn_on_all_atoms()
-        self.simulation.update_coords()
-        return log_rosen_weight
     
     def rotate_molecule(self,mol,new_position):
 
@@ -707,7 +671,7 @@ class CBMCJump(CBMCRegrowth):
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,final_pair_PE+final_dih_PE+final_bp_PE-initial_pair_PE-initial_dih_PE-initial_bp_PE,0
+        return accepted,final_pair_PE+final_dih_PE+final_bp_PE-initial_pair_PE-initial_dih_PE-initial_bp_PE
 
 class TranslationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
@@ -754,7 +718,7 @@ class TranslationMove(Move):
         eligible_molecules = [molecule for key,molecule in self.molecules.items() if not (self.stationary_types.intersection([atom.atomType for atom in molecule.atoms]))]
         return rnd.choice(eligible_molecules)
 
-    def get_random_move(self,anchor_pos):
+    def get_random_move(self,anchor_pos,max_perp_shift=0.25):
         """
         Returns
         -------
@@ -766,7 +730,7 @@ class TranslationMove(Move):
         nearest_face = self.faces[np.argmin(dists_to_face),:]
         trans_plane = np.array([nearest_face[0],nearest_face[1],nearest_face[2],np.sum(np.multiply(nearest_face[:3],anchor_pos))])
         unit_normal = trans_plane[:3] / np.linalg.norm(trans_plane[:3])
-        vertical_shift = unit_normal * rnd.uniform(-0.25,0.25)
+        perp_shift = unit_normal * rnd.uniform(-max_perp_shift,max_perp_shift)
               
         new_anchor_pos = anchor_pos + np.array([self.max_disp,self.max_disp,self.max_disp])
         while np.linalg.norm(anchor_pos-new_anchor_pos) > self.max_disp:
@@ -776,7 +740,7 @@ class TranslationMove(Move):
             new_anchor_pos[dim3] = anchor_pos[dim3] + self.max_disp * rnd.uniform(-1,1)
             new_anchor_pos[dim1] = (trans_plane[3]-trans_plane[dim2]*new_anchor_pos[dim2]-trans_plane[dim3]*new_anchor_pos[dim3]) / trans_plane[dim1]
              
-        return new_anchor_pos-anchor_pos+vertical_shift
+        return new_anchor_pos-anchor_pos+perp_shift
     
     def get_uniq_pair_idxs(self,pair_ids,num_sets):
     
@@ -867,7 +831,7 @@ class TranslationMove(Move):
                 self.num_accepted+=1
             energy = new_energy-old_energy
             links = 0
-        return accepted,energy,links
+        return accepted,energy
 
 class RotationMove(Move):
     """A class that encapsulates a translation move that inherits from the Move class. A single ligand is translated along the nanoparticle surface up to the given 
@@ -968,7 +932,7 @@ class RotationMove(Move):
         self.num_moves+=1
         if accepted:
             self.num_accepted+=1
-        return accepted,new_energy-old_energy,0
+        return accepted,new_energy-old_energy
 
 class Move_Legacy(object):
     """A class used to encapsulate all MC moves that can be used by a simulation.  

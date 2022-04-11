@@ -1,15 +1,8 @@
-import os,sys
-#sys.path.insert(0,os.path.abspath('../src'))
-
-from npmc.simulation_class import *
+import os
+import npmc.simulation_class as simc
 import numpy as np
 import unittest
 import pickle
-from math import *
-import sys
-import concurrent.futures as conc
-from subprocess import check_output
-import mock
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -25,7 +18,7 @@ class TestSimulationInitializations(unittest.TestCase):
         self.silver_expected_coords = np.loadtxt(self.data_folder+"/expected_silver.xyz",skiprows=2)
         self.adsorbate_expected_coords =  np.loadtxt(self.data_folder+"/expected_adsorbate.xyz",skiprows=2)
         self.temp = 298.15
-        self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
+        self.sim = simc.Simulation(self.init_file,self.data_file,self.dumpfile,self.temp,anchortype=4)
 
     def test_initialize_group_by_comparing_silver_xyz_file_with_expected_file(self):
         self.sim.dump_group("silver","silverdump.xyz") 
@@ -53,10 +46,9 @@ class TestSimulationPotentialEvaluationsIntramolecular(unittest.TestCase):
         self.data_file = self.data_folder+"/system.data"
         self.dumpfile =  self.data_folder+"/regrow.xyz"
         self.temp = 298.15
-        self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
+        self.sim = simc.Simulation(self.init_file,self.data_file,self.dumpfile,self.temp,anchortype=2)
 
     def test_getCoulPE_with_lone_MeOH(self):
-        #import pdb;pdb.set_trace()
         self.assertAlmostEqual(0.0000,self.sim.getCoulPE(),places=4,msg="getCoulPE does not return the expected coulombic energy for a lone MeOH (it should be 0)")
 
     def test_getVdwlPE_with_lone_MeOH(self):
@@ -79,7 +71,7 @@ class TestSimulationPotentialEvaluationIntermolecular(unittest.TestCase):
         self.data_file = self.data_folder+"/system.data"
         self.dumpfile =  self.data_folder+"/regrow.xyz"
         self.temp = 298.15
-        self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
+        self.sim = simc.Simulation(self.init_file,self.data_file,self.dumpfile,self.temp,anchortype=2)
 
     def test_getVdwlPE_with_two_MeOHs_separated_by_5A(self):
         self.assertAlmostEqual(-1.6710847,self.sim.getVdwlPE(),places=4,msg="getVdwlPE does not return expected value for Van der Waals energy of two MeOHs seoarated by 5Angstroms")
@@ -96,7 +88,7 @@ class TestSimulationTurningOffAtoms(unittest.TestCase):
         self.data_file = self.data_folder+"/system.data"
         self.dumpfile =  self.data_folder+"/regrow.xyz"
         self.temp = 298.15
-        self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
+        self.sim = simc.Simulation(self.init_file,self.data_file,self.dumpfile,self.temp,anchortype=2)
     
     def test_turn_off_one_hydrogen_in_two_MeOHs_separated_by_5A_check_Van_der_Waals_Energy(self):
         self.sim.turn_on_all_atoms()
@@ -166,7 +158,7 @@ class TestUpdatingCoordinates(unittest.TestCase):
         self.data_file = self.data_folder+"/system.data"
         self.dumpfile =  self.data_folder+"/regrow.xyz"
         self.temp = 298.15
-        self.sim = Simulation(self.init_file,self.data_file,self.dumpfile,self.temp)
+        self.sim = simc.Simulation(self.init_file,self.data_file,self.dumpfile,self.temp,anchortype=2)
 
     def test_get_atom_coords_returns_correct_atom_coordinates(self):
         atom_coords = self.sim.get_atom_coords()

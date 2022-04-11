@@ -1,14 +1,11 @@
-import sys, os
+import os
 import unittest
-#sys.path.insert(0,os.path.abspath('../src'))
-
 from npmc.atom_class import Atom, loadAtoms
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
 class TestAtomMethods(unittest.TestCase):
     def setUp(self):
-        script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
         self.test_file = os.path.abspath(script_path+'/test_files/meoh.data') 
         self.atom = Atom(1,2,3,1.1,[4,6,7])
         self.atom_list = [Atom(1,1,1,1.1,[0.474,0.000,1.059]),

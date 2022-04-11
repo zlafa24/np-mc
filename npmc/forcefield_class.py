@@ -91,7 +91,7 @@ class DihedralForceField(ForceField):
         """
         kb = 0.0019872041
         beta = 1./(kb*temp)
-        thetas,dtheta = np.linspace(0,2*pi,num=500,retstep=True)
+        thetas,dtheta = np.linspace(0,2*np.pi,num=500,retstep=True)
         energies = self.ff_function(thetas)
         unnorm_probs = np.exp(-beta*energies)
         norm_probs = unnorm_probs/(np.sum(unnorm_probs)*dtheta)
@@ -344,7 +344,20 @@ class BranchPDF():
         pickle.dump(pdf,pdf_file)
         if weighted: pickle.dump(weights,weights_file)
         pdf_file.close(); weights_file.close()
-   
+ 
+def get_combined_pdf(ffs,temp,shifts):
+    print(shifts)
+    kb = 0.0019872041
+    beta = 1./(kb*temp)
+    energies = np.zeros(500)
+    for i,ff in enumerate(ffs):
+        thetas,dtheta = np.linspace(0-shifts[i],2*np.pi-shifts[i],num=500,retstep=True)
+        energies = np.add(energies,ff.ff_function(thetas))
+    thetas,dtheta = np.linspace(0,2*np.pi,num=500,retstep=True)
+    unnorm_probs = np.exp(-beta*energies)
+    norm_probs = unnorm_probs/(np.sum(unnorm_probs)*dtheta)
+    return thetas,norm_probs    
+ 
 def get_ff_params(settings_filename,ff_type,ff_style):
     """Returns the forcefield parameters for ff_type and ff_style from settings_filename.
     

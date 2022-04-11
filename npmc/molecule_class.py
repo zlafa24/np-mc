@@ -648,13 +648,7 @@ def getImpropersFromAtoms(atomlist,bondlist,impropers):
     -------
     improperlist : Improper List
         A list of Impropers that are associated with the Atoms in atoms.
-    """
-    #mol_graph = molecule2graph(atomlist,bondlist)
-    #improper_combos=[]
-    #Get possible angles by getting subgraphs with only 2 steps
-    #for atom1,atom2 in permutations(mol_graph.__iter__(),r=2):
-    #    if(ntwkx.shortest_path_length(mol_graph,source=atom1,target=atom2)==3):
-    #        improper_combos.append(ntwkx.shortest_path(mol_graph,source=atom1,target=atom2))      
+    """   
     improper_list=[]
     for improper in impropers:
         if improper.atoms.issubset([atom.atomID for atom in atomlist]):
@@ -765,8 +759,6 @@ def groupImpropersByMol(mol_dict,bond_dict,impropers):
        improper_dict[molID]=getImpropersFromAtoms(mol_dict[molID],bond_dict[molID],impropers)
     return improper_dict
 
-
-
 def molecule2graph(atomlist,bondlist):
     """Converts the Atom list and Bond list of a molecule to a graph data object
 
@@ -804,7 +796,7 @@ def set_anchor_atoms(molecules,anchortype):
         if len(anchorIDs)>0:
             molecule.setAnchorAtom(anchorIDs[0])
 
-def constructMolecules(filename,anchortype,lattice_const,np_edge_len):
+def constructMolecules(filename,anchortype):
     """From a LAMMPS input file construct a list of Molecule objects based on the molecules in the LAMMPS input file.
 
     Parameters
@@ -819,8 +811,7 @@ def constructMolecules(filename,anchortype,lattice_const,np_edge_len):
     """
     print("Loading Data File:")
     atoms = atm.loadAtoms(filename)
-    silvers = [atom for atom in atoms if atom.atomType==1]
-    faces,surface_sites = getSurfaces(silvers,np_edge_len,lattice_const)
+    np_atoms = [atom for atom in atoms if atom.atomType==1]
     bonds = loadBonds(filename)
     angles = loadAngles(filename)
     dihedrals = loadDihedrals(filename)
@@ -841,19 +832,15 @@ def constructMolecules(filename,anchortype,lattice_const,np_edge_len):
     for molID in atom_dict:
         molecules[molID]=Molecule(molID,atom_dict[molID],bond_dict[molID],angle_dict[molID],dihedral_dict[molID],improper_dict[molID])
     set_anchor_atoms(molecules,anchortype)
-    return molecules,faces,surface_sites
+    return molecules,np_atoms
 
-def getSurfaces(silvers,np_edge_len,lattice_const=4.08,vert_site_dist=1.126):
-    
-    min_Ag_dist = (lattice_const**2/2)**0.5
-    hollow_center = min_Ag_dist/3**0.5
-    hollow_height = 0.5*3**0.5*min_Ag_dist
+def getNanoparticleFaces(silvers):
     
     np_pos = np.empty(shape=(len(silvers),3))
     for i in range(len(silvers)):
         np_pos[i,:] = silvers[i].position
     
-    if len(silvers) == 0: return []
+    if len(silvers) == 0: return {}
     num_Ag = len(silvers)
     nns = np.empty(num_Ag)
     for i in range(num_Ag):
@@ -861,10 +848,11 @@ def getSurfaces(silvers,np_edge_len,lattice_const=4.08,vert_site_dist=1.126):
         nn_idxs = np.nonzero(dists < 1.01*np.min(dists[np.nonzero(dists)]))
         nns[i] = len(dists[nn_idxs])
     vertex_idxs = np.nonzero(nns == np.min(nns))[0]
-    
+    vertex_dists = np.sqrt(np.sum(np.square(np.array([atom.position for atom in np.array(silvers)[vertex_idxs[1:]]])-silvers[vertex_idxs[0]].position),axis=1))
+    np_edge_len = np.min(vertex_dists)
+            
     faceID = 1
     faces = {}
-    surface_sites_all = np.empty((0,6))
     for combo in list(combinations(vertex_idxs,3)):
         Ag1 = silvers[combo[0]].position
         Ag2 = silvers[combo[1]].position
@@ -882,28 +870,7 @@ def getSurfaces(silvers,np_edge_len,lattice_const=4.08,vert_site_dist=1.126):
                 surf_norm = cp/np.linalg.norm(cp)  
             faces[faceID] = Face(faceID,surf_norm,np.dot(cp/np.linalg.norm(cp),Ag3),np.array([Ag1,Ag2,Ag3]))
             faceID += 1
-            
-            surface_sites = surface_sites + vert_site_dist*surf_norm
-                
-            hor_shift = hollow_center * ((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3)
-            surface_sites = surface_sites + hor_shift
-            
-            new_vert1 = Ag1+hor_shift; new_vert2 = Ag2+hor_shift
-            dists_from_bottom = np.linalg.norm(np.cross(new_vert1-new_vert2,surface_sites-new_vert2)/np.linalg.norm(new_vert1-new_vert2),axis=1)
-            surface_sites = surface_sites[np.nonzero(dists_from_bottom > 1.01*vert_site_dist)[0],:]
-            
-            hor_shift_2 = 2*(hollow_height-hollow_center) * ((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3)
-            surface_sites_2 = surface_sites + hor_shift_2          
-    
-            new_vert3 = Ag1+hor_shift_2+hor_shift-(hollow_height*((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3))
-            new_vert4 = Ag2+hor_shift_2+hor_shift-(hollow_height*((Ag2+Ag1)/2 - Ag3)/np.linalg.norm((Ag2+Ag1)/2 - Ag3))
-            dists_from_bottom_2 = np.linalg.norm(np.cross(new_vert3-new_vert4,surface_sites_2-new_vert4)/np.linalg.norm(new_vert3-new_vert4),axis=1)
-            surface_sites_2 = surface_sites_2[np.nonzero(dists_from_bottom_2 > 1.01*vert_site_dist)[0],:]
-            
-            surface_sites_all = np.append(surface_sites_all,np.hstack((surface_sites,np.repeat(surf_norm[None,:],len(surface_sites[:,0]),axis=0))),axis=0)
-            surface_sites_all = np.append(surface_sites_all,np.hstack((surface_sites_2,np.repeat(surf_norm[None,:],len(surface_sites_2[:,0]),axis=0))),axis=0)
-    return faces,surface_sites_all
-
+    return faces
 
 def rot_quat(vector,theta,rot_axis):
     """Rotates a vector about a specified axis a specified angle theta using the quaternion method

@@ -1,18 +1,13 @@
-import os,sys
-#sys.path.insert(0,os.path.abspath('../src'))
-
+import os
 import npmc.simulation_class as sim
 import numpy as np
 import networkx as ntwkx
 import unittest
 import mock
 import pickle
-from math import *
-import sys
 import npmc.move_class as mvc
 import npmc.molecule_class as mlc
 import npmc.forcefield_class as ffc
-import pdb
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -20,9 +15,9 @@ class TestCBMCRegrowth(unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.lt_directory = os.path.abspath(script_path+'/test_files/move_tests/lt_files')
-        self.dihedral_type3_pdf =  pickle.load(open(script_path+'/test_files/move_tests/dihedral_type3_pdf.pickle','rb'))
-        self.dihedral_type4_pdf = pickle.load(open(script_path+'/test_files/move_tests/dihedral_type4_pdf.pickle','rb'))
-        self.SCCO_pair_pdf = pickle.load(open(script_path+'/test_files/move_tests/pair_pe_pdf_SCCO_dihedral_angle.pickle','rb'))
+        with open(script_path+'/test_files/move_tests/dihedral_type3_pdf.pickle','rb') as file: self.dihedral_type3_pdf = pickle.load(file)
+        with open(script_path+'/test_files/move_tests/dihedral_type4_pdf.pickle','rb') as file: self.dihedral_type4_pdf = pickle.load(file)
+        with open(script_path+'/test_files/move_tests/pair_pe_pdf_SCCO_dihedral_angle.pickle','rb') as file: self.SCCO_pair_pdf = pickle.load(file)
         self.init_file = os.path.abspath(self.lt_directory+'/two_meohs/system.in')
         self.data_file = os.path.abspath(self.lt_directory+'/two_meohs/system.data')
         self.dump_file = os.path.abspath(self.lt_directory+'/two_meohs/regrow.xyz')
@@ -30,7 +25,7 @@ class TestCBMCRegrowth(unittest.TestCase):
         self.data_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/system.data')
         self.dump_file_b = os.path.abspath(self.lt_directory+'/two_mhexos/regrow.xyz')
         self.temp = 298.15
-        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp)
+        self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp,anchortype=2)
         self.sim_branched = sim.Simulation(init_file=self.init_file_b,datafile=self.data_file_b,dumpfile=self.dump_file_b,temp=self.temp,anchortype=5)
         self.cbmc_move = mvc.CBMCRegrowth(self.simulation,2,(5,5))
         self.cbmc_move_b = mvc.CBMCRegrowth(self.sim_branched,5,(10,10),read_pdf=True)
@@ -59,12 +54,12 @@ class TestCBMCRegrowth(unittest.TestCase):
         molecule = cbmc_move_large_trials.molecules[2]
         dihedrals,atoms = molecule.index2dihedrals(4)
         dihedrals,energies = cbmc_move_large_trials.select_dih_angles(molecule,dihedrals)
-        (normed_histogram,bins) = np.histogram(dihedrals,bins=500,density=True)
+        normed_histogram,bins = np.histogram(dihedrals,bins=500,density=True)
         np.testing.assert_array_almost_equal(normed_histogram,self.dihedral_type4_pdf,decimal=2,err_msg="The resulting histogram from 100000 trials of select_dih_angles does not match the distriburion expected by the PDF of the OPLS dihedral type for a CCOH dihedral.")
 
     def test_evaluate_energies_returns_expected_energies_for_specified_angles(self):
         molecule = self.simulation.molecules[1]
-        rotations = [0,pi,2*pi,pi/2.,2*pi]
+        rotations = [0,np.pi,2*np.pi,np.pi/2,2*np.pi]
         energies = self.cbmc_move.evaluate_energies(molecule,[molecule.getAtomByMolIndex(4)],rotations)
         actual_energies = [-1.1082622,-1.34260189,-1.1082622,-1.55146693,-1.1082622]
         np.testing.assert_array_almost_equal(energies,actual_energies,err_msg="evaluate_energies does not return correct energies for a set of specified rotation angles.")
@@ -141,10 +136,10 @@ class TestTranslationMove(unittest.TestCase):
         self.dump_file = os.path.abspath(self.lt_directory+'/regrow.xyz')
         self.temp = 298.15
         self.simulation = sim.Simulation(init_file=self.init_file,datafile=self.data_file,dumpfile=self.dump_file,temp=self.temp,type_lengths=(5,13),anchortype=4)
-        self.translate_move = mvc.TranslationMove(self.simulation,self.simulation.max_disp,10.0,[1],self.simulation.faces)
+        self.translate_move = mvc.TranslationMove(self.simulation,self.simulation.max_disp,[1],False)
 
     def test_translate_translates_molecule_by_specified_move(self):
-        molecule = self.simulation.molecules[-1]
+        molecule = self.simulation.molecules[1]
         old_positions = np.copy([atom.position for atom in molecule.atoms])
         move = np.array([1,1,1])
         self.translate_move.translate(molecule,move)
@@ -158,12 +153,12 @@ class TestTranslationMove(unittest.TestCase):
         vertex1 = np.array([21.00609,0.00000,-12.98248]); vertex2 = np.array([0.00000,12.98248,-21.00609]); vertex3 = np.array([0.00000,-12.98248,-21.00609])
         v1 = vertex3-vertex1; v2 = vertex2-vertex1
         cp = np.cross(v1,v2)
-        displacement = self.translate_move.get_random_move(molecule.anchorAtom.position)
+        displacement = self.translate_move.get_random_move(molecule.anchorAtom.position,max_perp_shift=0.0)
         self.assertAlmostEqual(np.dot(cp,displacement),0.0)
         
     def test_displacement_less_than_max_displacement(self):
         molecule = self.simulation.molecules[1948]
-        displacement = self.translate_move.get_random_move(molecule.anchorAtom.position)
+        displacement = self.translate_move.get_random_move(molecule.anchorAtom.position,max_perp_shift=0.0)
         self.assertLess(np.linalg.norm(displacement),self.simulation.max_disp)
         
     def tearDown(self):
@@ -196,21 +191,16 @@ class TestCBMCSwap(unittest.TestCase):
 
     def test_align_mol_to_positions_correctly_aligns_atom_positions(self):
         molecule1,molecule2=self.swap_move.select_random_molecules()
-        position1_old = np.copy(np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))]))
         position2_old =  np.copy(np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))]))
         self.swap_move.align_mol_to_positions(molecule1,position2_old[0:(self.swap_move.starting_index)])
-        position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
         position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
         np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms.")
         
     def test_align_mol_to_positions_correctly_aligns_atom_positions_branched(self):
         molecule1 = self.sim_branched.molecules[1]
         molecule2 = self.sim_branched.molecules[2]
-        #molecule1,molecule2=self.swap_move_b.select_random_molecules()
-        position1_old = np.copy(np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))]))
         position2_old =  np.copy(np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))]))
         self.swap_move_b.align_mol_to_positions(molecule1,position2_old[0:(self.swap_move_b.starting_index)])
-        position2_new = np.array([molecule2.getAtomByMolIndex(i).position for i in range(len(molecule2.atoms))])
         position1_new = np.array([molecule1.getAtomByMolIndex(i).position for i in range(len(molecule1.atoms))])
         np.testing.assert_allclose(position1_new[0:3,:],position2_old[0:3,:],err_msg="swap_molecule_positions does not correctly trade the coordinates of the common atoms for branched ligands.")    
         
@@ -237,11 +227,6 @@ class TestCBMCSwap(unittest.TestCase):
         bonds2_post = getBonds(atoms2,11)
         np.testing.assert_allclose(np.concatenate((bonds1_pre[:2],bonds2_pre[2:]),axis=0),bonds2_post,err_msg='swap_molecule_positions changes bond lengths in molecule 2')
         np.testing.assert_allclose(np.concatenate((bonds2_pre[:2],bonds1_pre[2:]),axis=0),bonds1_post,err_msg='swap_molecule_positions changes bond lengths in molecule 1')
-
-    @mock.patch.object(mvc.CBMCSwap,'regrow')
-    def test_move_returns_False_when_regrow_returns_False(self,mock_method):
-        mock_method.return_value = False
-        self.assertFalse(self.swap_move.move(),msg="CBMCSwap move method does not return False when regrow method returns False")
 
     @mock.patch.object(mvc.CBMCSwap,'regrow')
     def test_move_returns_False_when_regrow_returns_False(self,mock_method):
