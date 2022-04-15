@@ -346,7 +346,6 @@ class BranchPDF():
         pdf_file.close(); weights_file.close()
  
 def get_combined_pdf(ffs,temp,shifts):
-    print(shifts)
     kb = 0.0019872041
     beta = 1./(kb*temp)
     energies = np.zeros(500)

@@ -94,10 +94,7 @@ class CBMCRegrowth(Move):
     def get_site_ID(self,anchorAtom):
         
         sites = np.genfromtxt(self.surfsites_file,skip_header=2)
-        #print(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1))
-        siteID = np.nonzero(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1) < 0.1)[0]
-        #print(sites[siteID],anchorAtom.position)
-        
+        siteID = np.nonzero(np.linalg.norm(anchorAtom.position[None,:]-sites[:,1:],axis=1) < 0.1)[0]       
         return siteID
 
     def set_anchor_atoms(self):

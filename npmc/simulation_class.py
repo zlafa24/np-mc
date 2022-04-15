@@ -347,10 +347,7 @@ class Simulation(object):
         """Updates the atom positions for each instance of the atom class with the atom positions from LAMMPS.
         """
         indxs = np.argsort([atom.atomID for atom in self.atomlist],axis=0)
-        #print(self.lmp.numpy.extract_atom("x"))
-        #print('test')
         coords = self.lmp.gather("x",1,3)
-        #print(len(np.asarray(coords)),np.asarray(coords))
         for idx,i in zip(indxs,range(len(self.atomlist))):
             self.atomlist[idx].position[0]=float(coords[i*3])
             self.atomlist[idx].position[1]=float(coords[i*3+1])
