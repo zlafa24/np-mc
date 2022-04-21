@@ -143,14 +143,21 @@ class MALDISpectrum(object):
         else:
             ligand_types = [self.get_molecule_type(self.molecules[ligand[0]]) for ligand in fragment]
             return(len([1 for i in ligand_types if i==1]))
+        
+    def get_fragment_IDs(self,fragment):
+        if not np.any(fragment):
+            return np.zeros(self.ligands_per_fragment)
+        else:
+           return [self.molecules[ligand[0]].molID for ligand in fragment]
     
     def get_maldi_spectrum(self):
         fragments = [self.get_sample_fragment_2() for sample in range(self.numsamples)]
         fragment_types = np.array([self.get_fragment_category(fragment) for fragment in fragments])
+        fragment_IDs = np.array([self.get_fragment_IDs(fragment) for fragment in fragments])
         hist, bins = np.histogram(fragment_types,bins=range(0,self.ligands_per_fragment+2),density=True)
         self.hist = hist
         self.bins = bins
-        return((hist,bins))
+        return hist,bins,fragment_IDs
 
     def get_binomial(self,fraction):
         numtries = self.ligands_per_fragment
