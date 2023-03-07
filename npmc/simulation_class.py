@@ -395,9 +395,9 @@ class Simulation(object):
     def check_total_energy(self):
         running_deltaE = self.initial_PE+self.deltaE
         actual_totalPE = self.get_total_PE()
-        if not np.isclose(running_deltaE,actual_totalPE,abs_tol=0.001):
+        if not np.isclose(running_deltaE,actual_totalPE,atol=0.001):
             raise Exception('Total energy has deviated.')
-        if np.isclose(running_deltaE,actual_totalPE,abs_tol=1e-6):
+        if np.isclose(running_deltaE,actual_totalPE,atol=1e-6):
             self.deltaE = self.get_total_PE()-self.initial_PE
 
     def perform_mc_move(self):
