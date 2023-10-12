@@ -42,7 +42,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,restartdatafile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[2,10,10,1],
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[2,10,10,1],
             jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
                      
         rnd.seed(seed)
@@ -69,7 +69,7 @@ class Simulation(object):
         self.dumpfile = os.path.abspath(dumpfile)
         self.datafile = os.path.abspath(datafile)
         self.init_file = os.path.abspath(init_file)
-        self.restartdatafile = os.path.abspath(restartdatafile)
+        
         self.init_styles_file = self.init_file + '.init'
         self.exclude=False
               
@@ -189,9 +189,10 @@ class Simulation(object):
         """
         self.lmp.command("write_dump all xyz "+self.dumpfile+" modify append yes")
     
-    def dump_restart(self):
+    def dump_restart(self,restartdatafile,):
         '''Output restart files to the restart file specified in the SImulation's restartdatafile variable
         '''
+        self.restartdatafile = restartdatafile
         self.lmp.command("write_restart "+self.restartdatafile+"_*.restart")
 
     def getCoulPE(self):
