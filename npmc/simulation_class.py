@@ -19,7 +19,9 @@ class Simulation(object):
     datafile : str
         The LAMMPS data file which contains the coordinates of the atoms and bond, angle, and dihedral information.    
     dumpfile : str
-        The filename of the file which one wishes to dump the XYZ information of the simulation.   
+        The filename of the file which one wishes to dump the XYZ information of the simulation.
+    restartdatafile : str
+        The filename of the file which one wishes to generate restart data files containing a "snapshot" of the entire system.
     temp : float
         The temperature which one wishes to run the simulation.          
     type_lengths : list of type int
@@ -40,7 +42,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[2,10,10,1],
+    def __init__(self,init_file,datafile,restartdatafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[2,10,10,1],
             jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
                      
         rnd.seed(seed)
@@ -179,6 +181,7 @@ class Simulation(object):
             As the specified format is XYZ it is a good idea to append .xyz to the end of the filename.
         """
         self.lmp.command("write_dump "+group_name+" xyz "+filename)
+        self.lmp.command("write_data "+self.restartdatafile+".*")
 
     def dump_atoms(self):
         """Dump the atom XYZ info to the dumpfile specified in the Simulation's dumpfile variable.
