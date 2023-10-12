@@ -181,7 +181,7 @@ class Simulation(object):
             As the specified format is XYZ it is a good idea to append .xyz to the end of the filename.
         """
         self.lmp.command("write_dump "+group_name+" xyz "+filename)
-        self.lmp.command("write_data "+self.restartdatafile+".*")
+        self.lmp.command("write_restart "+self.restartdatafile+".*")
 
     def dump_atoms(self):
         """Dump the atom XYZ info to the dumpfile specified in the Simulation's dumpfile variable.
