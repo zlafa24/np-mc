@@ -192,7 +192,7 @@ class Simulation(object):
     def dump_restart(self):
         '''Output restart files to the restart file specified in the SImulation's restartdatafile variable
         '''
-        self.lmp.command("write_restart "+self.restartdatafile+"_*")
+        self.lmp.command("write_restart "+self.restartdatafile+"_*.restart")
 
     def getCoulPE(self):
         """Compute the Coulombic potential energy from LAMMPS.
