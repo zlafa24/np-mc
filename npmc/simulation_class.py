@@ -59,7 +59,7 @@ class Simulation(object):
         self.molecules,np_atoms = mol.constructMolecules(datafile,anchortype)
         self.faces = mol.getNanoparticleFaces(np_atoms)
         self.atomlist = self.get_atoms()
-        self.move_weights = [1,10,1,10,1]#moves
+        self.move_weights = moves
         print(f'The Length of self.move_weights is: {len(self.move_weights)}')
         
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
