@@ -649,11 +649,11 @@ class CBMCJump(CBMCRegrowth):
         initial_pair_PE = self.simulation.get_pair_PE()
         self.simulation.turn_on_all_atoms()
         log_Wo_anchor = self.regrow_anchor_position(mol,self.starting_index,keep_original=True)
-        log_Wo_chain,init_pair_PE,initial_dih_PE,branch_pdfs = self.regrow(mol,self.starting_index,keep_original=True)     
+        log_Wo_chain,initial_pair_PE,initial_dih_PE,branch_pdfs = self.regrow(mol,self.starting_index,keep_original=True)     
         initial_bp_PE = np.sum([self.get_branch_point_energy(mol,branch_pdf) for branch_pdf in branch_pdfs])    
 
         log_Wf_anchor = self.regrow_anchor_position(mol,self.starting_index,keep_original=False)
-        log_Wf_chain,fin_pair_PE,final_dih_PE,branch_pdfs = self.regrow(mol,self.starting_index,keep_original=False)      
+        log_Wf_chain,final_pair_PE,final_dih_PE,branch_pdfs = self.regrow(mol,self.starting_index,keep_original=False)      
         self.simulation.update_coords()
         
         final_bp_PE = np.sum([self.get_branch_point_energy(mol,branch_pdf) for branch_pdf in branch_pdfs])
