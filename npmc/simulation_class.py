@@ -122,15 +122,15 @@ class Simulation(object):
         translate_move_legacy = mvc.TranslationMove_Legacy(self,max_disp,[nptype])
         rotation_move_legacy = mvc.RotationMove_Legacy(self,anchortype,max_angle)
         cbmc_move_legacy = mvc.CBMCRegrowth_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
-        #swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
+        swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
         translate_move = mvc.TranslationMove(self,max_disp,[nptype],cluster)
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
-        #swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
+        swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         jump_move = mvc.CBMCJump(self,anchortype,type_lengths,jump_dists,numtrials,read_pdf)
-        self.moves = [cbmc_move,translate_move,rotation_move,jump_move]
+        self.moves = [cbmc_move,translate_move,swap_move,rotation_move,jump_move]
         print(f'The length of self.moves is: {len(self.moves)}')
-        if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,rotation_move_legacy] 
+        if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
         if restart:
             for i,move in enumerate(self.moves):
                 move.set_acceptance_rate_restart(i,'Acceptance_Rate.txt')
