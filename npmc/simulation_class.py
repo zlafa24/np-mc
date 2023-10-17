@@ -42,7 +42,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[2,10,10,1],
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[1,10,1,10,1],
             jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
                      
         rnd.seed(seed)
@@ -59,7 +59,7 @@ class Simulation(object):
         self.molecules,np_atoms = mol.constructMolecules(datafile,anchortype)
         self.faces = mol.getNanoparticleFaces(np_atoms)
         self.atomlist = self.get_atoms()
-        self.move_weights = [2,10,10,1]#moves   Was originally weight [1,10,1,10,1] I removed the swap move for single ligand studies.
+        self.move_weights = [1,10,1,10,1]#moves
         print(f'The Length of self.move_weights is: {len(self.move_weights)}')
         
         self.lmp = lammps("",["-echo","none","-screen","lammps.out"])
