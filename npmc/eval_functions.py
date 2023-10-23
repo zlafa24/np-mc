@@ -1,4 +1,4 @@
-'''
+
 from __future__ import print_function
 import pickle
 import numpy as np
@@ -315,4 +315,4 @@ def plot_minimize(len1, len2, size = 'np40'):
     fig1.suptitle(f'Morse Potential {size} C{len1}/C{len2}')
     ax1.legend(['Theoretical Morse Potential S-Ag','Closest S-Ag Pair', 'Lowest Morse Potential'])
     fig1.savefig(f'{size}_C{len1}_C{len2}_morse_pot.png', dpi = 400) 
-    '''
+    
