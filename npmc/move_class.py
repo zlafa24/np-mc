@@ -390,7 +390,7 @@ class CBMCRegrowth(Move):
             total_log_rosen_weight+=log_step_weight  
         return total_log_rosen_weight,total_pair_energy,total_dih_energy,branch_pdfs
 
-    def move(self):
+    def move(self, temp):
         """A CBMC regrowth move is performed on a random molecule starting from a random index, and it is accepted according to the Metropolis criteria using the Rosenbluth weights.
         
         Returns
@@ -491,7 +491,7 @@ class CBMCSwap(CBMCRegrowth):
                 self.rotate_partial_molecule(mol,angles[i])
         self.simulation.update_coords()
         
-    def move(self,mol1=None,mol2=None):
+    def move(self,temp,mol1=None,mol2=None):
         """A CBMC swap move is performed on a random molecule starting from a random index, and it is accepted according to the Metropolis criteria using the Rosenbluth weights.
         
         Returns
@@ -505,7 +505,6 @@ class CBMCSwap(CBMCRegrowth):
         self.simulation.turn_off_atoms(atomIDs,[])
         initial_pair_PE = self.simulation.get_pair_PE()
         self.simulation.turn_on_all_atoms()
-        
         log_Wo_chain1,initial_pair_PE1,initial_dih_PE1,branch_pdfs1 = self.regrow(mol1,self.starting_index,keep_original=True)
         log_Wo_chain2,initial_pair_PE2,initial_dih_PE2,branch_pdfs2 = self.regrow(mol2,self.starting_index,keep_original=True)
 
@@ -523,9 +522,10 @@ class CBMCSwap(CBMCRegrowth):
         self.simulation.turn_off_atoms(atomIDs,[])
         final_pair_PE = self.simulation.get_pair_PE()
         self.simulation.turn_on_all_atoms()
-        
+        print(f'Swap Initial Pair PE: {initial_pair_PE}\tFinal Pair PE: {final_pair_PE}')
         probability = min(1,np.exp(log_Wf_chain1+log_Wf_chain2-(log_Wo_chain1+log_Wo_chain2)))
         accepted = probability>rnd.random()
+        print(f'ACCEPTED? {accepted} - Prob {probability}')
         if not all([log_Wo_chain1,log_Wo_chain2,log_Wf_chain2,log_Wf_chain1]):
             accepted=False
         self.num_moves+=1
@@ -634,7 +634,7 @@ class CBMCJump(CBMCRegrowth):
         self.simulation.update_coords()
         return log_rosen_weight
 
-    def move(self):
+    def move(self,temp):
         """A CBMC swap move is performed on a random molecule starting from a random index, and it is accepted according to the Metropolis criteria using the Rosenbluth weights.
         
         Returns
@@ -660,9 +660,10 @@ class CBMCJump(CBMCRegrowth):
         self.simulation.turn_off_atoms(atomIDs,[])
         final_pair_PE = self.simulation.get_pair_PE()
         self.simulation.turn_on_all_atoms()
-        
+        print(f'Jump Initial Pair PE: {initial_pair_PE}\t Final Pair PE: {final_pair_PE}')
         probability = min(1,np.exp(log_Wf_chain+log_Wf_anchor-log_Wo_chain-log_Wo_anchor))    
         accepted = probability>rnd.random()
+        print(f'ACCEPTED? {accepted} - Prob {probability}')
         if not all([log_Wo_chain,log_Wf_chain]):
             accepted=False
         self.num_moves+=1
@@ -807,7 +808,7 @@ class TranslationMove(Move):
             self.num_accepted+=1
         return accepted,new_energy-old_energy,len(linked_mols)
     
-    def move(self):
+    def move(self, temp):
         
         if self.cluster: accepted,energy,links = self.cluster_move()
         else:
@@ -821,7 +822,7 @@ class TranslationMove(Move):
             new_energy = self.simulation.get_total_PE()   
             self.simulation.turn_on_all_atoms()
             
-            probability = min(1,np.exp((-1./(self.kb*self.temp))*(new_energy-old_energy)))
+            probability = min(1,np.exp((-1./(self.kb*temp))*(new_energy-old_energy)))
             accepted = probability>rnd.random()
             self.num_moves+=1
             if accepted:
@@ -910,7 +911,7 @@ class RotationMove(Move):
         molecule.align_to_vector(new_vector)
         self.simulation.update_coords()
 
-    def move(self):
+    def move(self, temp):
         """A rotation move is performed on a random molecule with a random amount of rotation, and it is accepted according to the Metropolis criteria.
         
         Returns
@@ -924,7 +925,7 @@ class RotationMove(Move):
         self.rotate_molecule(molecule)
         new_energy = self.simulation.get_total_PE()
         self.simulation.turn_on_all_atoms()
-        probability = min(1,np.exp(-1./(self.kb*self.temp)*(new_energy-old_energy)))
+        probability = min(1,np.exp(-1./(self.kb*temp)*(new_energy-old_energy)))
         accepted = rnd.uniform(0,1)<probability
         self.num_moves+=1
         if accepted:
