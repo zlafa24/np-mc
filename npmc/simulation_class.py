@@ -42,7 +42,7 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(5,13),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[1,10,1,10,1],
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(13,15),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[1,10,1,10,1],
             jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
                      
         rnd.seed(seed)
@@ -57,6 +57,7 @@ class Simulation(object):
         self.temp = temp
         self.max_disp = max_disp
         self.molecules,np_atoms = mol.constructMolecules(datafile,anchortype)
+        print('Length of molecules list: ', len(self.molecules))
         self.faces = mol.getNanoparticleFaces(np_atoms)
         self.atomlist = self.get_atoms()
         self.move_weights = moves
@@ -87,7 +88,7 @@ class Simulation(object):
         """
         lmp.command("group silver type 1")
         lmp.command("group sulfur type 5")
-        lmp.command("group adsorbate type 2 3 4 5 6")
+        lmp.command("group adsorbate type 2 3 4 5 6 7 8 9")
         self.lmp.command("group empty empty")
 
     def initializeComputes(self,lmp):
@@ -412,7 +413,7 @@ class Simulation(object):
         if np.isclose(running_deltaE,actual_totalPE,atol=1e-6):
             self.deltaE = self.get_total_PE()-self.initial_PE
 
-    def perform_mc_move(self):
+    def perform_mc_move(self, temp):
         """Randomly selects one of the Monte Carlo moves included in initializeMoves, performs it, and accepts or rejects the move according to the Metropolis criteria.
         
         Returns
@@ -422,7 +423,7 @@ class Simulation(object):
         """
         move = rnd.choices(self.moves,weights=self.move_weights)[0]
         old_positions = np.copy([atom.position for atom in self.atomlist])
-        accepted,energy = move.move()
+        accepted,energy = move.move(temp)
         if accepted:
             self.deltaE += energy
         else:  
