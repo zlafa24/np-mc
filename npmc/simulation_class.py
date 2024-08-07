@@ -164,12 +164,14 @@ class Simulation(object):
         max_iter : int, optional
             The maximum allowed iterations in the minimization procedure.
         """
-        self.lmp.command("fix fxfrcS sulfur setforce 0. 0. 0.")
+        self.lmp.command("fix fxfrcS sulfur setforce 0.0 0.0 0.0")
+        self.lmp.command('fix staystill sulfur spring/self 30000.0') #ensures that the sulfurs maintain the position in the same coord as defined in surface_sites.xyz
         self.lmp.command('timestep 0.5')
         self.lmp.command(f'min_style {style}')
         self.lmp.command("minimize "+str(force_tol)+" "+str(e_tol)+" "+str(max_iter)+" "+str(max_iter*10))
         self.get_coords()
         self.lmp.command("unfix fxfrcS")
+        self.lmp.command('unfix staystill')
 
     def dump_group(self,group_name,filename):
         """Dumps the atoms of the specified group to an XYZ file specified by filename
