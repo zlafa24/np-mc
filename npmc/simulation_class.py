@@ -42,8 +42,8 @@ class Simulation(object):
         A Boolean that determines whether branch point probability density functions (PDFs) are read from a .pkl file or are determined at the start of the simulation
         and then written to a .pkl file.
     """
-    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(13,15),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[1,10,1,10,1],
-            jump_dists=[0.93,1.95],seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
+    def __init__(self,init_file,datafile,dumpfile,temp,type_lengths=(13,15),nptype=1,anchortype=5,max_disp=0.4,max_angle=0.1745,numtrials=5,numtrials_jump=20,moves=[1,1,10,1,10,1],
+            jump_dists=[0.93,1.95], num_MD_steps = 10000, MD_timestep = 0.5, seed=None,restart=False,cluster=False,read_pdf=False,legacy=False):
                      
         rnd.seed(seed)
         np.random.seed(seed)
@@ -56,6 +56,8 @@ class Simulation(object):
         self.numtrials_jump = numtrials_jump
         self.temp = temp
         self.max_disp = max_disp
+        self.num_MD_steps = num_MD_steps
+        self.md_timestep = MD_timestep
         self.molecules,np_atoms = mol.constructMolecules(datafile,anchortype)
         print('Length of molecules list: ', len(self.molecules))
         self.faces = mol.getNanoparticleFaces(np_atoms)
@@ -88,7 +90,7 @@ class Simulation(object):
         """
         lmp.command("group silver type 1")
         lmp.command("group sulfur type 5")
-        lmp.command("group adsorbate type 2 3 4 5 6 7 8 9")
+        lmp.command("group adsorbate subtract all silver sulfur") #this now dynamically defines the adsorbate group rather than 2,3,4,6,7,8,9
         self.lmp.command("group empty empty")
 
     def initializeComputes(self,lmp):
@@ -117,7 +119,7 @@ class Simulation(object):
         """
         lmp.command("fix fxfrc silver setforce 0. 0. 0.")
     
-    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,jump_dists,numtrials,restart,cluster,read_pdf,legacy):
+    def initializeMoves(self,type_lengths,nptype,anchortype,max_disp,max_angle,jump_dists,numtrials,num_MD_steps,restart,cluster,read_pdf,legacy):
         """Initializes the Monte Carlo moves used in the simulation.
         """
         translate_move_legacy = mvc.TranslationMove_Legacy(self,max_disp,[nptype])
@@ -126,10 +128,11 @@ class Simulation(object):
         swap_move_legacy = mvc.CBMCSwap_Legacy(self,anchortype,type_lengths,numtrials,read_pdf)
         translate_move = mvc.TranslationMove(self,max_disp,[nptype],cluster)
         rotation_move = mvc.RotationMove(self,anchortype,max_angle)
+        md_move = mvc.MDmove(self, num_MD_steps, self.temp, self.md_timestep) #ZRL - hybrid MD MC for small simultaneous adjustments of the ligands
         cbmc_move = mvc.CBMCRegrowth(self,anchortype,type_lengths,numtrials,read_pdf)
         swap_move = mvc.CBMCSwap(self,anchortype,type_lengths,numtrials,read_pdf)
         jump_move = mvc.CBMCJump(self,anchortype,type_lengths,jump_dists,numtrials,read_pdf)
-        self.moves = [cbmc_move,translate_move,swap_move,rotation_move,jump_move]
+        self.moves = [md_move,cbmc_move,translate_move,swap_move,rotation_move,jump_move]
         print(f'The length of self.moves is: {len(self.moves)}')
         if legacy: self.moves = [cbmc_move_legacy,translate_move_legacy,swap_move_legacy,rotation_move_legacy] 
         if restart:
