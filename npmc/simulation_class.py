@@ -79,7 +79,7 @@ class Simulation(object):
         self.initializeGroups(self.lmp)
         self.initializeComputes(self.lmp)
         self.initializeFixes(self.lmp)
-        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,jump_dists,numtrials,restart,cluster,read_pdf,legacy)
+        self.initializeMoves(type_lengths,nptype,anchortype,max_disp,max_angle,jump_dists,numtrials,num_MD_steps,restart,cluster,read_pdf,legacy)
         self.initialize_data_files(restart)
         self.step = 0 if not restart else self.get_last_step_number()
         self.update_neighbor_list()
