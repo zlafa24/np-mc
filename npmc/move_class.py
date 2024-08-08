@@ -43,6 +43,59 @@ class Move(object):
             self.num_moves += int(last_line[2*index+1].strip())
             self.num_accepted += int(int(last_line[2*index+1].strip()) * float(last_line[2*index+2].strip()))
 
+class MDmove(Move):
+    """
+    A class that encapsulates a short molecular dynamics run time period to efficiently handle minute configurational adjustments.
+
+    Parameters
+    ------------
+
+    """
+    def __init__(self, simulation, numsteps, temp, timestep):
+        super(MDmove,self).__init__(simulation)
+        self.move_name = 'MD'
+        self.temp = temp
+        self.numsteps = numsteps
+        self.timestep = timestep
+        
+        #self.move()
+        
+
+    def run_MD(self):
+        self.simulation.lmp.command('velocity adsorbate set 0.0 0.0 0.0')
+        self.simulation.lmp.command('velocity sulfur set 0.0 0.0 0.0')
+        self.simulation.lmp.command("fix fxfrcS sulfur setforce 0.0 0.0 0.0")
+        self.simulation.lmp.command('fix staystill sulfur spring/self 30000.0')
+        self.simulation.lmp.command(f'fix mynvt adsorbate nvt temp {self.temp} {self.temp} $({100.0}*dt)')
+        #self.simulation.lmp.command(f'timestep {self.timestep}')
+        self.simulation.lmp.command(f'run {self.numsteps}')
+        self.simulation.lmp.command('unfix mynvt') #reset fix for NVT integrator to avoid interference with other moves
+        self.simulation.lmp.command("unfix fxfrcS") #reset fix for sulfur setforce
+        self.simulation.lmp.command('unfix staystill') #reset fix for harmonic tether
+        #self.simulation.lmp.command('timestep 0.5')
+
+
+
+    def move(self):     
+        old_energy = self.simulation.get_total_PE()
+        print(f'{self.simulation.rank} OLD {old_energy}')     
+        self.run_MD()
+        new_energy = self.simulation.get_total_PE()   
+        probability = min(1,np.exp((-1./(self.kb*self.temp))*(new_energy-old_energy)))
+        accepted = probability>rnd.random()
+        self.num_moves+=1
+        if accepted:
+            self.simulation.get_coords() #get_coords updates the atom coordinates in the atom class with the current lammps instance coords
+            self.simulation.update_coords() #updates coords
+            self.simulation.update_neighbor_list() #updates neighbor list
+            self.num_accepted+=1
+        energy = new_energy-old_energy
+        print(f'{self.simulation.rank} NEW {new_energy}')
+        print(f'MD move acceptance: {accepted}')
+        
+        #links = 0
+        return accepted,energy
+
 class CBMCRegrowth(Move):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the Move class.  
 
