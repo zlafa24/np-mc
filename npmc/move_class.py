@@ -78,7 +78,7 @@ class MDmove(Move):
 
     def move(self,temp):     
         old_energy = self.simulation.get_total_PE()
-        print(f'{self.simulation.rank} OLD {old_energy}')     
+        #print(f'{self.simulation.rank} OLD {old_energy}')     
         self.run_MD()
         new_energy = self.simulation.get_total_PE()   
         probability = min(1,np.exp((-1./(self.kb*self.temp))*(new_energy-old_energy)))
@@ -90,8 +90,8 @@ class MDmove(Move):
             self.simulation.update_neighbor_list() #updates neighbor list
             self.num_accepted+=1
         energy = new_energy-old_energy
-        print(f'{self.simulation.rank} NEW {new_energy}')
-        print(f'MD move acceptance: {accepted}')
+       # print(f'{self.simulation.rank} NEW {new_energy}')
+        #print(f'MD move acceptance: {accepted}')
         
         #links = 0
         return accepted,energy
