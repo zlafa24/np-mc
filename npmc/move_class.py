@@ -76,7 +76,7 @@ class MDmove(Move):
 
 
 
-    def move(self,temp=self.temp):     
+    def move(self,temp):     
         old_energy = self.simulation.get_total_PE()
         print(f'{self.simulation.rank} OLD {old_energy}')     
         self.run_MD()
