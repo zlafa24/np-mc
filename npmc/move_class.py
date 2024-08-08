@@ -66,6 +66,7 @@ class MDmove(Move):
         self.simulation.lmp.command('velocity sulfur set 0.0 0.0 0.0')
         self.simulation.lmp.command("fix fxfrcS sulfur setforce 0.0 0.0 0.0")
         self.simulation.lmp.command('fix staystill sulfur spring/self 30000.0')
+        self.simulation.lmp.command(f'velocity adsorbate create {self.temp} dist gaussian sum no mom yes rot yes') #establishes random velocities to the ligand chains from a gaussian distribution and resets linear and angular momentum
         self.simulation.lmp.command(f'fix mynvt adsorbate nvt temp {self.temp} {self.temp} $({100.0}*dt)')
         #self.simulation.lmp.command(f'timestep {self.timestep}')
         self.simulation.lmp.command(f'run {self.numsteps}')
