@@ -43,6 +43,7 @@ class Move(object):
             self.num_moves += int(last_line[2*index+1].strip())
             self.num_accepted += int(int(last_line[2*index+1].strip()) * float(last_line[2*index+2].strip()))
 
+'''
 class MDmove(Move):
     """
     A class that encapsulates a short molecular dynamics run time period to efficiently handle minute configurational adjustments.
@@ -97,7 +98,7 @@ class MDmove(Move):
         
         #links = 0
         return accepted,energy
-
+'''
 class CBMCRegrowth(Move):
     """A class that encapsulates a Configurationally Biased Regrowth move as outline by Siepmann et al. that inherits from the Move class.  
 
