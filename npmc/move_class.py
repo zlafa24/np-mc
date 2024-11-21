@@ -717,7 +717,7 @@ class CBMCJump(CBMCRegrowth):
         final_pair_PE = self.simulation.get_pair_PE()
         self.simulation.turn_on_all_atoms()
         print(f'Jump Initial Pair PE: {initial_pair_PE}\t Final Pair PE: {final_pair_PE}')
-        delta_log_W = log_Wf_chain - log_Wo_chain  #+ log_Wf_anchor- log_Wo_anchor
+        delta_log_W = log_Wf_chain + log_Wf_anchor - log_Wo_chain - log_Wo_anchor
         if delta_log_W > 0:
             probability = 1
         else:
